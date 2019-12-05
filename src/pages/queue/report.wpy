@@ -1,0 +1,308 @@
+<template>
+    <view class="weui-flex flex-y h100 que-box">
+        <view class="weui-flex flex-c flex-sb tj">
+            <view class="weui-flex__item">{{form.start_time}} ~ {{form.end_time}}</view>
+            <view @tap="opens" style="color:#f48423">设置筛选条件</view>
+        </view>
+        <!-- 桌台类型s -->
+        <scroll-view class="desk-box" scroll-x>
+            <repeat for="{{config.desk_config}}" key="desks" index="index" item="item">
+                <view wx:if="{{item.desk_id != 0}}" @tap="setDesk({{item.desk_id}})" class="desk-item {{item.desk_id == inx ? 'on' : '' }}">
+                    <view>{{item.desk_name}}</view>
+                    <view wx:if="{{item.is_fixed == 0}}" class="nums">（{{item.start_num}}人~{{item.end_num}}人）</view>
+                    <view wx:else class="nums">（{{item.start_num}}人）</view>
+                </view>
+                <view wx:else class="desk-item all {{item.desk_id == inx ? 'on' : '' }}" @tap="setDesk({{item.desk_id}})">
+                    <view>全部</view>
+                    <view class="nums"></view>
+                </view>
+            </repeat>
+        </scroll-view>
+        <view class="pandect">共有{{count}}桌，{{sum_num}}人排队</view>
+        <scroll-view class="desk-list" scroll-y bindscrolltolower="morePage">
+            <repeat wx:if="{{ques.length}}" for="{{ques}}" key="ques" index="index" item="item">
+                <Que-item @getclient.user="getclient" @loadData.user="loadData" :model.sync="item"></Que-item>
+            </repeat>
+            <view wx:if="{{!ques.length}}" class="weui-flex flex-jc h100" @tap="plus" style="color:#888;margin-top:150rpx;">
+                暂无排队
+            </view>
+            <Copyright></Copyright>
+        </scroll-view>
+        <Dialogz :dialogShow.sync="dialogShow" :canClose.sync="canClose" :title.sync="dia_title">
+            <view slot="content">
+                <view class="weui-flex flex-c flex-sb sw">
+                    <view class="f36">时间</view>
+                    <view class="weui-flex flex-c">
+                        <picker mode="date" value="{{form.start_time}}" data-type="start_time" start="2019-01-01" end="{{today}}" bindchange="radioChange">
+                            <view class="picker">
+                                {{form.start_time}} 至
+                            </view>
+                        </picker>
+                        <picker mode="date" value="{{form.end_time}}" data-type="end_time" start="{{form.start_time}}" end="{{today}}" bindchange="radioChange">
+                            <view class="picker">
+                                {{form.end_time}}
+                            </view>
+                        </picker>
+                    </view>
+                </view>
+                <view class="weui-flex flex-c flex-sb sw">
+                    <view class="f36">列表顺序</view>
+                    <radio-group class="radio-group" style="line-hight:86rpx" data-type="sort" bindchange="radioChange">
+                        <label class="radio" wx:for="{{sorts}}" wx:key="sorts"><radio color="#f48423" value="{{item.name}}" checked="{{item.name == form.sort}}"/>{{item.value}}</label>
+                    </radio-group>
+                </view>
+                <view class="weui-flex flex-c flex-sb sw">
+                    <view class="f36">排队方式</view>
+                    <radio-group class="radio-group" style="line-hight:86rpx" data-type="source" bindchange="radioChange">
+                        <label class="radio" style="font-size:24rpx;" wx:for="{{sources}}" wx:key="sources"><radio color="#f48423" value="{{item.name}}" checked="{{item.name == form.source}}"/>{{item.value}}</label>
+                    </radio-group>
+                </view>
+                <view class="weui-flex flex-c flex-sb sw">
+                    <view class="f36">就餐/过号</view>
+                    <radio-group class="radio-group" style="line-hight:86rpx" data-type="status" bindchange="radioChange">
+                        <label class="radio" wx:for="{{statuses}}" wx:key="statuses"><radio color="#f48423" value="{{item.name}}" checked="{{item.name == form.status}}"/>{{item.value}}</label>
+                    </radio-group>
+                </view>
+            </view>
+            <view slot="comfire" class="weui-flex flex-c flex-sa h100">
+                <!-- <view class="btn" @tap="cancle">取消</view> -->
+                <view class="btn act" @tap="sure" style="background-color:{{theme}}">确定</view>
+            </view>
+        </Dialogz>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from '@/api/config'
+    import Tips from "@/utils/Tips"
+    import Lang from "@/utils/Lang"
+    import Queue from "@/components/queue/child/queue"
+    import Dialogz from "@/components/common/dialog"
+    import Copyright from "@/components/queue/child/copyright"
+    export default class basePages extends wepy.page {
+        config = {
+            navigationBarTitleText: '历史数据'
+        }
+        components = {
+            'Que-item': Queue,
+            Dialogz,
+            Copyright
+        }
+        data = {
+            dialogShow: false,
+            canClose: true,
+            dia_title: '设置筛选条件',
+            theme: wepy.$instance.globalData.themeColor,
+            config: {},
+            ques: [],
+            inx: 0,
+            page: 1,
+            count: 0,
+            sum_num: 0,
+            form: {
+                start_time: '2019-01-01',
+                end_time: '2019-09-02',
+                sort: 2,
+                source: 0,
+                status: '2,4'
+            },
+            today: '',
+            sorts: [{
+                name: '1',
+                value: '正序'
+            }, {
+                name: '2',
+                value: '倒序'
+            }],
+            sources: [{
+                name: '0',
+                value: '全部'
+            }, {
+                name: '1',
+                value: '小程序'
+            }, {
+                name: '2',
+                value: '现场'
+            }],
+            statuses: [{
+                name: '2,4',
+                value: '全部'
+            }, {
+                name: '2',
+                value: '就餐'
+            }, {
+                name: '4',
+                value: '过号'
+            }],
+            isload: true
+        };
+        async getlist() {
+            let params = {
+                desk_id: this.inx,
+                page: this.page,
+                pageSize: 30,
+                ...this.form
+            }
+            let res = await config.lineups(params)
+            if (!res.list.length && this.page > 1) {
+                this.page = this.page - 1
+                Tips.toast('没有更多数据了', () => {}, 'none');
+                return
+            }
+            if (this.page == 1) {
+                this.ques = res.list
+            } else {
+                this.ques = this.ques.concat(res.list)
+            }
+            this.count = res.count
+            this.sum_num = res.sum_num
+            this.$apply()
+        }
+        async load() {
+            let _config = wepy.getStorageSync('config'),
+                all = [{
+                    "desk_id": 0, //桌台ID
+                    "desk_name": "单人桌台", //桌台名称
+                    "is_fixed": "1", //是否固定人数 0不固定 1固定
+                    "start_num": 0, //人数
+                    "end_num": 0
+                }]
+            if (_config.desk_config.length) _config.desk_config = all.concat(_config.desk_config)
+            this.config = _config;
+            this.getlist()
+            this.isload = false
+        }
+        onLoad() {
+            let date = Lang.getDay(0)
+            this.today = date
+            this.form.start_time = date
+            this.form.end_time = date
+            this.load()
+        }
+        onShow() {
+            if (!this.isload) {
+                this.load()
+            }
+        }
+        methods = {
+            setDesk(inx) {
+                this.inx = inx
+                this.page = 1
+                this.getlist()
+            },
+            morePage() {
+                this.page = this.page + 1
+                this.getlist()
+            },
+            radioChange(e) {
+                let key = e.currentTarget.dataset.type || e.target.dataset.type
+                this.form[key] = e.detail.value
+            },
+            sure() {
+                this.dialogShow = false
+                this.getlist()
+            },
+            opens() {
+                this.dialogShow = true
+            },
+            loadData() {
+                this.page = 1
+                this.getlist()
+            }
+        }
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+    /* 隐藏滚动条 */
+     ::-webkit-scrollbar {
+        width: 0;
+        height: 0;
+        color: transparent;
+    }
+</style>
+
+<style lang="less" scoped>
+    .tj {
+        height: 50rpx;
+        line-height: 70rpx;
+    }
+    .que-box {
+        padding: 0 20rpx;
+        >view {
+            margin: 10rpx 0 20rpx;
+        }
+    }
+    .desk-box {
+        width: 708rpx;
+        height: 110rpx;
+        line-height: 110rpx;
+        white-space: nowrap;
+        .desk-item {
+            // box-sizing: border-box;
+            width: 177rpx;
+            height: 110rpx;
+            line-height: 110rpx;
+            display: inline-block;
+            font-size: 28rpx;
+            text-align: center;
+            border-right: 2px solid #f5f5f5;
+            background-color: #fff;
+            overflow: hidden;
+            &.all {
+                >view {
+                    height: 110rpx;
+                    line-height: 110rpx;
+                }
+                .nums {
+                    opacity: 0;
+                    width: 0;
+                    height: 0;
+                }
+            }
+            &.on {
+                background-color: rgb(244, 132, 35);
+                color: #fff;
+            }
+            >view {
+                height: 55rpx;
+                line-height: 55rpx;
+            }
+            .nums {
+                font-size: 24rpx;
+                line-height: 1
+            }
+        }
+    }
+    .pandect {
+        text-align: center;
+        font-size: 24rpx;
+        color: rgb(153, 153, 153);
+        padding: 20rpx;
+    }
+    .desk-list {
+        height: calc(~'100% - 300rpx');
+    }
+    .btn {
+        width: 220rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        text-align: center;
+        background-color: rgb(204, 204, 204);
+        color: #fff;
+        border-radius: 8rpx;
+    }
+    .radio {
+        // margin-right: 10rpx;
+        width: 135rpx;
+        display: inline-block;
+        white-space: nowrap;
+    }
+    .sw {
+        font: 30rpx;
+        margin-top: 40rpx;
+    }
+</style>

@@ -1,0 +1,409 @@
+<template>
+    <view class="weui-flex flex-y que-box h100">
+        <!-- head -->
+        <view class="weui-flex flex-c flex-sb" style="height:70rpx;">
+            <view @tap="showDesk" class="show-em {{config.is_pos==0?'not':''}}" style="border-color:{{theme}};color:{{theme}};">查看空台</view>
+            <view class="weui-flex flex-c">
+                <image wx:if="{{config.custom_voice_open == 1}}" @tap="saysay" src="{{song}}" mode="scaleToFill" class="img" />
+                <image @tap="toReport" src="{{date}}" mode="scaleToFill" class="img" />
+                <image src="{{setting}}" mode="scaleToFill" @tap="set" class="img" />
+            </view>
+        </view>
+        <!-- 取号 -->
+        <view wx:if="{{config.is_xc_phone == 0 && config.is_xc_room == 0}}" class="weui-flex flex-c flex-sb">
+            <input type="number" @input="setNum" data-type="num" value="{{num}}" class="input-box" placeholder="请输入就餐人数" />
+            <view class="btn act" @tap="getCode" style="background-color:{{theme}}">取号</view>
+        </view>
+        <!-- 带条件取号  -->
+        <view wx:else class="weui-flex flex-c flex-sb">
+            <view class="btn act one" @tap="setCode" style="background-color:{{theme}}">取号</view>
+        </view>
+        <!-- 排队数据 -->
+        <Ques @getclient.user="getclient" wx:if="{{!isEmpty}}" :config.sync="desk_config"></Ques>
+        <view wx:else class="weui-flex flex-c flex-jc h100" @tap="plus" style="color:{{theme}}">
+            立即设置桌台
+        </view>
+        <!-- 设置桌台条件 -->
+        <Dialogz :dialogShow.sync="dialogShow" :canClose.sync="canClose" :title.sync="dia_title">
+            <view slot="content">
+                <view class="weui-flex flex-c flex-sb sw ">
+                    <view class="f36">就餐人数</view>
+                    <input @input="setNum" data-type="num" value="{{num}}" type="number" class="count" />
+                    <view class="f36"></view>
+                </view>
+                <view wx:if="{{config.is_xc_phone != 0}}" class="weui-flex flex-c flex-sb sw ">
+                    <view class="f36">手机号码</view>
+                    <input @input="setNum" data-type="phone" value="{{phone}}" type="number" class="count" />
+                    <view class="f36"> </view>
+                </view>
+                <view wx:if="{{config.is_xc_room != 0}}" class="weui-flex flex-c flex-sb sw">
+                    <view class="f36">是否必须房间</view>
+                    <switch checked="{{is_room == 1}}" color="#f48423" data-type="is_room" bindchange="setNum" />
+                </view>
+            </view>
+            <view slot="comfire" class="weui-flex flex-c flex-sa h100">
+                <view class="btn1" @tap="cancle">取消</view>
+                <view class="btn1 act" @tap="getCode" style="background-color:{{theme}}">确定</view>
+            </view>
+        </Dialogz>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import Auth from '@/api/auth'
+    import Tips from "@/utils/Tips"
+    import config from '@/api/config'
+    import Ques from "./child/queues"
+    import Lang from '@/utils/Lang'
+    import Dialogz from "@/components/common/dialog"
+    export default class Queue extends wepy.component {
+        data = {
+            setting: '/static/images/setting.png',
+            date: '/static/images/date.png',
+            song: '/static/images/song.png',
+            lv: wepy.$instance.globalData.lv,
+            theme: wepy.$instance.globalData.themeColor,
+            isEmpty: true,
+            config: {},
+            num: '',
+            is_room: 0,
+            phone: '',
+            dialogShow: false,
+            canClose: false,
+            dia_title: '取号',
+            desk_config: []
+        }
+        components = {
+            Ques,
+            Dialogz
+        }
+        prinker(e) {
+            try {
+                let toDay = new Date();
+                // 格式化当天日期
+                let date = Lang.dateFormate(toDay, 'yyyy-MM-dd  hh:mm:ss');
+                console.log(date)
+                wmpf.printer({
+                    data: [{
+                            type: "base_string",
+                            content: e.store_name,
+                            style: {
+                                fontSize: 20,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        },
+                        {
+                            type: "base_string",
+                            content: '------------------------',
+                            style: {
+                                fontSize: 20,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: e.eat_code,
+                            style: {
+                                fontSize: 30,
+                                bold: 1,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: e.tips,
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '------------------------',
+                            style: {
+                                fontSize: 20,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "image",
+                            content: e.image,
+                            imageOption: {
+                                width: 200,
+                                height: 100,
+                                align: "center",
+                                offset: 0,
+                            }
+                        }, {
+                            type: "base_string",
+                            content: '扫一扫 到号自动提醒',
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '------------------------',
+                            style: {
+                                fontSize: 20,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: e.str1,
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: e.str,
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '------------------------',
+                            style: {
+                                fontSize: 20,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '取号时间：' + e.offer_at,
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '打印时间：' + date,
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '【吃货来了】提供排队服务',
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }, {
+                            type: "base_string",
+                            content: '技术支持：400-8778-327',
+                            style: {
+                                fontSize: 12,
+                                bold: 0,
+                                align: 'center',
+                            },
+                        }
+                    ],
+                    success(res) {
+                        console.log('打印成功', res);
+                    },
+                    fail(res) {
+                        console.log('打印失败', res);
+                    }
+                })
+            } catch (err) {
+                console.log(err, 'wmpf err')
+            }
+        }
+        methods = {
+            saysay() {
+                this.$emit('getclient', 'saysay')
+            },
+            setCode() {
+                this.dialogShow = true
+            },
+            cancle() {
+                this.num = ''
+                this.phone = ''
+                this.is_room = 0
+                this.dialogShow = false
+            },
+            showDesk() {
+                wepy.navigateTo({
+                    url: './desks?type=0'
+                });
+            },
+            set() {
+                wepy.navigateTo({
+                    url: '/pages/queue/my'
+                });
+            },
+            toReport() {
+                wepy.navigateTo({
+                    url: '/pages/queue/report'
+                });
+            },
+            plus() {
+                wepy.navigateTo({
+                    url: '/pages/queue/editDesk?type=1'
+                });
+            },
+            load() {
+                let _config = wepy.getStorageSync('config'),
+                    all = [{
+                        "desk_id": 0, //桌台ID
+                        "desk_name": "单人桌台", //桌台名称
+                        "is_fixed": "1", //是否固定人数 0不固定 1固定
+                        "start_num": 0, //人数
+                        "end_num": 0
+                    }]
+                console.log(_config.desk_config, '桌台')
+                console.log(_config)
+                if (_config.desk_config.length) {
+                    _config.desk_config = all.concat(_config.desk_config)
+                } else {
+                    _config.desk_config = all
+                }
+                this.config = _config;
+                this.desk_config = _config.desk_config
+                this.isEmpty = !this.config.desk_config.length
+                this.$apply()
+                this.$invoke('Ques', 'loadData')
+            },
+            clearTime() {
+                this.$invoke('Ques', 'clearTime')
+            },
+            getclient(text) {
+                this.$emit('getclient', text)
+            },
+            setNum(e) {
+                let key = e.currentTarget.dataset.type || e.target.dataset.type
+                this[key] = e.detail.value
+                if (key == 'is_room') {
+                    this[key] = e.detail.value ? 1 : 0
+                }
+            },
+            async getCode() {
+                if (this.num == 0 || this.num == '') {
+                    Tips.toast('请输入就餐人数', () => {}, "none");
+                    return false
+                }
+                if (this.phone == '' && this.config.is_xc_phone == 2) {
+                    Tips.toast('请输入手机号码', () => {}, "none");
+                    return false
+                }
+                if (this.phone != '' && this.phone.length != 11) {
+                    Tips.toast('手机号码有误', () => {}, "none");
+                    return false
+                }
+                this.dialogShow = false
+                let params = {
+                    num: this.num,
+                    phone: this.phone,
+                    is_room: this.is_room
+                }
+                let res = await config.setLineup(params)
+                if (res.errcode != 0) {
+                    Tips.toast(res.errmsg, () => {}, "none");
+                } else {
+                    Tips.toast('取号成功', () => {
+                        this.num = ''
+                        this.phone = ''
+                        this.is_room = 0
+                        this.$invoke('Ques', 'loadData')
+                        this.prinker(res.data.content)
+                        this.$apply()
+                    });
+                }
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    .que-box {
+        padding: 0 20rpx;
+        >view {
+            margin: 20rpx 0 10rpx;
+        }
+    }
+    .img {
+        width: 40rpx;
+        height: 40rpx;
+        margin-right: 20rpx;
+    }
+    .f36 {
+        font-size: 36rpx;
+    }
+    .sw {
+        margin-top: 30rpx;
+    }
+    .count {
+        height: 70rpx;
+        line-height: 70rpx;
+        border-bottom: 1px solid #ddd;
+        font-size: 24rpx;
+        padding-left: 20rpx;
+        box-sizing: border-box;
+        text-align: center;
+    }
+    .show-em {
+        border-style: solid;
+        border-width: 1px;
+        width: 180rpx;
+        height: 55rpx;
+        line-height: 55rpx;
+        text-align: center;
+        border-radius: 6rpx;
+        background-color: #fff;
+        &.not {
+            pointer-events: none;
+            opacity: 0;
+        }
+    }
+    .input-box {
+        width: 500rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        border: 1px solid #ddd;
+        color: rgb(153, 153, 153);
+        font-size: 24rpx;
+        padding-left: 20rpx;
+        box-sizing: border-box;
+    }
+    .btn {
+        width: 190rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        text-align: center;
+        font-size: 30rpx;
+        border-radius: 4rpx;
+        color: #fff;
+        &.one {
+            width: 710rpx;
+        }
+    }
+    .btn1 {
+        width: 220rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        text-align: center;
+        background-color: rgb(204, 204, 204);
+        color: #fff;
+        border-radius: 8rpx;
+        &.sub {
+            width: 550rpx;
+            position: absolute;
+            left: 100rpx;
+            bottom: 100rpx;
+        }
+        &.up {
+            width: 300rpx;
+        }
+    }
+</style>

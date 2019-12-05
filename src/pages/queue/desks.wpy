@@ -1,0 +1,155 @@
+<template>
+    <view class="weui-flex flex-y flex-c h100">
+        <view wx:if="{{type==1}}" style="padding:20rpx 0 0 30rpx">顾客排队信息：{{deskInfo.desk_name +'  ' + deskInfo.eat_code + '， '+deskInfo.num +'人'}}{{deskInfo.is_room ? '，房间':''}}</view>
+        <view class="weui-flex flex-c desk-type-box">
+            <repeat for="{{deskTypes}}" key="deskTypes" index="index" item="item">
+                <view class=" weui-flex flex-c">
+                    <view class="desk-type desk-{{index}}"></view>
+                    <view>{{item}}</view>
+                </view>
+            </repeat>
+        </view>
+        <scroll-view scroll-y class="desk-box {{type == 0?'type-0':''}}">
+            <repeat for="{{desks}}" key="desks" index="index" item="item">
+                <view style="padding: 0 30rpx;">
+                    <view class="col">{{item.place}}</view>
+                    <view class="box weui-flex flex-c flex-wrap">
+                        <repeat for="{{item.desk_list}}" key="desk_list" index="_index" item="_item">
+                            <view class="item de-{{_item.status}}" @tap="clickDesk({{_item.x3_desk_id}})">
+                                <view class="desk desk-{{_item.status}} one-line {{_item.x3_desk_id == deskId ? 'desk-on' : '' }}" style="font-size:{{48-_item.desk_no.length*4}}rpx">{{_item.desk_no}}</view>
+                                <view>{{_item.desk_number}}</view>
+                            </view>
+                        </repeat>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+        <view wx:if="{{type==1}}">
+            <view class="btn" @tap="sure"> 确定 </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from '@/api/config'
+    import {
+        connect
+    } from "wepy-redux";
+    import store from "@/store/utils";
+    @connect({
+        deskInfo: store.get("deskInfo")
+    })
+    export default class desks extends wepy.page {
+        config = {
+            navigationBarTitleText: '查看空台'
+        }
+        data = {
+            deskTypes: ['空桌', '预结', '预开台'],
+            desks: [],
+            deskId: -1,
+            type: 0,
+            log_id: ''
+        }
+        async onLoad(opt) {
+            this.type = opt.type || 0
+            this.log_id = opt.lid || ''
+            wepy.setNavigationBarTitle({ title: this.type == 0 ? '查看空台' : '选择就餐桌台' });
+            this.desks = await config.deskStatus()
+            this.$apply()
+        }
+        methods = {
+            clickDesk(id) {
+                this.deskId = id
+            },
+            async sure() {
+                wx.vibrateShort()
+                let params = {
+                    log_id: this.log_id,
+                    status: 2,
+                    x3_desk_id: this.deskId
+                }
+                let res = await config.callQue(params)
+                if (res) {
+                    wepy.navigateBack({
+                        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                    });
+                }
+            }
+        }
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .flex-y>view {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .desk-0 {
+        background-color: rgb(192, 227, 125);
+    }
+    .desk-1 {
+        background-color: #ccc;
+        pointer-events: none;
+    }
+    .desk-2 {
+        background-color: rgb(237, 195, 165);
+    }
+    .de-1{
+        pointer-events: none;
+    }
+    .desk-on {
+        background-color: rgb(244, 132, 35) !important;
+    }
+    .desk-type-box {
+        // margin: 20rpx 0;
+        padding: 20rpx 30rpx;
+        .desk-type {
+            width: 60rpx;
+            height: 28rpx;
+            margin: 0 10rpx 0 20rpx;
+        }
+    }
+    .desk-box {
+        height: calc(~"100% - 240rpx");
+        &.type-0 {
+            height: calc(~"100% - 100rpx") !important;
+        }
+        .col {
+            font-size: 30rpx;
+            margin-top: 20rpx;
+        }
+        .item {
+            width: 200rpx;
+            text-align: center;
+            margin-right: 42rpx;
+            &:nth-child(3n) {
+                margin-right: 0
+            }
+            .desk {
+                width: 200rpx;
+                height: 100rpx;
+                line-height: 100rpx;
+                border-radius: 8rpx;
+                margin: 20rpx 0 10rpx;
+                font-size: 48rpx;
+            }
+        }
+    }
+    .btn {
+        width: 520rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        text-align: center;
+        font-size: 36rpx;
+        border-radius: 10rpx;
+        color: #fff;
+        background-color: rgb(244, 132, 35);
+        margin: 18rpx auto;
+    }
+</style>

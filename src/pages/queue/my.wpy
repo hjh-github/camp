@@ -1,0 +1,363 @@
+<template>
+    <view class="weui-flex flex-y">
+        <view wx:if="{{save_tips}}" class="save-tips">保存成功</view>
+        <!-- head -->
+        <view class="head weui-flex flex-c">
+            <view class="avat">
+                <open-data type="userAvatarUrl"></open-data>
+            </view>
+            <view class="info weui-flex__item">
+                <view>账号：{{config.phone}}</view>
+                <view>门店：{{config.store_name}}</view>
+            </view>
+            <view class="exit" @tap="unlogin" style="color:{{theme}}">退出</view>
+        </view>
+        <!-- 网店排队 -->
+        <view class="table-mag mag-box">
+            <view class="weui-flex flex-c flex-sb">
+                <view>网店取号</view>
+                <switch checked="{{config.is_lineup == 1}}" data-type="is_lineup" color="#f48423" bindchange="switch3Change" />
+            </view>
+            <view class="weui-flex flex-c flex-sb">
+                <view>自动开启与结束</view>
+                <view class="weui-flex flex-c">
+                    <picker mode="time" value="{{config.start_time}}" data-type="start_time" start="00:00" end="{{config.end_time || '23:59'}}" bindchange="bindTimeChange">
+                        <view class="picker">
+                            {{config.start_time || '请选择'}}
+                        </view>
+                    </picker>
+                    -
+                    <picker mode="time" value="{{config.end_time}}" data-type="end_time" start="{{config.start_time || '00:00'}}" end="23:59" bindchange="bindTimeChange">
+                        <view class="picker">
+                            {{config.end_time || '请选择'}}
+                        </view>
+                    </picker>
+                </view>
+            </view>
+        </view>
+        <!-- pos开关  -->
+        <view class="table-mag mag-box">
+            <view @tap="toSetting" class="weui-flex flex-c flex-sb act">
+                <view>取号条件</view>
+                <view class="to-icon"></view>
+            </view>
+        </view>
+        <!-- 语音管理 -->
+        <view class="table-mag mag-box">
+            <view class="weui-flex flex-c flex-sb">
+                <view>语音播报</view>
+                <switch checked="{{config.is_voice == 1}}" data-type="is_voice" color="#f48423" bindchange="switch3Change" />
+            </view>
+            <view hidden="{{config.is_voice != 1}}" class="weui-flex flex-c flex-sb">
+                <view>播放次数</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="broadcast_num" bindchange="radioChange">
+                    <label class="radio" wx:for="{{times}}" wx:key="times"><radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.broadcast_num}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+            <view hidden="{{config.is_voice != 1}}" class="weui-flex flex-c flex-sb">
+                <view>声音</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="voice" bindchange="radioChange">
+                    <label class="radio" wx:for="{{vois}}" wx:key="vois"> <radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.voice}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+        </view>
+        <!-- 语音管理 -->
+        <view class="table-mag mag-box">
+            <view class="weui-flex flex-c flex-sb">
+                <view>自定义语音</view>
+                <switch checked="{{config.custom_voice_open == 1}}" data-type="custom_voice_open" color="#f48423" bindchange="switch3Change" />
+            </view>
+            <view hidden="{{config.custom_voice_open != 1}}" @tap="toSetting('content')" class="weui-flex flex-c flex-sb act">
+                <view>内容</view>
+                <view class="to-icon"></view>
+            </view>
+            <view hidden="{{config.custom_voice_open != 1}}" class="weui-flex flex-c flex-sb">
+                <view>声音</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="custom_voice_option" bindchange="radioChange">
+                    <label class="radio" wx:for="{{vois}}" wx:key="vois"> <radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.custom_voice_option}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+        </view>
+        <!-- 桌台管理 -->
+        <view class="table-mag mag-box">
+            <view class="weui-flex flex-c flex-sb">
+                <view>餐桌管理</view>
+                <view style="color:{{theme}}" @tap="set(1)">添加</view>
+            </view>
+            <repeat wx:if="{{!isEmpty}}" for="{{config.desk_config}}" key="index" index="index" item="item">
+                <view class="weui-flex flex-c act mag-item" @tap="set(2,{{item.desk_id}})">
+                    <view style="width:300rpx;">{{item.desk_name}}</view>
+                    <view wx:if="{{item.is_fixed == 0}}" class="weui-flex__item">{{item.start_num}}人~{{item.end_num}}人</view>
+                    <view wx:else class="weui-flex__item">{{item.start_num}}人</view>
+                    <view class="to-icon"></view>
+                </view>
+            </repeat>
+            <view wx:if="{{isEmpty}}" class="emtry" @tap="set(1)">
+                暂无桌台，点击去添加
+            </view>
+        </view>
+        <!-- pos开关  -->
+        <view class="table-mag mag-box" style="margin-bottom:10px;">
+            <view class="weui-flex flex-c flex-sb">
+                <view>查询POS桌台</view>
+                <switch checked="{{config.is_pos == 1}}" data-type="is_pos" color="#f48423" bindchange="switch3Change" />
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import Auth from "@/api/auth"
+    import Vioce from "@/mixins/vioce"
+    import Tips from "@/utils/Tips"
+    import config from '@/api/config'
+    export default class QueMy extends wepy.page {
+        config = {
+            navigationBarTitleText: '设置'
+        }
+        data = {
+            theme: wepy.$instance.globalData.themeColor,
+            isEmpty: true,
+            config: {},
+            times: [{
+                    name: '1',
+                    value: '1次'
+                },
+                {
+                    name: '2',
+                    value: '2次'
+                },
+                {
+                    name: '3',
+                    value: '3次'
+                },
+            ],
+            vois: [{
+                    name: '0',
+                    value: '女A'
+                },
+                {
+                    name: '4',
+                    value: '女B'
+                },
+                {
+                    name: '1',
+                    value: '男A'
+                }
+            ],
+            IMEI: '',
+            save_tips: '',
+            edit_isOpen: false,
+            isload: true
+        }
+        mixins = [Vioce]
+        onReady(e) {
+            // 使用 wx.createAudioContext 获取 audio 上下文 context
+            this.audioCtx = wx.createInnerAudioContext('myAudio')
+        }
+        onLoad() {
+            let self = this
+            this.getBaidyToken();
+            wx.getSystemInfo({
+                success: function(res) {
+                    self.IMEI = res.SDKVersion
+                }
+            })
+            this.config = wepy.getStorageSync('config')
+            this.isEmpty = !this.config.desk_config.length
+            this.isload = false
+            console.log(this.config.desk_config)
+        }
+        async onShow() {
+            if (this.edit_isOpen) {
+                this.config['custom_voice_content'] = wepy.$instance.globalData.v_content
+                this.edit_isOpen = false
+                await this.save()
+                let conf = await config.getConfig()
+                this.config = conf
+                wepy.setStorageSync('config', conf);
+            } else {
+                wepy.$instance.globalData.v_content = this.config['custom_voice_content']
+            }
+            if (!this.isload) this.config = wepy.getStorageSync('config')
+        }
+        async getBaidyToken() {
+            this.b_token = await config.clientToken();
+            this.$apply();
+        }
+        async save() {
+            let params = {
+                id: this.config.id,
+                is_lineup: this.config.is_lineup,
+                start_time: this.config.start_time,
+                end_time: this.config.end_time,
+                is_voice: this.config.is_voice,
+                broadcast_num: this.config.broadcast_num,
+                voice: this.config.voice,
+                is_pos: this.config.is_pos,
+                custom_voice_open: this.config.custom_voice_open,
+                custom_voice_content: this.config.custom_voice_content,
+                custom_voice_option: this.config.custom_voice_option
+            }
+            let res = await config.saveConfig(params)
+            if (res) {
+                this.save_tips = '保存成功'
+                this.$apply()
+                console.log(this.save_tips)
+                setTimeout(() => {
+                    this.save_tips = ''
+                    this.$apply()
+                }, 2300)
+            }
+        }
+        methods = {
+            bindTimeChange(e) {
+                let key = e.currentTarget.dataset.type || e.target.dataset.type
+                let value = e.detail.value
+                if (key == 'start_time') {
+                    if (value == this.config.end_time) {
+                        Tips.toast('可排队时间不可相同', () => {}, "none");
+                        return false
+                    }
+                }
+                if (key == 'end_time') {
+                    if (value == this.config.start_time) {
+                        Tips.toast('可排队时间不可相同', () => {}, "none");
+                        return false
+                    }
+                }
+                this.config[key] = value
+                console.log(this.config)
+                this.save()
+            },
+            radioChange(e) {
+                let key = e.currentTarget.dataset.type || e.target.dataset.type
+                this.config[key] = e.detail.value
+                if (key == 'voice') {
+                    this.getclient('欢迎使用语音播报', 1, this.config[key])
+                }
+                this.save()
+            },
+            switch3Change(e) {
+                let key = e.currentTarget.dataset.type || e.target.dataset.type
+                this.config[key] = e.detail.value ? 1 : 0
+                if (key == 'is_voice') {
+                    let text = this.config[key] ? '语音播报已开启' : '语音播报已关闭'
+                    this.getclient(text, 1, 0, 1)
+                }
+                this.save()
+            },
+            set(n, id) {
+                wepy.navigateTo({
+                    url: '/pages/queue/editDesk?type=' + n + '&id=' + id
+                });
+            },
+            toSetting(key) {
+                if (key == 'content') {
+                    this.edit_isOpen = true
+                    wepy.navigateTo({
+                        url: './editc'
+                    });
+                    return false
+                }
+                wepy.navigateTo({
+                    url: './setting'
+                });
+            },
+            unlogin() {
+                wx.showModal({
+                    content: '您确定要退出登录吗？',
+                    success(res) {
+                        if (res.confirm) {
+                            Auth.unlogin().then(res => {
+                                wx.clearStorage();
+                                wepy.reLaunch({
+                                    url: '/pages/queue/index'
+                                });
+                            })
+                        } else if (res.cancel) {
+                            console.log('用户点击取消')
+                        }
+                    }
+                })
+            }
+        }
+    }
+</script>
+<style>
+    @keyframes myfirst {
+        0% {
+            opacity: 0;
+        }
+        40% {
+            opacity: 1;
+        }
+        60% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+    .save-tips {
+        width: 180rpx;
+        height: 50rpx;
+        line-height: 50rpx;
+        position: fixed;
+        top: 0rpx;
+        left: 50%;
+        text-align: center;
+        color: #fff;
+        margin-left: -90rpx;
+        background-color: rgba(244, 132, 35, 0.4);
+        border-bottom-left-radius: 10rpx;
+        border-bottom-right-radius: 10rpx;
+        animation: myfirst 2s linear;
+        opacity: 0;
+    }
+</style>
+
+<style lang="less" scoped>
+    .radio {
+        margin-right: 20rpx;
+        width: 120rpx;
+        display: inline-block;
+    }
+    .act {
+        &:active {
+            background-color: #f2f2f2;
+        }
+    }
+    .head {
+        padding: 30rpx;
+        background-color: #fff;
+        .avat {
+            width: 146rpx;
+            height: 146rpx;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-right: 30rpx;
+        }
+        .info {
+            >view {
+                padding-bottom: 10rpx;
+            }
+        }
+        .exit {
+            width: 100rpx;
+            text-align: center;
+        }
+    }
+    .table-mag {
+        font-size: 30rpx;
+        .mag-item .weui-flex__item {
+            color: rgb(153, 153, 153)
+        }
+    }
+    .emtry {
+        font-size: 26rpx;
+        color: rgb(153, 153, 153);
+        text-align: center;
+    }
+</style>

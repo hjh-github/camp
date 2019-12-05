@@ -1,0 +1,117 @@
+<template>
+    <view class="weui-flex flex-c flex-sb item-content">
+        <view class="desk-info">
+            <view wx:if="{{model.is_room}}" class="room">房间</view>
+            <view wx:if="{{model.status == 4}}" class="gh">已过号</view>
+            <view>{{model.num}}人</view>
+            <view class="desk-name" style="font-size:{{48- 2 * model.length}}rpx;">{{model.eat_code}}</view>
+            <view wx:if="{{model.lineup_at}}">已等待{{model.lineup_at}}</view>
+        </view>
+        <view wx:if="{{model.status == 2 || model.status ==4}}" style="font-size:36rpx" class="weui-flex__item weui-flex flex-c flex-sa ctrl-box">
+            <view>{{model.source}}</view>
+            <view class="c-btn" @tap="call(6)">恢复</view>
+            <view class="c-btn" @tap="call(2)">就餐</view>
+        </view>
+        <view wx:else class="weui-flex__item weui-flex flex-c flex-sa ctrl-box">
+            <view class="c-btn" @tap="call(1)">叫号</view>
+            <view class="c-btn" @tap="call(2)">就餐</view>
+            <view class="c-btn" @tap="call(3)">过号</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy'
+    import config from '@/api/config'
+    import Lang from "@/utils/Lang";
+    import store from "@/store/utils";
+    export default class Queue extends wepy.component {
+        props = ['model']
+        methods = {
+            async call(status) {
+                let _config = wepy.getStorageSync('config')
+                if (_config.is_pos == 1 && status == 2) {
+                    store.save('deskInfo', this.model)
+                    wepy.navigateTo({
+                        url: '/pages/queue/desks?type=1&lid=' + this.model.log_id
+                    });
+                    return false
+                }
+                wx.vibrateShort()
+                let params = {
+                    log_id: this.model.log_id,
+                    status
+                }
+                let res = await config.callQue(params)
+                console.log(res)
+                if (status == 1) {
+                    this.$emit('getclient', `请${this.model.eat_code}就餐`)
+                    
+                } else if (status == 3 && res.is_call == 1) {
+                    if (res.call.eat_code) this.$emit('getclient', `请${res.call.eat_code}就餐`)
+                }
+                this.$emit('loadData')
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    .item-content {
+        height: 120rpx;
+        margin-bottom: 20rpx;
+        .desk-info {
+            width: 312rpx;
+            height: 100%;
+            box-sizing: border-box;
+            padding: 10rpx 10rpx 10rpx 60rpx;
+            background-color: #fff;
+            text-align: right;
+            font-size: 24rpx;
+            line-height: 1;
+            position: relative;
+            overflow: hidden;
+            .desk-name {
+                height: 48rpx;
+                text-align: left;
+                font-size: 48rpx;
+                white-space: nowrap;
+            }
+            .room {
+                position: absolute;
+                top: -10px;
+                left: -20px;
+                background-color: rgb(244, 132, 35);
+                color: #fff;
+                width: 50px;
+                height: 30px;
+                font-size: 10px;
+                text-align: center;
+                line-height: 44px;
+                transform: rotate(-45deg)
+            }
+            .gh {
+                position: absolute;
+                bottom: 10px;
+                left: 4px;
+                color: rgb(244, 132, 35);
+                font-size: 10px;
+            }
+        }
+    }
+    .ctrl-box {
+        padding-left: 20rpx;
+        .c-btn {
+            width: 100rpx;
+            height: 100rpx;
+            line-height: 100rpx;
+            text-align: center;
+            border-radius: 50%;
+            background-color: #fff;
+            &:active {
+                background-color: rgb(244, 132, 35);
+                color: #fff;
+            }
+        }
+    }
+</style>

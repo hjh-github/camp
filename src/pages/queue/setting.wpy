@@ -1,0 +1,134 @@
+<template>
+    <view class="weui-flex flex-y">
+        <!-- 手机号码 -->
+        <view class="table-mag mag-box">
+            <view class="weui-flex flex-c flex-sb">
+                <view>手机号码</view>
+            </view>
+            <view class="weui-flex flex-c flex-sb">
+                <view>网店取号时</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="is_wxapp_phone" bindchange="radioChange">
+                    <label class="radio" wx:for="{{times}}" wx:key="times"><radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.is_wxapp_phone}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+            <view class="weui-flex flex-c flex-sb">
+                <view>现场取号时</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="is_xc_phone" bindchange="radioChange">
+                    <label class="radio" wx:for="{{times}}" wx:key="vois"> <radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.is_xc_phone}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+        </view>
+        <!-- 是否必须房间 -->
+        <view class="table-mag mag-box">
+            <view class="weui-flex flex-c flex-sb">
+                <view>是否必须房间</view>
+            </view>
+            <view class="weui-flex flex-c flex-sb">
+                <view>网店取号时</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="is_wxapp_room" bindchange="radioChange">
+                    <label class="radio" wx:for="{{vois}}" wx:key="times"><radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.is_wxapp_room}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+            <view class="weui-flex flex-c flex-sb">
+                <view>现场取号时</view>
+                <radio-group class="radio-group" style="line-hight:86rpx" data-type="is_xc_room" bindchange="radioChange">
+                    <label class="radio" wx:for="{{vois}}" wx:key="vois"> <radio color="#f48423" value="{{item.name}}" checked="{{item.name == config.is_xc_room}}"/>{{item.value}}</label>
+                </radio-group>
+            </view>
+        </view>
+        <view>
+            <view class="btn" @tap="save"> 确定 </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import Auth from "@/api/auth"
+    import config from '@/api/config'
+    import Tips from "@/utils/Tips"
+    export default class setting extends wepy.page {
+        config = {
+            navigationBarTitleText: '取号条件设置'
+        }
+        data = {
+            config: {},
+            times: [{
+                    name: '0',
+                    value: '不填'
+                },
+                {
+                    name: '1',
+                    value: '选填'
+                },
+                {
+                    name: '2',
+                    value: '必填'
+                },
+            ],
+            vois: [{
+                    name: '0',
+                    value: '不填'
+                },
+                {
+                    name: '1',
+                    value: '必填'
+                }
+            ],
+        }
+        onShow() {
+            this.config = wepy.getStorageSync('config')
+        }
+        methods = {
+            radioChange(e) {
+                let key = e.currentTarget.dataset.type || e.target.dataset.type
+                this.config[key] = e.detail.value
+            },
+            async save() {
+                let params = {
+                    id: this.config.id,
+                    is_lineup: this.config.is_lineup,
+                    start_time: this.config.start_time,
+                    end_time: this.config.end_time,
+                    is_voice: this.config.is_voice,
+                    broadcast_num: this.config.broadcast_num,
+                    voice: this.config.voice,
+                    is_pos: this.config.is_pos,
+                    is_wxapp_room: this.config.is_wxapp_room,
+                    is_xc_room: this.config.is_xc_room,
+                    is_wxapp_phone: this.config.is_wxapp_phone,
+                    is_xc_phone: this.config.is_xc_phone,
+                }
+                let res = await config.saveConfig(params)
+                if (res) {
+                    Tips.toast("保存成功",async () => {
+                        let conf = await config.getConfig()
+                        wepy.setStorageSync('config', conf);
+                        wepy.navigateBack({
+                            delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                        });
+                    }, "none");
+                }
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    .radio {
+        margin-right: 20rpx;
+        width: 120rpx;
+        display: inline-block;
+    }
+    .btn {
+        width: 520rpx;
+        height: 70rpx;
+        line-height: 70rpx;
+        text-align: center;
+        font-size: 36rpx;
+        border-radius: 10rpx;
+        color: #fff;
+        background-color: rgb(244, 132, 35);
+        margin: 60rpx auto;
+    }
+</style>

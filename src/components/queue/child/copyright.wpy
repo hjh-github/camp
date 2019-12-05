@@ -1,0 +1,22 @@
+<template>
+  <view class="copyright">
+    <view>【吃货来了】</view>
+    <view>提供排队服务</view>
+  </view>
+</template>
+
+<script>
+  import wepy from 'wepy'
+
+  export default class Copyright extends wepy.component {
+
+  }
+</script>
+
+<style lang="less" scoped>
+  .copyright{
+    text-align: center;
+    font-size: 24rpx;
+    color: #888;
+  }
+</style>

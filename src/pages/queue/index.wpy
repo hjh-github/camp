@@ -1,0 +1,95 @@
+<template>
+    <view class="h100">
+        <Tologin :dialogShow.sync="islogin" @load.user="load"></Tologin>
+        <Queue wx:if="{{!islogin}}" @getclient.user="getclient"></Queue>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from '@/api/config'
+    import Auth from '@/api/auth'
+    import Tologin from "@/components/queue/login"
+    import Queue from "@/components/queue/index"
+    import Vioce from "@/mixins/vioce"
+    export default class basePages extends wepy.page {
+        config = {
+            navigationBarTitleText: '款易排队'
+        }
+        components = {
+            Tologin,
+            Queue
+        }
+        data = {
+            islogin: true,
+            lv: wepy.$instance.globalData.lv,
+            isload: true,
+            IMEI: ''
+        };
+        mixins = [Vioce]
+        async load(show = 0) {
+            this.islogin = !wepy.getStorageSync('token')
+            if (this.islogin) {
+                this.$invoke('Queue', 'clearTime')
+            }
+            if (!this.islogin) {
+                if (!show) {
+                    let auth = await Auth.power(),
+                        store = await config.stores();
+                    wepy.setStorageSync('phone', auth.data.phone);
+                    wepy.setStorageSync('base_store_id', store.base_store_id);
+                }
+                let conf = await config.getConfig()
+                wepy.setStorageSync('config', conf);
+                console.log(conf)
+                this.$invoke('Queue', 'load');
+                this.$apply()
+            }
+        }
+        async getBaidyToken() {
+            this.b_token = await config.clientToken();
+            this.$apply();
+        }
+        onReady(e) {
+            // 使用 wx.createAudioContext 获取 audio 上下文 context
+            this.audioCtx = wx.createInnerAudioContext('myAudio')
+        }
+        onLoad() {
+            let self = this
+            // this.load()
+            this.getBaidyToken();
+            wx.getSystemInfo({
+                success: function(res) {
+                    self.IMEI = res.SDKVersion
+                }
+            })
+            this.isload = false
+        }
+        onShow() {
+            if (this.isload) {
+                return false
+            }
+            this.load(1)
+        }
+        onHide() {
+            this.$invoke('Queue', 'clearTime')
+        }
+        methods = {
+            load() {
+                this.load()
+            },
+            getclient(text) {
+                this.getclient(text)
+            }
+        }
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style scoped>
+
+</style>

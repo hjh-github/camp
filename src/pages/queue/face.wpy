@@ -1,0 +1,62 @@
+<template>
+    <view>
+        <view @tap="toBface">小程序你起来吧~</view>
+        <view>reslut:</view>
+        <view>{{launcMpResult}}</view>
+        <view>当前门店编码：{{base_store_id}}</view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class test extends wepy.page {
+        data = {
+            launcMpResult: '',
+            base_store_id:''
+        }
+        onLoad() {
+            let self = this
+            try {
+                //接受另一端屏幕上的小程序发来的消息
+                wxfaceapp.onRemoteMessage(function(res) {
+                    // console.log("onRemoteMessage retCode = " + res.replyCode)
+                    self.launcMpResult = `sendMsgFrom: ${res.senderAppid},msgContent: ${res.content}`
+                })
+            } catch (err) {
+                console.log(err)
+                self.launcMpResult = JSON.stringify(err) 
+            }
+            this.base_store_id = wepy.$instance.globalData.base_store_id
+        }
+        methods = {
+            toBface() {
+                let self = this
+                try {
+                    //启动背屏小程序
+                    wxfaceapp.launchMp({
+                        appId: "wx813336259c61072b",
+                        hostAppId: "wx078081accf042303",
+                        miniappType: 0, //小程序版本类型
+                        launchPage: "/pages/queue/bface",
+                        needLogin: 0, //是否需要登录态
+                        success(res) {
+                            console.log('launchMp suc')
+                            self.launcMpResult = `launcMpResult: ${res.reply}`
+                        },
+                        fail(res) {
+                            console.log('launchMp failed reply = ' + res.reply)
+                            self.launcMpResult = `launcMpResult: ${res.reply}`
+                        }
+                    })
+                } catch (err) {
+                    console.log(err)
+                    self.launcMpResult = JSON.stringify(err) 
+                }
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+
+</style>

@@ -1,0 +1,16 @@
+{
+	"description": "A WePY project",
+	"setting": {
+		"urlCheck": true,
+		"es6": false,
+		"postcss": false,
+		"minified": false,
+		"newFeature": true
+	},
+	"compileType": "miniprogram",
+	"appid": "wx359599feb0a4e292",
+	"projectname": "wepy",
+	"miniprogramRoot": "dist/",
+	"libVersion": "2.5.1",
+	"condition": {}
+}
