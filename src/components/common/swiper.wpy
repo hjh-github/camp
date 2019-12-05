@@ -1,0 +1,46 @@
+<template>
+    <view>
+        <swiper wx:if="{{model.swipers.type == 1}}" class="screen-swiper {{DotStyle?'square-dot':'round-dot'}}" indicator-dots="true" circular="true" autoplay="true" interval="5000" duration="500">
+            <swiper-item wx:for="{{model.swipers.list}}" wx:key>
+                <image src="{{item.url}}" mode="aspectFill" wx:if="{{item.type=='image'}}"></image>
+                <video src="{{item.url}}" autoplay loop muted show-play-btn="{{false}}" controls="{{false}}" objectFit="cover" wx:if="{{item.type=='video'}}"></video>
+            </swiper-item>
+        </swiper>
+        <swiper wx:if="{{model.swipers.type == 2}}" class="card-swiper {{DotStyle?'square-dot':'round-dot'}}" indicator-dots="true" circular="true" autoplay="true" interval="5000" duration="500" bindchange="cardSwiper" indicator-color="#8799a3" indicator-active-color="#0081ff">
+            <swiper-item wx:for="{{model.swipers.list}}" wx:key class="{{cardCur==index?'cur':''}}">
+                <view class="swiper-item">
+                    <image src="{{item.url}}" mode="aspectFill" wx:if="{{item.type=='image'}}"></image>
+                    <video src="{{item.url}}" autoplay loop muted show-play-btn="{{false}}" controls="{{false}}" objectFit="cover" wx:if="{{item.type=='video'}}"></video>
+                </view>
+            </swiper-item>
+        </swiper>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Swiper extends wepy.component {
+        props=['model']
+        data = {
+            cardCur: 0
+        };
+        methods = {
+            cardSwiper(e) {
+                this.cardCur = e.detail.current
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style scoped>
+    .tower-swiper .tower-item {
+        transform: scale(calc(0.5 + var(--index) / 10));
+        margin-left: calc(var(--left) * 100rpx - 150rpx);
+        z-index: var(--index);
+    }
+</style>

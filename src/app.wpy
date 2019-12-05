@@ -1,4 +1,4 @@
-<style lang="less">
+<style>
   @import "colorui/main.wxss";
   @import "colorui/icon.wxss";
   page {
@@ -135,7 +135,7 @@
       };
     }
     config = {
-      pages: ["pages/queue/index", "pages/queue/report", "pages/queue/editc", "pages/queue/editDesk", "pages/queue/my", "pages/queue/desks", "pages/queue/setting", "pages/queue/face", "pages/queue/bface", "pages/queue/webview"],
+      pages: ["pages/home/index"],
       window: {
         backgroundTextStyle: "light",
         navigationBarBackgroundColor: "#fff",
