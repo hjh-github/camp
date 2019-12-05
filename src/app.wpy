@@ -1,6 +1,6 @@
 <style lang="less">
-  @import "./static/style/weui.wxss";
-  @import "./static/style/common.less";
+  @import "colorui/main.wxss";
+  @import "colorui/icon.wxss";
   page {
     background-color: #f5f5f5;
     color: #000;
@@ -135,7 +135,7 @@
       };
     }
     config = {
-      pages: ["pages/queue/index", "pages/queue/report", "pages/queue/editc", "pages/queue/editDesk", "pages/queue/my", "pages/queue/desks", "pages/queue/setting", "pages/queue/face", "pages/queue/bface","pages/queue/webview"],
+      pages: ["pages/queue/index", "pages/queue/report", "pages/queue/editc", "pages/queue/editDesk", "pages/queue/my", "pages/queue/desks", "pages/queue/setting", "pages/queue/face", "pages/queue/bface", "pages/queue/webview"],
       window: {
         backgroundTextStyle: "light",
         navigationBarBackgroundColor: "#fff",
