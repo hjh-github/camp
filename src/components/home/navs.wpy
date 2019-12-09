@@ -16,38 +16,14 @@
 
 <script>
     import wepy from "wepy";
+    import navigator from '@/mixins/navigator'
     export default class Dialog extends wepy.component {
         props = ['model']
         data = {}
-        methods = {
-            navigator(url, type) {
-                if (type == 'none' || !type) {
-                    return false
-                }
-                if (type == 'navigateTo') {
-                    wepy.navigateTo({
-                        url
-                    });
-                } else if (type == 'redirectTo') {
-                    wepy.redirectTo({
-                        url
-                    });
-                } else if (type == 'reLaunch') {
-                    wepy.reLaunch({
-                        url
-                    });
-                } else if (type == 'web') {
-                    console.log('暂时先只打开本地路径')
-                }
-            }
-        };
+        mixins = [navigator]
     }
 </script>
-<style>
-    page {
-        height: 100%;
-    }
-</style>
+
 
 <style lang="less" scoped>
 

@@ -1,0 +1,83 @@
+
+<template>
+    <view class="bg-white container weui-flex flex-c">
+        <scroll-view scroll-x class="nav" scroll-with-animation scroll-left="{{scrollLeft}}">
+            <repeat for="{{model.scrollNav}}" key="index" index="index" item="item">
+                <view class="cu-item {{index == TabCur?'cur':''}}" style="color:{{index == TabCur?theme:''}}" @tap="tabSelect({{item.id}})" data-id="{{index}}">
+                    {{item.name}}
+                </view>
+            </repeat>
+        </scroll-view>
+        <view @tap="screen" class="screen weui-flex flex-c flex-jc">{{screenKey}}<text class="cuIcon-{{hasScreen?'triangleupfill':'triangledownfill'}} "></text></view>
+        <view hidden="{{!hasScreen}}" class="screen-box bg-white">
+            <view @tap="che_screen('默认')">默认排序</view>
+            <view @tap="che_screen('时间')">开始时间由近到远</view>
+            <view @tap="che_screen('人气')">人气从高到低</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Dialog extends wepy.component {
+        props = ['model']
+        data = {
+            TabCur: 0,
+            scrollLeft: 0,
+            theme: wepy.$instance.globalData.themeColor,
+            hasScreen: false,
+            screenKey: '默认'
+        };
+        methods = {
+            tabSelect(id, e) {
+                this.TabCur = e.currentTarget.dataset.id;
+                this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+                this.$emit('ret', id, this.screenKey)
+            },
+            screen() {
+                this.hasScreen = !this.hasScreen
+            },
+            che_screen(screenKey) {
+                this.hasScreen = false
+                this.screenKey = screenKey
+                this.$emit('ret', this.model.scrollNav[this.TabCur].id, screenKey)
+            }
+        };
+    }
+</script>
+
+
+<style lang="less" scoped>
+    .container {
+        margin-top: 10px;
+        border-bottom: 1px solid #eee;
+        position: relative;
+    }
+    .nav {
+        width: 630rpx;
+        box-sizing: border-box;
+    }
+    .screen {
+        height: 100%;
+        width: 120rpx;
+        box-sizing: border-box;
+        border-left: 1px solid #eee;
+    }
+    .screen-box {
+        position: absolute;
+        left: 0;
+        top: 92rpx;
+        width: 100%;
+        transition: all 0.36s;
+        view {
+            height: 70rpx;
+            line-height: 70rpx;
+            box-sizing: border-box;
+            border-bottom: 1px solid #eee;
+            padding-left: 30rpx;
+            &:last-child {
+                border: 0;
+            }
+        }
+    }
+</style>

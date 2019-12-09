@@ -14,6 +14,10 @@
     background-color: transparent;
   }
 </style>
+<style lang="less">
+  @import "./static/style/weui.wxss";
+  @import "./static/style/common.less";
+</style>
 
 <script>
   import wepy from "wepy";
@@ -38,7 +42,7 @@
       baseUrl: "https://testx3.kuan1.cn",
       kdsUrl: "https://twebapi.kuan1.cn",
       fuUrl: "https://testnewx1.kuan1.cn",
-      themeColor: "rgb(244,132,35)",
+      themeColor: "#F4D000",
       v_content: ''
     };
     constructor() {
@@ -135,7 +139,7 @@
       };
     }
     config = {
-      pages: ["pages/home/index"],
+      pages: ["pages/home/index","pages/meet/meet","pages/my/my"],
       window: {
         backgroundTextStyle: "light",
         navigationBarBackgroundColor: "#fff",
@@ -148,6 +152,31 @@
         "scope.userLocation": {
           desc: "你的位置信息将用于小程序位置的效果展示"
         }
+      },
+      "tabBar": {
+        "color": "#a9b7b7",
+        "selectedColor": "#F4D000",
+        "borderStyle": "black",
+        "list": [
+          {
+            "selectedIconPath": "static/images/icon_consult_press.png",
+            "iconPath": "static/images/icon_consult.png",
+            "pagePath": "pages/home/index",
+            "text": "首页"
+          },
+          {
+            "selectedIconPath": "static/images/icon_invest_press.png",
+            "iconPath": "static/images/icon_invest.png",
+            "pagePath": "pages/meet/meet",
+            "text": "互动"
+          },
+          {
+            "selectedIconPath": "static/images/icon_mine_press.png",
+            "iconPath": "static/images/icon_mine.png",
+            "pagePath": "pages/my/my",
+            "text": "我的"
+          }
+        ]
       }
     };
   }

@@ -1,0 +1,67 @@
+<template>
+    <view class="cu-card case">
+        <repeat for="{{8}}" key="index" index="index" item="item">
+            <view class="cu-item shadow">
+                <view class="image">
+                    <image src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg" mode="widthFix"></image>
+                    <view class="cu-tag bg-red">热门</view>
+                    <view class="cu-bar bg-shadeBottom">
+                        <view>
+                            <text class="cuIcon-time"></text> 10天
+                            <text class="cuIcon-evaluate"></text> 1~6岁
+                        </view>
+                        <view>
+                            <text class="cuIcon-favor"></text> 4.88分
+                            <text class="quan">1688人参加</text>
+                        </view>
+                    </view>
+                </view>
+                <view class="title-box">【广州最美女孩】 一个叫做代练的女孩，遇见LOVE</view>
+                <view style="padding:0 30rpx">
+                    <view class="one-line" style="color:red">一个叫做代练的女孩，遇见 LOVE LOVE LOVE</view>
+                    <view class="one-line" style="color:#ccc;font-size:22rpx">身高172cm，体重102</view>
+                </view>
+                <view class="weui-flex flex-end price">
+                    <view style="color:{{theme}};font-size:22rpx;margin-right:10rpx;">
+                        ￥<text style="color:{{theme}};font-size:36rpx">1680.00</text>
+                    </view>
+                    <view style="color:#999;font-size:24rpx;text-decoration: line-through">
+                        ￥1680.00
+                    </view>
+                </view>
+            </view>
+        </repeat>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class card extends wepy.component {
+        data = {
+            theme: wepy.$instance.globalData.themeColor
+        };
+        methods = {};
+    }
+</script>
+
+<style lang="less" scoped>
+    .quan {
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        padding: 2rpx 6px;
+        border-radius: 20rpx;
+        font-size: 24rpx;
+    }
+    .title-box {
+        font-size: 30rpx;
+        padding: 10rpx 30rpx;
+    }
+    .tips-box {
+        width: 510rpx;
+        box-sizing: border-box;
+        padding-left: 30rpx;
+        font-size: 24rpx;
+    }
+    .price {
+        padding: 20rpx 30rpx 30rpx;
+    }
+</style>

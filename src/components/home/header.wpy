@@ -1,0 +1,39 @@
+
+  
+<template>
+    <view class="cu-bar search" style="background-color:{{theme}}">
+        <view class="cu-avatar round">
+            <open-data class="img" type="userAvatarUrl"></open-data>
+        </view>
+        <view class="search-form radius">
+            <text class="cuIcon-search"></text>
+            <input type="text" placeholder="搜索图片、文章、视频" confirm-type="search"></input>
+        </view>
+        <view class="action">
+            <text>广州</text>
+            <text class="cuIcon-triangledownfill"></text>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Dialog extends wepy.component {
+        data = {
+            theme: wepy.$instance.globalData.themeColor
+        };
+        methods = {};
+    }
+</script>
+
+
+<style lang="less" scoped>
+
+    .round{
+        overflow: hidden;
+        .img{
+            width:100%;
+            height: 100%;
+        }
+    }
+</style>
