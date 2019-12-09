@@ -49,7 +49,6 @@
 
 <style lang="less" scoped>
     .container {
-        margin-top: 10px;
         border-bottom: 1px solid #eee;
         position: relative;
     }

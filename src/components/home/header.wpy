@@ -28,7 +28,9 @@
 
 
 <style lang="less" scoped>
-
+    .search{
+        height: 110rpx;
+    }
     .round{
         overflow: hidden;
         .img{

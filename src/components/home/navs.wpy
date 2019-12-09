@@ -1,6 +1,6 @@
 
 <template>
-    <view>
+    <view style="margin-bottom:10px">
         <view class="cu-list grid col-{{model.navs.gridCol}} {{gridBorder?'':'no-border'}}">
             <view class="cu-item" wx:for="{{model.navs.list}}" wx:key wx:if="{{index<model.navs.gridCol*2}}" >
                 <view class="cuIcon-{{item.icon}} text-{{item.color}}" @tap="navigator({{item.url}},{{item.type}})">

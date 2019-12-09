@@ -1,12 +1,15 @@
 
 <template>
-  <scroll-view class="h100" scroll-y scroll-with-animation @scroll="scroll">
+  <view class="h100">
     <cHeader></cHeader>
-    <cSwiper :model.sync="model"></cSwiper>
-    <Navs :model.sync="model"></Navs>
-    <scrollNav :model.sync="model" @ret.user="getScreen" class="{{scrollTop>486?'fixed':''}}"></scrollNav>
-    <cCard></cCard>
-  </scroll-view>
+    <scroll-view class="main" scroll-y @scroll="scroll" scroll-anchoring="{{true}}">
+      <cSwiper :model.sync="model"></cSwiper>
+      <Navs :model.sync="model"></Navs>
+      <scrollNav :model.sync="model" @ret.user="getScreen" ></scrollNav>
+      <scrollNav hidden="{{!isfixed}}" :model.sync="model" @ret.user="getScreen" class="fixed"></scrollNav>
+      <cCard></cCard>
+    </scroll-view>
+  </view>
 </template>
 
 <script>
@@ -18,7 +21,7 @@
   import cCard from "@/components/home/cCard"
   export default class Dialog extends wepy.page {
     data = {
-      scrollTop: 0,
+      isfixed: false,
       theme: wepy.$instance.globalData.themeColor,
       model: {
         swipers: {
@@ -153,7 +156,6 @@
         backgroundColor: this.theme, //背景颜色值，有效值为十六进制颜色,
         success: res => {}
       });
-      
       // this.$invoke('cSwiper', 'load', this.model)
       // this.$invoke('Navs', 'load', this.model)
     }
@@ -162,7 +164,11 @@
         console.log(key, screen)
       },
       scroll(e) {
-        this.scrollTop = e.detail.scrollTop
+        if (e.detail.scrollTop > 428) {
+          if (!this.isfixed) this.isfixed = true
+        } else {
+          if (this.isfixed) this.isfixed = false
+        }
       }
     };
   }
@@ -178,8 +184,10 @@
   .fixed {
     position: fixed;
     left: 0;
-    top: 0;
+    top: 110rpx;
     z-index: 9999;
-    margin: 0
+  }
+  .main{
+    height: calc(~'100% - 110rpx');
   }
 </style>
