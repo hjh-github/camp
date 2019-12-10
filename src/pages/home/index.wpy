@@ -5,9 +5,9 @@
     <scroll-view class="main" scroll-y @scroll="scroll" scroll-anchoring="{{true}}">
       <cSwiper :model.sync="model"></cSwiper>
       <Navs :model.sync="model"></Navs>
-      <scrollNav :model.sync="model" @ret.user="getScreen" ></scrollNav>
+      <scrollNav :model.sync="model" @ret.user="getScreen"></scrollNav>
       <scrollNav hidden="{{!isfixed}}" :model.sync="model" @ret.user="getScreen" class="fixed"></scrollNav>
-      <cCard></cCard>
+      <cCard ></cCard>
     </scroll-view>
   </view>
 </template>
