@@ -139,13 +139,13 @@
       };
     }
     config = {
-      pages: ["pages/home/index","pages/meet/meet","pages/my/my"],
+      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address"],
       window: {
         backgroundTextStyle: "light",
-        navigationBarBackgroundColor: "#fff",
+        navigationBarBackgroundColor: "#F4D000",
         backgroundColor: "#fff",
         navigationBarTitleText: "",
-        navigationBarTextStyle: "black"
+        navigationBarTextStyle: "white"
       },
       navigateToMiniProgramAppIdList: [],
       permission: {

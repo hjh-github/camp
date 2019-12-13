@@ -13,6 +13,10 @@ export default class location extends wepy.mixin {
                 wepy.redirectTo({
                     url
                 });
+            }else if (type == 'switchTab') {
+                wepy.switchTab({
+                    url
+                });
             } else if (type == 'reLaunch') {
                 wepy.reLaunch({
                     url

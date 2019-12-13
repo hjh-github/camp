@@ -7,7 +7,7 @@
                     <view class="cu-tag bg-red">热门</view>
                     <view class="cu-bar bg-shadeBottom">
                         <view>
-                            <text class="cuIcon-time"></text> 10天
+                            <text class="cuIcon-countdown"></text> 10天
                             <text class="cuIcon-evaluate"></text> 1~6岁
                         </view>
                         <view>

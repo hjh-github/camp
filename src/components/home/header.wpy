@@ -7,9 +7,9 @@
         </view>
         <view class="search-form radius">
             <text class="cuIcon-search"></text>
-            <input type="text" placeholder="搜索图片、文章、视频" confirm-type="search"></input>
+            <input disabled type="text" placeholder="搜索图片、文章、视频" confirm-type="search"></input>
         </view>
-        <view class="action">
+        <view class="action" @tap="navigator">
             <text>广州</text>
             <text class="cuIcon-triangledownfill"></text>
         </view>
@@ -22,7 +22,11 @@
         data = {
             theme: wepy.$instance.globalData.themeColor
         };
-        methods = {};
+        methods = {
+            navigator(){
+                wepy.navigateTo({ url: '/pages/home/address' });
+            }
+        };
     }
 </script>
 

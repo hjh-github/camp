@@ -1,18 +1,20 @@
 
 <template>
-    <view class="bg-white container weui-flex flex-c">
-        <scroll-view scroll-x class="nav" scroll-with-animation scroll-left="{{scrollLeft}}">
-            <repeat for="{{model.scrollNav}}" key="index" index="index" item="item">
-                <view class="cu-item {{index == TabCur?'cur':''}}" style="color:{{index == TabCur?theme:''}}" @tap="tabSelect({{item.id}})" data-id="{{index}}">
-                    {{item.name}}
-                </view>
-            </repeat>
-        </scroll-view>
-        <view @tap="screen" class="screen weui-flex flex-c flex-jc">{{screenKey}}<text class="cuIcon-{{hasScreen?'triangleupfill':'triangledownfill'}} "></text></view>
-        <view hidden="{{!hasScreen}}" class="screen-box bg-white">
-            <view @tap="che_screen('默认')">默认排序</view>
-            <view @tap="che_screen('时间')">开始时间由近到远</view>
-            <view @tap="che_screen('人气')">人气从高到低</view>
+    <view class="bg-white container">
+        <view class="bg-white container weui-flex flex-c {{isfixed?'fixed':'pr'}}">
+            <scroll-view scroll-x class="nav" scroll-with-animation scroll-left="{{scrollLeft}}">
+                <repeat for="{{model.scrollNav}}" key="index" index="index" item="item">
+                    <view class="cu-item {{index == TabCur?'cur':''}}" style="color:{{index == TabCur?theme:''}}" @tap="tabSelect({{item.id}})" data-id="{{index}}">
+                        {{item.name}}
+                    </view>
+                </repeat>
+            </scroll-view>
+            <view @tap="screen" class="screen weui-flex flex-c flex-jc">{{screenKey}}<text class="cuIcon-{{hasScreen?'triangleupfill':'triangledownfill'}} "></text></view>
+            <view hidden="{{!hasScreen}}" class="screen-box bg-white">
+                <view @tap="che_screen('默认')">默认排序</view>
+                <view @tap="che_screen('时间')">开始时间由近到远</view>
+                <view @tap="che_screen('人气')">人气从高到低</view>
+            </view>
         </view>
     </view>
 </template>
@@ -20,7 +22,7 @@
 <script>
     import wepy from "wepy";
     export default class Dialog extends wepy.component {
-        props = ['model']
+        props = ['model', 'isfixed']
         data = {
             TabCur: 0,
             scrollLeft: 0,
@@ -48,9 +50,19 @@
 
 
 <style lang="less" scoped>
+    .fixed {
+        position: fixed;
+        left: 0;
+        top: 108rpx;
+        
+    }
+    .pr{
+        position: relative;
+    }
     .container {
         border-bottom: 1px solid #eee;
-        position: relative;
+        height: 90rpx;
+        z-index: 9999;
     }
     .nav {
         width: 630rpx;

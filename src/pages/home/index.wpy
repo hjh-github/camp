@@ -5,8 +5,8 @@
     <scroll-view class="main" scroll-y @scroll="scroll" scroll-anchoring="{{true}}">
       <cSwiper :model.sync="model"></cSwiper>
       <Navs :model.sync="model"></Navs>
-      <scrollNav :model.sync="model" @ret.user="getScreen"></scrollNav>
-      <scrollNav hidden="{{!isfixed}}" :model.sync="model" @ret.user="getScreen" class="fixed"></scrollNav>
+      <scrollNav :isfixed.sync="isfixed" :model.sync="model" @ret.user="getScreen"></scrollNav>
+      <!-- <scrollNav hidden="{{!isfixed}}" :model.sync="model" @ret.user="getScreen" class="fixed"></scrollNav> -->
       <cCard ></cCard>
     </scroll-view>
   </view>
@@ -30,8 +30,8 @@
             id: 0,
             type: 'image',
             url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big84000.jpg',
-            link: '/pages/home/index',
-            linkType: 'navigateTo'
+            link: '/pages/meet/meet',
+            linkType: 'switchTab'
           }, {
             id: 1,
             type: 'image',
@@ -64,15 +64,15 @@
             color: 'red',
             badge: 120,
             name: 'VR',
-            url: '/pages/home/index',
-            type: 'navigateTo'
+            url: '/pages/meet/meet',
+            type: 'switchTab'
           }, {
             icon: 'recordfill',
             color: 'orange',
             badge: 1,
             name: '录像',
-            url: '/pages/home/index',
-            type: 'redirectTo'
+            url: '/pages/my/my',
+            type: 'switchTab'
           }, {
             icon: 'picfill',
             color: 'yellow',
@@ -181,12 +181,7 @@
 </style>
 
 <style lang="less" scoped>
-  .fixed {
-    position: fixed;
-    left: 0;
-    top: 110rpx;
-    z-index: 9999;
-  }
+
   .main{
     height: calc(~'100% - 110rpx');
   }

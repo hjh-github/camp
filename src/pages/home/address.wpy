@@ -1,0 +1,169 @@
+
+<template>
+    <view>
+        <view class="padding bg-white">
+            当前城市：深圳
+        </view>
+        <scroll-view scroll-y class="indexes" scroll-into-view="indexes-{{listCurID}}" style="height:calc(100vh - 50px)" scroll-with-animation="true" enable-back-to-top="true">
+            <block wx:for="{{list}}" wx:key>
+                <view class="padding indexItem-{{list[index]}}" id="indexes-{{list[index]}}" data-index="{{list[index]}}">{{list[index]}}</view>
+                <view class="cu-list menu-avatar no-padding">
+                    <view class="cu-item" wx:for="{{2}}" wx:key wx:for-index="sub">
+                        <view class="cu-avatar round lg">{{list[index]}}</view>
+                        <view class="content">
+                            <view class="text-grey">{{list[index]}}
+                                <text class="text-abc">{{list[sub]}}</text></view>
+                            <view class="text-gray text-sm">
+                                {{sub+2}}
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </block>
+        </scroll-view>
+        <view class="indexBar" style="height:calc(100vh - 50px)">
+            <view class="indexBar-box" bindtouchstart="tStart" bindtouchend="tEnd" catchtouchmove="tMove">
+                <view class="indexBar-item" wx:for="{{list}}" wx:key id="{{index}}" bindtouchstart="getCur" bindtouchend="setCur">{{list[index]}}</view>
+            </view>
+        </view>
+        <!--选择显示-->
+        <view hidden="{{hidden}}" class="indexToast">
+            {{listCur}}
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Dialog extends wepy.page {
+        data = {
+            hidden: true,
+            list:[],
+            listCur:'',
+            listCurID:''
+        };
+        onLoad() {
+            let list = [];
+            for (let i = 0; i < 26; i++) {
+                list[i] = String.fromCharCode(65 + i)
+            }
+            this.list = list
+            this.listCur = list[0]
+        }
+        methods = {
+            getCur(e) {
+                this.hidden = false
+                this.listCur = this.list[e.target.id]
+            },
+            setCur(e) {
+                this.hidden = true
+                this.listCur = this.listCur
+            },
+            //滑动选择Item
+            tMove(e) {
+                let y = e.touches[0].clientY,
+                    offsettop = this.data.boxTop,
+                    that = this;
+                //判断选择区域,只有在选择区才会生效
+                if (y > offsettop) {
+                    let num = parseInt((y - offsettop) / 20);
+                    this.listCur = that.list[num]
+                };
+            },
+            //触发全部开始选择
+            tStart() {
+                this.hidden = false
+            },
+            //触发结束选择
+            tEnd() {
+                this.hidden = true
+                this.listCurID = this.listCur
+            },
+            indexSelect(e) {
+                let that = this;
+                let barHeight = this.data.barHeight;
+                let list = this.data.list;
+                let scrollY = Math.ceil(list.length * e.detail.y / barHeight);
+                for (let i = 0; i < list.length; i++) {
+                    if (scrollY < i + 1) {
+                        that.listCur = list[i]
+                        this.movableY = i * 20
+                        return false
+                    }
+                }
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    page {
+        padding-top: 100rpx;
+    }
+    .indexes {
+        position: relative;
+    }
+    .indexBar {
+        position: fixed;
+        right: 0px;
+        bottom: 0px;
+        padding: 20rpx 20rpx 20rpx 60rpx;
+        display: flex;
+        align-items: center;
+    }
+    .indexBar .indexBar-box {
+        width: 40rpx;
+        height: auto;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.1);
+        border-radius: 10rpx;
+    }
+    .indexBar-item {
+        flex: 1;
+        width: 40rpx;
+        height: 40rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24rpx;
+        color: #888;
+    }
+    movable-view.indexBar-item {
+        width: 40rpx;
+        height: 40rpx;
+        z-index: 9;
+        position: relative;
+    }
+    movable-view.indexBar-item::before {
+        content: "";
+        display: block;
+        position: absolute;
+        left: 0;
+        top: 10rpx;
+        height: 20rpx;
+        width: 4rpx;
+        background-color: #f37b1d;
+    }
+    .indexToast {
+        position: fixed;
+        top: 0;
+        right: 80rpx;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        width: 100rpx;
+        height: 100rpx;
+        border-radius: 10rpx;
+        margin: auto;
+        color: #fff;
+        line-height: 100rpx;
+        text-align: center;
+        font-size: 48rpx;
+    }
+</style>
