@@ -1,0 +1,106 @@
+
+<template>
+    <view>
+        <!-- 轮播图 -->
+        <cSwiper :model.sync="model"></cSwiper>
+        <!-- 标题部分 -->
+        <ctitle></ctitle>
+        <!-- 选择规格 -->
+        <scroll-view scroll-x class="sku-box bg-white margin-top-sm">
+            <repeat for="{{4}}" key="index" index="index" item="item">
+                <view class="padding-sm sku-item">
+                    <view class="bg-orange padding light radius text-center shadow-blur">
+                        <view class="text-xs text-Abc">12.12~12.24</view>
+                        <view class="text-xs text-Abc">少量名额</view>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+        <!-- 已售 -->
+        <view class="cu-list menu margin-top-sm">
+            <view class="cu-item">
+                <view class="content">
+                    <text class="text-black text-df">本期已售4，</text>
+                    <text class="text-grey text-sm">累积已售35</text>
+                </view>
+                <view class="action">
+                    <view class="cu-avatar-group">
+                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10004.jpg);"></view>
+                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10003.jpg);"></view>
+                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10002.jpg);"></view>
+                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view>
+                    </view>
+                </view>
+                <view class="action">
+                    <text class="cuIcon-right text-gray"></text>
+                </view>
+            </view>
+            <view class="cu-item">
+                <view class="content">
+                    <text class="cuIcon-circlefill text-grey"></text>
+                    <text class="text-grey">2019年12月23日 23:18:21</text>
+                </view>
+            </view>
+            <view class="cu-item">
+                <view class="content">
+                    <text class="cuIcon-circlefill text-grey"></text>
+                    <text class="text-grey">2019年12月23日 23:18:25</text>
+                </view>
+            </view>
+            <view class="cu-item">
+                <view class="content">
+                    <text class="cuIcon-circlefill text-grey"></text>
+                    <text class="text-grey">2019年12月23日 23:18:28</text>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import cSwiper from "@/components/common/swiper";
+    import ctitle from "@/components/detaile/title";
+    export default class Dialog extends wepy.page {
+        data = {
+            close: "/static/images/close.png",
+            model: {
+                swipers: {
+                    type: 1,
+                    list: [{
+                            id: 0,
+                            type: "video",
+                            url: "https://images.hxqxly.com/yx.mp4",
+                            link: "",
+                            linkType: ""
+                        }
+                    ]
+                }
+            }
+        };
+        components = {
+            cSwiper,
+            ctitle
+        };
+        config = {
+            navigationBarTitleText: "活动详情"
+        };
+        methods = {};
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .sku-item {
+        display: inline-block;
+        width: 240rpx;
+    }
+    .sku-box {
+        white-space: nowrap;
+        width: 100%;
+    }
+</style>

@@ -1,0 +1,49 @@
+
+<template>
+    <view class="bg-white">
+        <view wx:if="{{!hasDeadline}}" class="weui-flex flex-c solid-bottom padding-bottom-sm padding">
+            <view class="cu-tag line-orange margin-right-sm text-xs radius">活动费</view>
+            <view class="text-red text-price text-xxl">6380</view>
+            <view class="text-gray text-xs">（不含大交通）</view>
+        </view>
+        <view wx:else class="weui-flex bg-gradual-orange flex-c padding-bottom-sm padding">
+            <view class="weui-flex__item flex flex-y">
+                <view class="flex flex-c">
+                    <view class="cu-tag bg-white margin-right-sm text-red text-xs radius">活动费</view>
+                    <view class="text-white text-price text-xxl">6380</view>
+                </view>
+                <view class="flex flex-c">
+                    <view class="text-white text-sm">12月26日 00：00 结束</view>
+                    <view class="text-gray text-xs">（不含大交通）</view>
+                </view>
+            </view>
+            <view class="text-right">
+                <view>距离结束时间</view>
+                <view>66:55:55</view>
+            </view>
+        </view>
+        <view class="padding">
+            <view class="text-lg two-line margin-bottom-sm">【限量版圣诞卡】购300元送1500元--福州</view>
+            <view>
+                <repeat for="{{5}}" key="index" index="index" item="item">
+                    <view class="cu-tag bg-gray text-red text-xs radius">享受权益</view>
+                </repeat>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Dialog extends wepy.component {
+        data = {
+            close: "/static/images/close.png",
+            hasDeadline:0
+        };
+        methods = {};
+    }
+</script>
+
+<style lang="less" scoped>
+
+</style>

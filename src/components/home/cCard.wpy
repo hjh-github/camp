@@ -1,7 +1,7 @@
 <template>
     <view class="cu-card case">
         <repeat for="{{8}}" key="index" index="index" item="item">
-            <view class="cu-item shadow">
+            <view class="cu-item shadow" @tap="toDetaile">
                 <view class="image">
                     <image src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg" mode="widthFix"></image>
                     <view class="cu-tag bg-red">热门</view>
@@ -40,7 +40,12 @@
         data = {
             theme: wepy.$instance.globalData.themeColor
         };
-        methods = {};
+        methods = {
+            toDetaile(){
+                wepy.navigateTo({ url: '/pages/detaile/detaile' });
+                
+            }
+        };
     }
 </script>
 
