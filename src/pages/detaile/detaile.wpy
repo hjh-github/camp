@@ -1,91 +1,116 @@
 
 <template>
-    <view>
-        <!-- 轮播图 -->
-        <cSwiper :model.sync="model"></cSwiper>
-        <!-- 标题部分 -->
-        <ctitle></ctitle>
-        <!-- 选择规格 -->
-        <scroll-view scroll-x class="sku-box bg-white margin-top-sm">
-            <repeat for="{{4}}" key="index" index="index" item="item">
-                <view class="padding-sm sku-item">
-                    <view class="bg-orange padding light radius text-center shadow-blur">
-                        <view class="text-xs text-Abc">12.12~12.24</view>
-                        <view class="text-xs text-Abc">少量名额</view>
+    <view class="h100">
+        <scroll-view scroll-y class="main-view">
+            <view id="info-box">
+                <!-- 轮播图 -->
+                <cSwiper :model.sync="model"></cSwiper>
+                <!-- 标题部分 -->
+                <ctitle></ctitle>
+                <!-- 选择规格 -->
+                <scroll-view scroll-x class="sku-box bg-white margin-top-sm">
+                    <repeat for="{{4}}" key="index" index="index" item="item">
+                        <view class="padding-sm sku-item">
+                            <view class="bg-orange padding light radius text-center shadow-blur">
+                                <view class="text-xs text-Abc">12.12~12.24</view>
+                                <view class="text-xs text-Abc">少量名额</view>
+                            </view>
+                        </view>
+                    </repeat>
+                </scroll-view>
+                <!-- 更多信息 -->
+                <cInfo></cInfo>
+                <cRemake></cRemake>
+            </view>
+            <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
+                <view class="flex text-center">
+                    <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">
+                        图文详情
+                    </view>
+                    <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">
+                        安全行程
+                    </view>
+                    <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">
+                        报名须知
                     </view>
                 </view>
-            </repeat>
+            </scroll-view>
+            <swiper class="bg-white padding-top-sm margin-bottom-sm text-center" current="{{TabCur}}" bindchange="tabSelect">
+                <swiper-item>
+                    图文详情
+                </swiper-item>
+                <swiper-item>
+                    安全行程
+                </swiper-item>
+                <swiper-item>
+                    报名须知
+                </swiper-item>
+            </swiper>
         </scroll-view>
-        <!-- 已售 -->
-        <view class="cu-list menu margin-top-sm">
-            <view class="cu-item">
-                <view class="content">
-                    <text class="text-black text-df">本期已售4，</text>
-                    <text class="text-grey text-sm">累积已售35</text>
-                </view>
-                <view class="action">
-                    <view class="cu-avatar-group">
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10004.jpg);"></view>
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10003.jpg);"></view>
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10002.jpg);"></view>
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view>
-                    </view>
-                </view>
-                <view class="action">
-                    <text class="cuIcon-right text-gray"></text>
-                </view>
+        <view class="cu-bar bg-white tabbar border shop solid-top">
+            <button class="action" open-type="contact">
+                          <view class="cuIcon-weixin text-orange">
+                          </view>
+                          聊活动
+                        </button>
+            <view class="action">
+                <view class="cuIcon-friend text-orange"></view>
+                结伴同行
             </view>
-            <view class="cu-item">
-                <view class="content">
-                    <text class="cuIcon-circlefill text-grey"></text>
-                    <text class="text-grey">2019年12月23日 23:18:21</text>
-                </view>
-            </view>
-            <view class="cu-item">
-                <view class="content">
-                    <text class="cuIcon-circlefill text-grey"></text>
-                    <text class="text-grey">2019年12月23日 23:18:25</text>
-                </view>
-            </view>
-            <view class="cu-item">
-                <view class="content">
-                    <text class="cuIcon-circlefill text-grey"></text>
-                    <text class="text-grey">2019年12月23日 23:18:28</text>
-                </view>
-            </view>
+            <view class="bg-orange submit text-df">立即订购</view>
         </view>
     </view>
 </template>
 
 <script>
     import wepy from "wepy";
-    import cSwiper from "@/components/common/swiper";
-    import ctitle from "@/components/detaile/title";
+    import cSwiper from "@/components/common/swiper"
+    import ctitle from "@/components/detaile/title"
+    import cInfo from "@/components/detaile/info"
+    import cRemake from "@/components/detaile/remake"
     export default class Dialog extends wepy.page {
         data = {
+            TabCur: 0,
             close: "/static/images/close.png",
             model: {
                 swipers: {
                     type: 1,
                     list: [{
-                            id: 0,
-                            type: "video",
-                            url: "https://images.hxqxly.com/yx.mp4",
-                            link: "",
-                            linkType: ""
-                        }
-                    ]
+            id: 0,
+            type: 'image',
+            url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big84000.jpg',
+            link: '/pages/meet/meet',
+            linkType: 'switchTab'
+          }]
                 }
-            }
+            },
+            mainHeight: 0
         };
         components = {
             cSwiper,
-            ctitle
+            ctitle,
+            cInfo,
+            cRemake
         };
         config = {
             navigationBarTitleText: "活动详情"
         };
-        methods = {};
+        onLoad() {
+            // 获取主内容高度，用于悬浮详情导航
+            let view = wx.createSelectorQuery().select("#info-box");
+            view.fields({
+                size: true
+            }, data => {
+                console.log(data.height);
+                this.mainHeight = data.height
+            }).exec();
+        }
+        methods = {
+            tabSelect(e) {
+                console.log(e)
+                this.TabCur = e.currentTarget.dataset.id || e.detail.current
+            }
+        };
     }
 </script>
 <style>
@@ -95,6 +120,9 @@
 </style>
 
 <style lang="less" scoped>
+    .main-view {
+        height: calc(~'100% - 100rpx');
+    }
     .sku-item {
         display: inline-block;
         width: 240rpx;

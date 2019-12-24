@@ -1,0 +1,48 @@
+
+<template>
+    <view class="bg-white padding margin-top-sm dynamic {{isCard?'no-card':''}}">
+        <view class="cu-item">
+            <view class="cu-list menu-avatar">
+                <view class="cu-item">
+                    <view class="cu-avatar round lg" style="left:0rpx;background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg);">
+                        <view class="cu-tag badge {{index%2==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}}"></view>
+                    </view>
+                    <view class="content flex-sub" style="left:116rpx;">
+                        <view>
+                            <text class="padding-right-xs">戴大叔</text>
+                            <repeat for="{{5}}" key="index" index="index" item="item">
+                                <text class="cuIcon-{{index<3?'favorfill':'favor'}} text-orange"></text>
+                            </repeat>
+                        </view>
+                        <view class="text-gray text-sm flex justify-between">
+                            2019-12-24 22:38:36
+                        </view>
+                    </view>
+                </view>
+            </view>
+            <text class="text-content padding-bottom-sm" style="display:inline-block">    WE战队：应该是在小组赛中最让人感到意外的一支队伍，新人选手，特别是新人上单选手表现都非常出色，有冲劲；
+                　JDG战队：作为德玛西亚杯小组赛中唯一一支全胜晋级的队伍，伴随着打野选手Kanavi的成长，JDG应该也是本届德杯中配合最为默契的队伍；
+                　BLG战队：国豪与新中单FoFo的中野联动表现可圈可点；
+                　RW战队：有很多人把目光放在了EDG新人上单身上，但RW的新人中单Ruby也是在小组赛中表现最为出色的新人选手，连续三把稳定Carry的中路将RW带入了八强赛；</text>
+            <view class="bg-white " style="padding-top:0">
+                <view class="grid col-3 grid-square">
+                    <view class="bg-img" wx:for="{{9}}" wx:key style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big1000{{index+1}}.jpg);"></view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Dialog extends wepy.component {
+        data = {
+            close: "/static/images/close.png"
+        };
+        methods = {};
+    }
+</script>
+
+<style lang="less" scoped>
+
+</style>
