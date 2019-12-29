@@ -5,23 +5,28 @@ export default class auth extends base {
   // /**
   //  * 一键登录
   //  */
-  // static async login() {
-  //   let value = await wx.getStorageSync('levelid');
-  //   let self = this;
-  //   if (!value) {
-  //     // console.log(`[auth] levelid : ${value}`)
-  //     await this.toLogin()
-  //   } else {
-  //     wx.checkSession({
-  //       success(res) {
-  //         return
-  //       },
-  //       fail: async function (res) {
-  //         await self.toLogin()
-  //       }
-  //     })
-  //   }
-  // }
+  static async login() {
+    let self = this
+   await wepy.checkSession().then(async res=>{
+      console.log('还在登录状态下')
+      // await self.toLogin()
+    }).catch(async err=>{
+      console.log('重新登录')
+      await self.toLogin()
+    });
+    
+    // wx.checkSession({
+    //   success(res) {
+    //     console.log('还在登录状态下')
+    //     return
+    //   },
+    //   fail: async function (res) {
+    //     console.log('重新登录')
+    //     await self.toLogin()
+    //   }
+    // })
+
+  }
   // 解析手机号
   static async getPhone(codes) {
     const shopCode = wepy.$instance.globalData.appCode;
@@ -40,30 +45,16 @@ export default class auth extends base {
     })
   }
   // 登录
-  static async login(userInfo) {
+  static async toLogin() {
     const shopCode = wepy.$instance.globalData.appCode;
+    let {code} = await wepy.login()
     let params = {
       appid: shopCode,
-      ...userInfo
+      code
     }
-    const url = `${this.baseUrl}/seller/web/index.php?r=user/logins`;
-    return await this.post(url, params, true, true);
-  }
-  //退出登录
-  static async unlogin() {
-    const url = `${this.baseUrl}/seller/web/index.php?r=user/loginout`;
-    let params = {
-      token: wepy.getStorageSync("token"),
-    }
-    return await this.post(url, params);
-  }
-  // 获取权限列表
-  static async power() {
-    const url = `${this.baseUrl}/seller/web/index.php?r=user/power`;
-    let params = {
-      token: wepy.getStorageSync("token"),
-    }
-    return await this.post(url,params,true,true);
+    const url = `${this.baseUrl}/wxlogin`;
+    let _code = await this.post(url, params, true, true);
+    console.log(_code)
   }
 
   /**

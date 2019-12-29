@@ -1,0 +1,27 @@
+
+<template>
+    <view class="loading weui-flex flex-c flex-jc">
+        <image src="/static/images/loading-white.gif" mode="scaleToFill" style="width:450rpx;height:315rpx">
+        </image>
+    </view>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class Dialog extends wepy.component {
+  data = {
+    close: "/static/images/close.png"
+  };
+  methods = {
+
+  };
+}
+</script>
+
+<style lang="less" scoped>
+.loading{
+    width:100%;
+    height:100%;
+    background-color: #fff;
+}
+</style>

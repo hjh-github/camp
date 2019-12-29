@@ -8,50 +8,40 @@ export default class http {
     const param = {
       url: url,
       method: method,
-      data: needToken ? Object.assign(data, {
-        token: wepy.getStorageSync("token")
-      }) : data,
+      data: data,
       header: {
-        "Content-Type": form ? "application/x-www-form-urlencoded" : "application/json"
+        "Content-Type": "application/x-www-form-urlencoded" 
       }
     };
 
     if (loading) {
       // store.save('loading', true)
-      Tips.loading();
+      // Tips.loading();
+      wx.showNavigationBarLoading()
     }
     // 网络连接超时
     let _data;
     await wepy.request(param).then(res => {
       if (loading) {
         // store.save('loading', false)
-        Tips.loaded();
+        // Tips.loaded();
+        wx.hideNavigationBarLoading()
       }
-
-      if (res.data.errcode == 304) {
-        wx.clearStorage();
-        store.save("desklist", {
-          desks: [],
-          desksE: 16,
-          canOpen: false
-        });
-        Tips.toast("该帐号已在其他终端登录，请重新登录！", () => {
-          wepy.reLaunch({ url: '/pages/queue/index' });
-        }, "none");
-        return false;
-      } else if (res.data.errcode != 0) {
-
+      if (res.data.errcode != 200) {
         if (res.data.errmsg) Tips.toast(res.data.errmsg, () => { }, "none");
       }
       if (this.isSuccess(res)) {
         _data = !msg ? res.data.data : res.data;
+
+
       } else {
         throw this.requestException(res);
       }
     }).catch(err => {
       if (loading) {
         // store.save('loading', false)
-        Tips.loaded();
+        // Tips.loaded();
+        wx.hideNavigationBarLoading()
       }
       console.log(err)
       // Tips.loaded();

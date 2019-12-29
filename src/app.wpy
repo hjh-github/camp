@@ -35,15 +35,14 @@
       scene: null,
       base_store_id: "",
       appCode: "",
-      lv: 0, //临时用来区别产品版本  0 表示完全版
       // baseUrl: "https://x3.kuan1.cn",
       // kdsUrl: "https://webapi.kuan1.cn",
       // fuUrl: "https://fu.kuan1.cn",
-      baseUrl: "https://testx3.kuan1.cn",
+      baseUrl: "http://192.168.1.109:8809",
       kdsUrl: "https://twebapi.kuan1.cn",
       fuUrl: "https://testnewx1.kuan1.cn",
       themeColor: "#F4D000",
-      v_content: ''
+      cityCode:''
     };
     constructor() {
       super();

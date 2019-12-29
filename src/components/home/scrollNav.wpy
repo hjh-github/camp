@@ -3,17 +3,18 @@
     <view class="bg-white container">
         <view class="bg-white container weui-flex flex-c {{isfixed?'fixed':'pr'}}">
             <scroll-view scroll-x class="nav" scroll-with-animation scroll-left="{{scrollLeft}}">
-                <repeat for="{{model.scrollNav}}" key="index" index="index" item="item">
+                <repeat for="{{model}}" key="index" index="index" item="item">
                     <view class="cu-item {{index == TabCur?'cur':''}}" style="color:{{index == TabCur?theme:''}}" @tap="tabSelect({{item.id}})" data-id="{{index}}">
                         {{item.name}}
                     </view>
                 </repeat>
             </scroll-view>
-            <view @tap="screen" class="screen weui-flex flex-c flex-jc">{{screenKey}}<text class="cuIcon-{{hasScreen?'triangleupfill':'triangledownfill'}} "></text></view>
+            <view @tap="screen" class="screen weui-flex flex-c flex-jc">{{screens[screenKey].name}}<text class="cuIcon-{{hasScreen?'triangleupfill':'triangledownfill'}} "></text></view>
             <view hidden="{{!hasScreen}}" class="screen-box bg-white">
-                <view @tap="che_screen('默认')">默认排序</view>
-                <view @tap="che_screen('时间')">开始时间由近到远</view>
-                <view @tap="che_screen('人气')">人气从高到低</view>
+                <repeat for="{{screens}}" key="index" index="index" item="item">
+                   <view @tap="che_screen({{item.id}},{{item.name}})">{{item.content}}</view> 
+                </repeat>
+                
             </view>
         </view>
     </view>
@@ -28,10 +29,24 @@
             scrollLeft: 0,
             theme: wepy.$instance.globalData.themeColor,
             hasScreen: false,
-            screenKey: '默认'
+            screens:[{
+                id:0,
+                name:'默认',
+                content:'默认排序'
+            },{
+                id:1,
+                name:'时间',
+                content:'开始时间由近到远'
+            },{
+                id:2,
+                name:'人气',
+                content:'人气从高到低'
+            }],
+            screenKey: '0'
         };
         methods = {
             tabSelect(id, e) {
+                if(this.TabCur == e.currentTarget.dataset.id) return false
                 this.TabCur = e.currentTarget.dataset.id;
                 this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
                 this.$emit('ret', id, this.screenKey)
@@ -40,9 +55,10 @@
                 this.hasScreen = !this.hasScreen
             },
             che_screen(screenKey) {
+                if(this.screenKey == screenKey) return false
                 this.hasScreen = false
                 this.screenKey = screenKey
-                this.$emit('ret', this.model.scrollNav[this.TabCur].id, screenKey)
+                this.$emit('ret', this.model[this.TabCur].id, screenKey)
             }
         };
     }

@@ -5,25 +5,25 @@
             <view class="cu-item">
                 <view class="content">
                     <text class="cuIcon-location text-grey"></text>
-                    <text class="text-black text-df">湖北</text>
+                    <text class="text-black text-df">{{model.collectionPlace}}</text>
                 </view>
             </view>
             <view class="cu-item">
                 <view class="content">
                     <text class="cuIcon-time text-grey"></text>
-                    <text class="text-black text-df">12.24/12.30</text>
+                    <text class="text-black text-df">{{model.periods}}</text>
                 </view>
             </view>
             <view class="cu-item">
                 <view class="content">
                     <text class="cuIcon-activity text-grey"></text>
-                    <text class="text-black text-df">泡妞</text>
+                    <text class="text-black text-df">{{model.effect}}</text>
                 </view>
             </view>
             <view class="cu-item">
                 <view class="content">
                     <text class="text-black text-df">本期已售4，</text>
-                    <text class="text-grey text-sm">累积已售35</text>
+                    <text class="text-grey text-sm">累积已售{{model.campersNum}}</text>
                 </view>
                 <view class="action">
                     <view class="cu-avatar-group">
@@ -43,6 +43,7 @@
 <script>
 import wepy from "wepy";
 export default class Dialog extends wepy.component {
+    props=['model']
   data = {
     close: "/static/images/close.png"
   };

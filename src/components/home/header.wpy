@@ -10,7 +10,7 @@
             <input disabled type="text" placeholder="搜索图片、文章、视频" confirm-type="search"></input>
         </view>
         <view class="action" @tap="navigator">
-            <text>广州</text>
+            <text>{{city?city.name:'请选择城市'}}</text>
             <text class="cuIcon-triangledownfill"></text>
         </view>
     </view>
@@ -18,6 +18,13 @@
 
 <script>
     import wepy from "wepy";
+     import {
+        connect
+    } from "wepy-redux"
+    import store from "@/store/utils"
+    @connect({
+        city: store.get("city")
+    })
     export default class Dialog extends wepy.component {
         data = {
             theme: wepy.$instance.globalData.themeColor

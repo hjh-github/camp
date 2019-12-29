@@ -1,4 +1,4 @@
-- 注意改项目 wepy版本为 1.7.* 使用这个脚手架
+- 注意该项目 wepy版本为 1.7.* 使用这个脚手架
 - npm install wepy-cli -g
 - 开启实时编译
 - wepy build --watch  或者  npm run dev

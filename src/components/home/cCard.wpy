@@ -1,33 +1,33 @@
 <template>
     <view class="cu-card case">
-        <repeat for="{{8}}" key="index" index="index" item="item">
-            <view class="cu-item shadow" @tap="toDetaile">
+        <repeat for="{{model}}" key="index" index="index" item="item">
+            <view class="cu-item shadow" @tap="toDetaile({{item.id}})">
                 <view class="image">
-                    <image src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg" mode="widthFix"></image>
-                    <view class="cu-tag bg-red">热门</view>
+                    <image src="{{item.image}}" mode="widthFix"></image>
+                    <view hidden class="cu-tag bg-red">热门</view>
                     <view class="cu-bar bg-shadeBottom">
                         <view>
-                            <text class="cuIcon-countdown"></text> 10天
-                            <text class="cuIcon-evaluate"></text> 1~6岁
+                            <text class="cuIcon-countdown"></text> {{item.duration}}天
+                            <text class="cuIcon-evaluate"></text> {{item.ageGroups}}}岁
                         </view>
                         <view>
-                            <text class="cuIcon-favor"></text> 4.88分
-                            <text class="quan">1688人参加</text>
+                            <!-- <text class="cuIcon-favor"></text> 4.88分 -->
+                            <text class="quan">{{item.campersNum}}人参加</text>
                         </view>
                     </view>
                 </view>
-                <view class="title-box">【广州最美女孩】 一个叫做代练的女孩，遇见LOVE</view>
+                <view class="title-box">{{item.courseTittle}}</view>
                 <view style="padding:0 30rpx">
-                    <view class="one-line" style="color:red">一个叫做代练的女孩，遇见 LOVE LOVE LOVE</view>
-                    <view class="one-line" style="color:#ccc;font-size:22rpx">身高172cm，体重102</view>
+                    <view class="one-line" style="color:red">{{item.courseChar}}</view>
+                    <view class="one-line" style="color:#ccc;font-size:22rpx">{{item.periods}}</view>
                 </view>
                 <view class="weui-flex flex-end price">
                     <view style="color:{{theme}};font-size:22rpx;margin-right:10rpx;">
-                        ￥<text style="color:{{theme}};font-size:36rpx">1680.00</text>
+                        ￥<text style="color:{{theme}};font-size:36rpx">{{item.price}}</text>
                     </view>
-                    <view style="color:#999;font-size:24rpx;text-decoration: line-through">
+                    <!-- <view style="color:#999;font-size:24rpx;text-decoration: line-through">
                         ￥1680.00
-                    </view>
+                    </view> -->
                 </view>
             </view>
         </repeat>
@@ -37,12 +37,13 @@
 <script>
     import wepy from "wepy";
     export default class card extends wepy.component {
+        props=['model']
         data = {
             theme: wepy.$instance.globalData.themeColor
         };
         methods = {
-            toDetaile(){
-                wepy.navigateTo({ url: '/pages/detaile/detaile' });
+            toDetaile(id){
+                wepy.navigateTo({ url: '/pages/detaile/detaile?id=' + id });
                 
             }
         };

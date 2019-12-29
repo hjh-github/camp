@@ -9,4 +9,17 @@ export default class base {
   static put = http.put.bind(http);
   static post = http.post.bind(http);
   static delete = http.delete.bind(http);
+  // 截取经纬度
+  static async getLocation() {
+    return wepy.getLocation({
+      type: 'gcj02'
+    }).then(res => {
+      return `${res.latitude},${res.longitude}`
+    }).catch(err => {
+      console.log(err)
+      return  ''
+    });
+  }
 }
+
+

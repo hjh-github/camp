@@ -2,6 +2,7 @@ import wepy from 'wepy'
 export default class location extends wepy.mixin {
     methods = {
         navigator(url, type) {
+            console.log(url,type)
             if (type == 'none' || !type) {
                 return false
             }
