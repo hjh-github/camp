@@ -41,12 +41,6 @@
       <view class="cu-item arrow">
         <view class="content" bindtap="showQrcode">
           <text class="cuIcon-read text-red"></text>
-          <text class="text-grey">营前课</text>
-        </view>
-      </view>
-      <view class="cu-item arrow">
-        <view class="content" bindtap="showQrcode">
-          <text class="cuIcon-news text-red"></text>
           <text class="text-grey">身份信息管理</text>
         </view>
       </view>
