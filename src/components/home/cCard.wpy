@@ -8,7 +8,7 @@
                     <view class="cu-bar bg-shadeBottom">
                         <view>
                             <text class="cuIcon-countdown"></text> {{item.duration}}天
-                            <text class="cuIcon-evaluate"></text> {{item.ageGroups}}}岁
+                            <text class="cuIcon-evaluate"></text> {{item.ageGroups}}岁
                         </view>
                         <view>
                             <!-- <text class="cuIcon-favor"></text> 4.88分 -->

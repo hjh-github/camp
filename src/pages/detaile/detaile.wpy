@@ -8,11 +8,11 @@
                 <!-- 标题部分 -->
                 <ctitle :model.sync="courseInfo"></ctitle>
                 <!-- 选择规格 -->
-                <scroll-view scroll-x class="sku-box bg-white margin-top-sm">
-                    <repeat for="{{4}}" key="index" index="index" item="item">
+                <scroll-view wx:if="{{courseInfo.periodList.length}}" scroll-x class="sku-box bg-white margin-top-sm">
+                    <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
                         <view class="padding-sm sku-item">
                             <view class="bg-orange padding light radius text-center shadow-blur">
-                                <view class="text-xs text-Abc">12.12~12.24</view>
+                                <view class="text-xs text-Abc">{{item.startTime}}~{{item.overTime}}</view>
                                 <view class="text-xs text-Abc">少量名额</view>
                             </view>
                         </view>
@@ -35,9 +35,9 @@
                     </view>
                 </view>
             </scroll-view>
-            <swiper class="bg-white padding-top-sm margin-bottom-sm text-center" current="{{TabCur}}" bindchange="tabSelect">
-                <swiper-item>
-                    <rich-text>{{courseInfo.details}}</rich-text>
+            <swiper class="bg-white padding-top-sm margin-bottom-sm text-center" style="min-height:250rpx" current="{{TabCur}}" bindchange="tabSelect">
+                <swiper-item style="min-height:250rpx">
+                    <rich-text nodes="">{{courseInfo.details}}</rich-text>
                 </swiper-item>
                 <swiper-item>
                     <rich-text>{{courseInfo.trip}}</rich-text>
@@ -84,7 +84,8 @@
                 }]
             },
             mainHeight: 0,
-            courseInfo:{}
+            courseInfo:{},
+            nodes:['name','attrs','attrs']
         };
         components = {
             cSwiper,
