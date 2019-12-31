@@ -85,11 +85,11 @@
       await this.load()
       this.$apply()
     }
-    async load() {
+    async load(page = '') {
       let homeData = await config.getIndex({
         courseTypeId: this.courseTypeId,
         sort: this.sort,
-        pageIndex: this.pageIndex,
+        pageIndex: page || this.pageIndex,
         pageSize: this.pageSize
       })
       this.swipers.list = homeData.banners
@@ -112,10 +112,34 @@
       this.toload = true
       this.isLoad = true
     }
+    async loadcourses(pageIndex) {
+      let params = {
+        courseTypeId: this.courseTypeId,
+        sort: this.sort,
+        pageIndex: pageIndex,
+        pageSize: this.pageSize
+      }
+      let courses = await config.getCourses(params)
+      if (this.pageIndex == 1) {
+        this.courses = courses.courses
+      } else {
+        this.courses = this.courses.concat(courses.courses)
+      }
+      if (!courses.courses.length) {
+        this.pageIndex = this.pageIndex
+        this.noMore()
+        this.$apply()
+        return false
+      } else {
+        if (this.pageIndex > 1) this.pageIndex = this.pageIndex + 1
+      }
+    }
     methods = {
-      getScreen(key, screen) {
+      async getScreen(key, screen) {
         this.courseTypeId = key
         this.sort = screen
+        await this.loadcourses(1)
+        this.$apply()
       },
       scroll(e) {
         if (e.detail.scrollTop > 428) {
@@ -124,31 +148,16 @@
           if (this.isfixed) this.isfixed = false
         }
       },
-      async getMore() {
+      getMore() {
         if (this.loadmoring) {
           return false
         }
         this.loadmoring = true
         this.showMore()
         let oldpage = this.pageIndex
-        let params = {
-          courseTypeId: this.courseTypeId,
-          sort: this.sort,
-          pageIndex: this.pageIndex + 1,
-          pageSize: this.pageSize
-        }
-        let courses = await config.getCourses(params)
+        this.loadcourses(this.pageIndex + 1)
         this.loadmoring = false
-        if (!courses.courses.length) {
-          this.pageIndex = this.pageIndex
-          this.noMore()
-          this.$apply()
-          return false
-        } else {
-          this.pageIndex = this.pageIndex + 1
-        }
         this.toload = false
-        this.courses = this.courses.concat(courses.courses)
         this.$apply()
       }
     };

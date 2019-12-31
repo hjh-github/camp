@@ -35,14 +35,15 @@
       scene: null,
       base_store_id: "",
       appCode: "",
-      // baseUrl: "https://x3.kuan1.cn",
-      // kdsUrl: "https://webapi.kuan1.cn",
-      // fuUrl: "https://fu.kuan1.cn",
-      baseUrl: "http://192.168.1.109:8809",
-      kdsUrl: "https://twebapi.kuan1.cn",
-      fuUrl: "https://testnewx1.kuan1.cn",
+      baseUrl: "https://wechat.hxqxly.com",
+      kdsUrl: "https://webapi.kuan1.cn",
+      fuUrl: "https://fu.kuan1.cn",
+      // baseUrl: "http://192.168.1.109:8809",
+      // kdsUrl: "https://twebapi.kuan1.cn",
+      // fuUrl: "https://testnewx1.kuan1.cn",
       themeColor: "#F4D000",
-      cityCode:''
+      cityCode:'',
+      code:''
     };
     constructor() {
       super();

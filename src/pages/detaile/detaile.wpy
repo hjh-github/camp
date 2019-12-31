@@ -35,24 +35,30 @@
                     </view>
                 </view>
             </scroll-view>
-            <swiper class="bg-white padding-top-sm margin-bottom-sm text-center" style="min-height:250rpx" current="{{TabCur}}" bindchange="tabSelect">
-                <swiper-item style="min-height:250rpx">
-                    <rich-text nodes="">{{courseInfo.details}}</rich-text>
+            <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
+                <swiper-item>
+                    <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
+                        <rich-text nodes="{{courseInfo.details}}"></rich-text>
+                    </scroll-view>
                 </swiper-item>
                 <swiper-item>
-                    <rich-text>{{courseInfo.trip}}</rich-text>
+                    <scroll-view scroll-y class="bg-white h100 padding">
+                        <rich-text nodes="{{courseInfo.trip}}"></rich-text>
+                    </scroll-view>
                 </swiper-item>
                 <swiper-item>
-                    <rich-text>{{courseInfo.notice}}</rich-text>
+                    <scroll-view scroll-y class="bg-white h100 padding">
+                        <rich-text nodes="{{courseInfo.notice}}"></rich-text>
+                    </scroll-view>
                 </swiper-item>
             </swiper>
         </scroll-view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact">
-                                  <view class="cuIcon-weixin text-orange">
-                                  </view>
-                                  聊活动
-                                </button>
+                                      <view class="cuIcon-weixin text-orange">
+                                      </view>
+                                      聊活动
+                                    </button>
             <view class="action">
                 <view class="cuIcon-friend text-orange"></view>
                 结伴同行
@@ -84,8 +90,8 @@
                 }]
             },
             mainHeight: 0,
-            courseInfo:{},
-            nodes:['name','attrs','attrs']
+            courseInfo: {},
+            nodes: ['name', 'attrs', 'attrs']
         };
         components = {
             cSwiper,
@@ -96,7 +102,7 @@
         config = {
             navigationBarTitleText: "活动详情"
         };
-      async  onLoad(opt) {
+        async onLoad(opt) {
             // 获取主内容高度，用于悬浮详情导航
             let view = wx.createSelectorQuery().select("#info-box");
             view.fields({
@@ -105,12 +111,14 @@
                 console.log(data.height);
                 this.mainHeight = data.height
             }).exec();
-           let res = await config.getCourseInfo(opt.id)
-           this.swipers.list[0].url = res.image
-           res.courseChar = res.courseChar.split('|')
-           this.courseInfo = res
-           console.log(this.courseInfo)
-           this.$apply()
+            let {
+                course
+            } = await config.getCourseInfo(opt.id)
+            this.swipers.list[0].url = course.image
+            course.courseChar = course.courseChar.split('|')
+            this.courseInfo = course
+            console.log(this.courseInfo)
+            this.$apply()
         }
         methods = {
             tabSelect(e) {
@@ -129,6 +137,9 @@
 <style lang="less" scoped>
     .main-view {
         height: calc(~'100% - 100rpx');
+    }
+    .scroll-view {
+        height: calc(~'100% - 90rpx') !important;
     }
     .sku-item {
         display: inline-block;

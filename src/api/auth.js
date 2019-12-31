@@ -32,9 +32,11 @@ export default class auth extends base {
     const shopCode = wepy.$instance.globalData.appCode;
     let params = {
       appid: shopCode,
-      ...codes
+      code: wepy.$instance.globalData.code,
+      encryptedData:codes.encryptedData,
+      iv:codes.iv
     }
-    const url = `${this.baseUrl}/seller/web/index.php?r=init/phone`;
+    const url = `${this.baseUrl}/member/getPhone`;
     return await this.post(url, params, false);
   }
   // 获取验证码
@@ -48,6 +50,7 @@ export default class auth extends base {
   static async toLogin() {
     const shopCode = wepy.$instance.globalData.appCode;
     let {code} = await wepy.login()
+    wepy.$instance.globalData.code = code
     let params = {
       appid: shopCode,
       code
@@ -55,6 +58,9 @@ export default class auth extends base {
     const url = `${this.baseUrl}/wxlogin`;
     let _code = await this.post(url, params, true, true);
     console.log(_code)
+    wepy.setStorageSync('mobile',_code.data.mobile);
+    wepy.setStorageSync('isFans',_code.data.isFans);
+    wepy.setStorageSync('sessionId',_code.data.sessionId);
   }
 
   /**
