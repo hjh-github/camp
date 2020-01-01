@@ -46,5 +46,14 @@ export default class config extends base {
             return res;
         })
     }
+    static async getChildList() {
+        let url = `${this.baseUrl}/member/getChildList`;
+        let params = {
+            sessionId:wepy.getStorageSync('sessionId')
+        }
+        return this.get(url, params, false).then(res => {
+            return res;
+        })
+    }
 }
 

@@ -22,6 +22,7 @@ export default class http {
     // 网络连接超时
     let _data;
     await wepy.request(param).then(res => {
+      console.log(res,'resulte')
       if (loading) {
         // store.save('loading', false)
         // Tips.loaded();

@@ -88,7 +88,9 @@ image {
 .round {
 	border-radius: 5000rpx;
 }
-
+.flex__item{
+	flex:1
+}
 .radius {
 	border-radius: 6rpx;
 }

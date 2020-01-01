@@ -1,28 +1,29 @@
 
 <template>
   <view style="padding-bottom:30rpx;">
-    <view class="UCenter-bg bg-gradualOrange bg-white">
-      <button wx:if="{{!phone}}" class="cu-btn bg-green shadow-blur round lg" open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">绑定手机号</button>
-      <button wx:if="{{phone}}" class="cu-btn bg-green shadow-blur round lg" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" style="background-color:{{theme}}">注册/登录</button>
+    <view class="UCenter-bg bg-white" style="text-shadow:none">
+      <view class="text-xl text-orange padding-bottom"><text class="cuIcon-footprint padding-right"></text>成长，是我们最值得珍藏的记忆</view>
+      <button wx:if="{{!mobile}}" class="cu-btn bg-green shadow-blur round lg" open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">绑定手机号</button>
+      <button wx:if="{{mobile}}" class="cu-btn bg-green shadow-blur round lg" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" style="background-color:{{theme}}">{{!childs.length?'未添加儿童信息，去添加':'查看儿童信息'}}</button>
     </view>
-    <!-- <view class="padding flex text-center text-grey bg-white shadow-warp">
-        <view class="flex flex-sub flex-direction solid-right">
-          <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
-          <view>亲自护照</view>
-        </view>
-        <view class="flex flex-sub flex-direction solid-right">
-          <view class="text-xxl text-orange"><text class="cuIcon-calendar"></text></view>
-          <view>活动点评</view>
-        </view>
-        <view class="flex flex-sub flex-direction solid-right">
-          <view class="text-xxl text-orange"><text class="cuIcon-album"></text></view>
-          <view>活动照片</view>
-        </view>
-        <view class="flex flex-sub flex-direction">
-          <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
-          <view>每日记录</view>
-        </view>
-      </view> -->
+    <view class="padding flex text-center text-grey bg-white shadow-warp">
+      <view class="flex flex-sub flex-direction solid-right">
+        <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
+        <view>亲自护照</view>
+      </view>
+      <view class="flex flex-sub flex-direction solid-right">
+        <view class="text-xxl text-orange"><text class="cuIcon-calendar"></text></view>
+        <view>活动点评</view>
+      </view>
+      <view class="flex flex-sub flex-direction solid-right">
+        <view class="text-xxl text-orange"><text class="cuIcon-album"></text></view>
+        <view>活动照片</view>
+      </view>
+      <view class="flex flex-sub flex-direction">
+        <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
+        <view>每日记录</view>
+      </view>
+    </view>
     <repeat for="{{5}}" key="index" index="index" item="item">
       <cCard></cCard>
     </repeat>
@@ -33,10 +34,12 @@
   import wepy from "wepy";
   import cCard from "@/components/meet/card"
   import auth from "@/api/auth"
+  import config from "@/api/config"
   export default class Meet extends wepy.page {
     data = {
       theme: wepy.$instance.globalData.themeColor,
-      phone: ''
+      mobile: '',
+      childs: []
     };
     config = {
       navigationBarTitleText: "成长记录"
@@ -44,21 +47,34 @@
     components = {
       cCard
     }
+    async onLoad() {
+      if (wepy.getStorageSync('mobile')) {
+        let {
+          childList
+        } = await config.getChildList()
+        this.childs = childList
+      }
+    }
     onShow() {
-      this.phone = wepy.getStorageSync('mobile');
-      
+      this.mobile = wepy.getStorageSync('mobile');
     }
     methods = {
-      onGotUserInfo(e) {
+     async onGotUserInfo(e) {
         console.log(e)
-      },
-    async  bindgetphonenumber(e) {
-        console.log(e)
-        if(e.detail.errMsg == "getPhoneNumber:ok"){
-          let phone = await auth.getPhone(e.detail)
-          console.log(phone)
+        if (e.detail.errMsg == "getUserInfo:ok") {
+           await auth.getUserinfo(e.detail)
         }
-        
+      },
+      async bindgetphonenumber(e) {
+        console.log(e)
+        if (e.detail.errMsg == "getPhoneNumber:ok") {
+          let mobile = await auth.getPhone(e.detail)
+          if (mobile) {
+            wepy.setStorageSync('mobile', mobile);
+            this.mobile = mobile
+          }
+          this.$apply()
+        }
       }
     };
   }

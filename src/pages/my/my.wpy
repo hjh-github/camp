@@ -6,7 +6,7 @@
         <open-data class="img" type="userAvatarUrl"></open-data>
       </view>
       <view class="text-xl">
-        <open-data  type="userNickName"></open-data>
+        <open-data type="userNickName"></open-data>
       </view>
       <!-- <image src="https://raw.githubusercontent.com/weilanwl/ColorUI/master/demo/images/wave.gif" mode="scaleToFill" class="gif-wave"></image> -->
     </view>
@@ -14,33 +14,33 @@
       <view class="flex flex-sub flex-direction">
         <view class="text-xxl text-orange"><text class="cuIcon-apps"></text></view>
         <view>
-           全部</view>
+          全部</view>
       </view>
       <view class="flex flex-sub flex-direction">
         <view class="text-xxl text-orange"><text class="cuIcon-pay"></text></view>
         <view>
-           待付款</view>
+          待付款</view>
       </view>
       <view class="flex flex-sub flex-direction">
         <view class="text-xxl text-orange"><text class="cuIcon-activity"></text></view>
         <view>
-           待参加</view>
+          待参加</view>
       </view>
       <view class="flex flex-sub flex-direction">
         <view class="text-xxl text-orange"><text class="cuIcon-comment"></text></view>
         <view>
-           待评价</view>
+          待评价</view>
       </view>
       <view class="flex flex-sub flex-direction">
         <view class="text-xxl text-orange"><text class="cuIcon-refund"></text></view>
         <view>
-           退款售后</view>
+          退款售后</view>
       </view>
     </view>
     <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
       <view class="cu-item arrow">
-        <view class="content" bindtap="showQrcode">
-          <text class="cuIcon-read text-red"></text>
+        <view class="content" bindtap="childs">
+          <text class="cuIcon-card text-red"></text>
           <text class="text-grey">身份信息管理</text>
         </view>
       </view>
@@ -63,6 +63,7 @@
 
 <script>
   import wepy from "wepy";
+  import Tips from "@/utils/Tips"
   export default class My extends wepy.page {
     config = {
       navigationBarTitleText: "我的"
@@ -70,7 +71,21 @@
     data = {
       close: "/static/images/close.png"
     };
-    methods = {};
+    methods = {
+      childs() {
+        if (wepy.getStorageSync('mobile')) {
+          wepy.navigateTo({
+            url: '/pages/meet/childs'
+          });
+        } else {
+          Tips.toast('需要先绑定手机号哦~', () => {
+            wepy.switchTab({
+              url: '/pages/meet/meet'
+            });
+          }, 'none')
+        }
+      }
+    };
   }
 </script>
 <style>
@@ -80,12 +95,12 @@
 </style>
 
 <style lang="less" scoped>
-.avat{
-  width:160rpx;
-  height: 160rpx;
-  border-radius: 50%;
-  overflow: hidden;
-}
+  .avat {
+    width: 160rpx;
+    height: 160rpx;
+    border-radius: 50%;
+    overflow: hidden;
+  }
   .UCenter-bg {
     background-image: url(https://images.kuan1.cn/kuan1/upload/image/20191212/20191212105653_66237.jpeg);
     background-size: cover;

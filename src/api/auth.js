@@ -7,6 +7,11 @@ export default class auth extends base {
   //  */
   static async login() {
     let self = this
+    if(!wepy.getStorageSync('sessionId')){
+      console.log('sessionId都没有，肯定要重新登录遍的啦')
+      await self.toLogin()
+      return false
+    }
    await wepy.checkSession().then(async res=>{
       console.log('还在登录状态下')
       // await self.toLogin()
@@ -27,16 +32,27 @@ export default class auth extends base {
     // })
 
   }
+  
   // 解析手机号
   static async getPhone(codes) {
-    const shopCode = wepy.$instance.globalData.appCode;
+    await this.login()
     let params = {
-      appid: shopCode,
-      code: wepy.$instance.globalData.code,
       encryptedData:codes.encryptedData,
-      iv:codes.iv
+      iv:codes.iv,
+      sessionId:wepy.getStorageSync('sessionId')
     }
-    const url = `${this.baseUrl}/member/getPhone`;
+    const url = `${this.baseUrl}/member/getPhone.html`;
+    return await this.post(url, params, false);
+  }
+  // 解析用户信息
+  static async getUserinfo(codes) {
+    await this.login()
+    let params = {
+      encryptedData:codes.encryptedData,
+      iv:codes.iv,
+      sessionId:wepy.getStorageSync('sessionId')
+    }
+    const url = `${this.baseUrl}/member/getUserinfo.html`;
     return await this.post(url, params, false);
   }
   // 获取验证码
@@ -57,7 +73,8 @@ export default class auth extends base {
     }
     const url = `${this.baseUrl}/wxlogin`;
     let _code = await this.post(url, params, true, true);
-    console.log(_code)
+    console.log(code)
+    wepy.setStorageSync('code',code);
     wepy.setStorageSync('mobile',_code.data.mobile);
     wepy.setStorageSync('isFans',_code.data.isFans);
     wepy.setStorageSync('sessionId',_code.data.sessionId);

@@ -139,7 +139,7 @@
       };
     }
     config = {
-      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile"],
+      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile","pages/meet/childs","pages/meet/addChild","pages/meet/addMan"],
       window: {
         backgroundTextStyle: "light",
         navigationBarBackgroundColor: "#F4D000",

@@ -1,0 +1,113 @@
+
+<template>
+    <view class="h100">
+        <view class="padding-xl padding-top padding-bottom bg-white text-red">
+            请设置儿童及监护人的有效证件信息，以便签订电子旅游合同并购买保险
+        </view>
+        <scroll-view class="main " scroll-y>
+            <repeat for="{{list}}" key="index" index="index" item="item">
+                <view class="cu-list padding-bottom card-menu menu-avatar">
+                    <view class="cu-item border-radius padding">
+                        <view class="action">
+                            <view class="text-black text-df">儿童：<text class="text-orange">代练</text></view>
+                            <view class="text-gray text-sm">男 2020年1月1日 172cm 55kg 正常</view>
+                            <view class="text-black text-sm">证件号：450881199204240919</view>
+                            <view class="text-black text-df">监护人：<text class="text-orange">代练的爸爸</text></view>
+                            <view class="text-gray text-sm">男 2020年1月1日 172cm 55kg 正常</view>
+                            <view class="text-black text-sm">证件号：450881199204240919</view>
+                        </view>
+                        <view class="edit text-yellow" @tap='toEdit(1)'>编辑</view>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+        <view @tap="toEdit(-1)" class="bg-yellow plus text-white text-center"><text class="cuIcon-add text-xl text-wihit padding-right-xs"></text>新增身份信息</view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class Dialog extends wepy.page {
+        data = {
+            close: "/static/images/close.png",
+            ListTouchStart: 0,
+            ListTouchDirection: null,
+            modalName: null,
+            list: [1, 2, 3]
+        };
+        config = {
+            navigationBarTitleText: "身份信息管理"
+        };
+        onLoad() {
+            // this.ListTouchDirection = 'right'
+            // if (this.list.length > 0) {
+            //     setTimeout(() => {
+            //         this.modalName = 'move-box-0'
+            //         this.$apply()
+            //         setTimeout(() => {
+            //             this.modalName = null
+            //             this.$apply()
+            //         }, 1000)
+            //     }, 300)
+            // }
+        }
+        methods = {
+            toEdit(id){
+                wepy.navigateTo({ url: './addChild?id=' + id });
+                
+            }
+            // ListTouchStart(e) {
+            //     this.ListTouchStart = e.touches[0].pageX
+            // },
+            // // ListTouch计算方向
+            // ListTouchMove(e) {
+            //     this.ListTouchDirection = e.touches[0].pageX - this.data.ListTouchStart > 0 ? 'right' : 'left'
+            // },
+            // // ListTouch计算滚动
+            // ListTouchEnd(e) {
+            //     if (this.ListTouchDirection == 'left') {
+            //         this.modalName = e.currentTarget.dataset.target
+            //     } else {
+            //         this.modalName = null
+            //     }
+            //     this.ListTouchDirection = null
+            // }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .action {
+        flex: 1;
+        text-align: left !important;
+    }
+    .edit {
+        width: 100rpx;
+    }
+    .cu-list {
+        margin-top: 0;
+        &:first-child {
+            padding-top: 30rpx;
+        }
+    }
+    .cu-item {
+        justify-content: flex-start !important;
+        height: auto !important;
+    }
+    .border-radius {
+        border-radius: 10rpx;
+    }
+    .main {
+        height: calc(~'100% - 238rpx');
+        box-sizing: border-box;
+    }
+    .plus {
+        height: 100rpx;
+        line-height: 100rpx;
+    }
+</style>
