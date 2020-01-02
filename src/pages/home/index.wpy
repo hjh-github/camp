@@ -10,7 +10,7 @@
         <scrollNav :isfixed.sync="isfixed" :model.sync="scrollNav" @ret.user="getScreen"></scrollNav>
         <!-- <scrollNav hidden="{{!isfixed}}" :model.sync="model" @ret.user="getScreen" class="fixed"></scrollNav> -->
         <cCard :model.sync="courses"></cCard>
-        <view wx:if="{{toload}}" class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+        <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5"></view>
       </scroll-view>
     </view>
   </view>
@@ -63,7 +63,8 @@
       loading
     }
     config = {
-      navigationBarTitleText: "上线就能赚大钱"
+      navigationBarTitleText: "上线就能赚大钱",
+      enablePullDownRefresh: true
     };
     async onLoad() {
       wepy.setNavigationBarColor({
@@ -78,12 +79,11 @@
       // this.$invoke('cSwiper', 'load', this.model)
       // this.$invoke('Navs', 'load', this.model)
     }
-    async onShow() {
-      if (!this.isShow) {
-        return false
-      }
-      await this.load()
+    async onPullDownRefresh() {
+      await this.loadcourses(1)
+      this.pageIndex = 1
       this.$apply()
+      wx.stopPullDownRefresh()
     }
     async load(page = '') {
       let homeData = await config.getIndex({
@@ -105,11 +105,9 @@
       }
     }
     showMore() {
-      this.toload = true
       this.isLoad = false
     }
     noMore() {
-      this.toload = true
       this.isLoad = true
     }
     async loadcourses(pageIndex) {
@@ -120,18 +118,21 @@
         pageSize: this.pageSize
       }
       let courses = await config.getCourses(params)
-      if (this.pageIndex == 1) {
-        this.courses = courses.courses
-      } else {
-        this.courses = this.courses.concat(courses.courses)
-      }
       if (!courses.courses.length) {
-        this.pageIndex = this.pageIndex
+        if (pageIndex == 1) {
+          this.courses = courses.courses
+        }
+        this.pageIndex = pageIndex
         this.noMore()
         this.$apply()
         return false
       } else {
-        if (this.pageIndex > 1) this.pageIndex = this.pageIndex + 1
+        if (pageIndex > 1) this.pageIndex = pageIndex
+        if (pageIndex == 1) {
+          this.courses = courses.courses
+        } else {
+          this.courses = this.courses.concat(courses.courses)
+        }
       }
     }
     methods = {
@@ -142,22 +143,23 @@
         this.$apply()
       },
       scroll(e) {
+        if(e.detail.scrollTop < 5){
+          wx.startPullDownRefresh()
+        }
         if (e.detail.scrollTop > 428) {
           if (!this.isfixed) this.isfixed = true
         } else {
           if (this.isfixed) this.isfixed = false
         }
       },
-      getMore() {
+      async getMore() {
         if (this.loadmoring) {
           return false
         }
         this.loadmoring = true
         this.showMore()
-        let oldpage = this.pageIndex
-        this.loadcourses(this.pageIndex + 1)
+        await this.loadcourses(this.pageIndex + 1)
         this.loadmoring = false
-        this.toload = false
         this.$apply()
       }
     };

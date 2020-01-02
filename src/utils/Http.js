@@ -33,8 +33,6 @@ export default class http {
       }
       if (this.isSuccess(res)) {
         _data = !msg ? res.data.data : res.data;
-
-
       } else {
         throw this.requestException(res);
       }

@@ -1,19 +1,37 @@
 
 <template>
     <view class="h100">
+        <!-- 下面是模态弹窗，可以独立模块 -->
+        <view class="cu-modal {{modalName =='tips'?'show':''}}">
+            <view class="cu-dialog">
+                <view class="action text-black text-left padding-xl" bindtap="hideModal">
+                    <view class="text-sm text-orange padding-top padding-bottom">1.为什么需要填写儿童证件以及身高体重信息？</view>
+                    <view style="line-height:1.66">
+                        <text class="text-black text-sm">答：一为了儿童购买旅游保险；二为了儿童选择合适尺码的衣服。 </text>
+                    </view>
+                    <view class="text-sm text-orange padding-top padding-bottom">1.为什么需要填写家长的证件信息？</view>
+                    <view style="line-height:1.66">
+                        <text class="text-black text-sm">答：因为签订电子旅游合同，儿童是未成年人，必须由监护人签订，需要签订人（即监护人）的有效证件号码、 </text>
+                    </view>
+                </view>
+                <view class="cu-bar bg-white">
+                    <view class="action margin-0 flex-sub text-orange solid-left" bindtap="hideModal">我知道了</view>
+                </view>
+            </view>
+        </view>
         <scroll-view class="main" scroll-y>
-            <view class="cu-bar bg-white solid-bottom margin-top">
+            <view class="cu-bar bg-white solid-bottom">
                 <view class="action">
                     <text class="cuIcon-evaluate text-orange "></text> 儿童信息
                 </view>
-                <view class="action  text-orange">
+                <view @tap="tips" class="action  text-orange">
                     说明<text class="cuIcon-question padding-left-xs"></text>
                 </view>
             </view>
             <view>
                 <view class="cu-form-group">
                     <view class="title">姓名</view>
-                    <input placeholder-class="text-sm" placeholder="请填写儿童姓名"></input>
+                    <input @input="input" class="text-right" data-target="name" placeholder-class="text-sm" placeholder="请填写儿童姓名"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">证件类型</view>
@@ -25,19 +43,32 @@
                 </view>
                 <view class="cu-form-group">
                     <view class="title">{{picker[cardInx].name}}</view>
-                    <input placeholder-class="text-sm" placeholder="请填写证件号码"></input>
+                    <input @input="input" class="text-right" data-target="cardNum" data-type="{{picker[cardInx].type}}" placeholder-class="text-sm" placeholder="请填写证件号码"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">出生日期</view>
-                    <input placeholder-class="text-sm" placeholder="2010-01-01"></input>
+                    <picker mode="date" value="{{form.birthdayStr}}" data-target="birthdayStr" end="{{end_date}}" bindchange="DateChange">
+                        <view class="picker">
+                            {{form.birthdayStr}}
+                        </view>
+                    </picker>
+                </view>
+                <view class="cu-form-group">
+                    <view class="title">性别</view>
+                    <view class="flex flex-c flex__item flex-jend">
+                        <view class="margin-right" @tap="gender(1)">
+                            <radio checked="{{form.gender == 1}}" class="radio margin-right-sm yellow"></radio>男</view>
+                        <view class="margin-right" @tap="gender(0)">
+                            <radio checked="{{form.gender == 0}}" class="radio margin-right-sm yellow"></radio>女</view>
+                    </view>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">身高（cm）</view>
-                    <input placeholder-class="text-sm" placeholder="请填写身高（cm），如 123"></input>
+                    <input @input="input" class="text-right" data-target="height" placeholder-class="text-sm" placeholder="请填写身高（cm），如 123"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">体重（KG）</view>
-                    <input placeholder-class="text-sm" placeholder="请填写体重（KG），如 32"></input>
+                    <input @input="input" class="text-right" data-target="weight" placeholder-class="text-sm" placeholder="请填写体重（KG），如 32"></input>
                 </view>
             </view>
             <view class="cu-bar bg-white margin-top solid-bottom ">
@@ -45,73 +76,177 @@
                     <text class="cuIcon-profile text-orange "></text> 监护人信息
                 </view>
                 <view class="action">
-                    <button class="cu-tag bg-yellow text-white shadow"  @tap.stop="toEdit(-1)" >添加监护人</button>
+                    <button class="cu-tag bg-yellow text-white shadow" @tap.stop="toEdit(-1)">添加监护人</button>
                 </view>
             </view>
             <view class="cu-list menu bg-white padding-top-sm margin-bottom">
-                <view class="padding-left"><text class="text-grey text-sm ">请选择儿童的一名监护人：</text></view>
-                <repeat for="{{5}}" key="index" index="index" item="item">
-                    <view @tap="checkMan({{index}})" class="cu-item flex flex-c lg">
+                <view class="padding-left {{!gues.length?'padding-bottom':''}}"><text class="text-grey text-sm ">请选择儿童的一名监护人：</text><text @tap.stop="toEdit(-1)" class="text-yellow" wx:if="{{!gues.length}}">未添加监护人,去添加 >> </text></view>
+                
+                <repeat for="{{gues}}" key="index" index="index" item="item">
+                    <view wx:if="{{gues.length}}" @tap="checkMan({{index}})" class="cu-item flex flex-c lg">
                         <view class="action text-xl padding-right">
                             <text class="cuIcon-{{manInx == index?'roundcheck': 'round'}} text-yellow "></text>
                         </view>
                         <view class="content">
-                            <view><text class="text-black">戴先生</text></view>
-                            <text class="text-grey text-sm">证件号：450881199204240919</text>
+                            <view><text class="text-black">{{item.name}}</text></view>
+                            <text class="text-grey text-sm">{{picker[item.cardType - 1].name}}：{{item.cardNum}}</text>
                         </view>
                         <view class="action padding-right">
-                            <text  class="text-yellow" @tap.stop="toEdit(-1)">编辑</text>
+                            <text class="text-yellow" @tap.stop="toEdit({{item.id}})">编辑</text>
                         </view>
                     </view>
                 </repeat>
             </view>
         </scroll-view>
-        <view @tap="toEdit(-1)" class="bg-yellow plus text-white text-center">保存</view>
-        <view class="flex w100">
-            <view @tap="toEdit(-1)" class="flex__item  bg-red plus text-white text-center"></text>删除</view>
-            <view @tap="toEdit(-1)" class="flex__item content bg-yellow plus text-white text-center"></text>修改</view>
+        <view wx:if="{{id=='-1'}}" @tap="plus()" class="bg-yellow plus text-white text-center">保存</view>
+        <view wx:else class="flex w100">
+            <view @tap="del(-1)" class="flex__item  bg-red plus text-white text-center">
+                </text>删除</view>
+            <view @tap="plus(-1)" class="flex__item content bg-yellow plus text-white text-center">
+                </text>修改</view>
         </view>
-        
     </view>
 </template>
 
 <script>
-    import wepy from "wepy";
+    import wepy from "wepy"
+    import Lang from "@/utils/Lang"
+    import Tips from "@/utils/Tips"
+    import config from "@/api/config"
     export default class Dialog extends wepy.page {
         data = {
+            modalName: '',
+            gues: [],
             picker: [{
                 name: '内地身份证号',
-                type: 0
-            }, {
-                name: '护照号',
                 type: 1
             }, {
-                name: '军官证号',
+                name: '护照号',
                 type: 2
             }, {
-                name: '港澳通行证号',
+                name: '军官证号',
                 type: 3
             }, {
-                name: '台胞证号',
+                name: '港澳通行证号',
                 type: 4
             }, {
-                name: '其他证号',
+                name: '台胞证号',
                 type: 5
+            }, {
+                name: '其他证号',
+                type: 6
             }, ],
             cardInx: 0,
-            manInx:0
+            manInx: 0,
+            id: '',
+            birthdayStr: "2015-09-01",
+            end_date: '',
+            form: {
+                name: '',
+                cardType: 1,
+                cardNum: '',
+                gender: 1,
+                birthdayStr: '',
+                height: '',
+                weight: '',
+                shapes: 1,
+                guardianId:''
+            },
+            rules: [{
+                    name: 'name',
+                    msg: '请填写儿童姓名'
+                },
+                {
+                    name: 'cardNum',
+                    msg: '请填写儿童证件号码'
+                },
+                {
+                    name: 'height',
+                    msg: '请填写儿童身高'
+                }, {
+                    name: 'weight',
+                    msg: '请填写儿童体重'
+                }
+            ]
         };
+        async onLoad(opt) {
+            this.id = opt.id
+            this.end_date = Lang.dateFormate(new Date(), 'yyyy-MM-dd')
+            if (this.id == -1) {
+                this.form.birthdayStr = this.end_date
+            }
+        }
+        async onShow() {
+            let {
+                guaList
+            } = await config.getGuaList()
+            this.gues = guaList
+            if (this.id == -1 && this.gues.length) {
+                this.form.guardianId = this.gues[0].id
+            }
+            this.$apply()
+        }
+        rulesFn() {
+            let flag = true
+            for (let i of this.rules) {
+                if (Lang.isEmpty(this.form[i.name])) {
+                    Tips.toast(i.msg, () => {}, 'none')
+                    flag = false
+                    break
+                }
+            }
+            return flag
+        }
         methods = {
+            gender(gender) {
+                this.form.gender = gender
+            },
+            tips() {
+                this.modalName = 'tips'
+            },
+            hideModal() {
+                this.modalName = ''
+            },
             PickerChange(e) {
-                console.log(e)
                 this.cardInx = e.detail.value
             },
-            checkMan(inx){
+            checkMan(inx) {
                 this.manInx = inx
+                this.form.guardianId = this.gues[this.manInx].id
             },
-            toEdit(id){
-                wepy.navigateTo({ url: './addMan?id=' + id });
-                
+            toEdit(id) {
+                wepy.navigateTo({
+                    url: './addMan?id=' + id
+                });
+            },
+            DateChange(e) {
+                this.birthdayStr = e.detail.value
+            },
+            input(e) {
+                let target = e.currentTarget.dataset.target || e.target.dataset.target,
+                    type = e.currentTarget.dataset.type || e.target.dataset.type,
+                    value = e.detail.value;
+                if (target == 'cardNum' && type == 1) {
+                    if (value.length == 18) {
+                        let _res = Lang.getBirthdayByIdCard(value)
+                        if (typeof _res == 'object') {
+                            Tips.toast(_res.message, () => {}, 'none')
+                        } else if (typeof _res == 'string') {
+                            this.form.birthdayStr = _res
+                        }
+                    }
+                }
+                this.form[target] = value
+            },
+            async plus() {
+                if (this.rulesFn()) {
+                    let rules = Lang.checkIdCard(this.form.cardNum)
+                    if (!rules.status) {
+                        Tips.toast(rules.message, () => {}, 'none')
+                        return false
+                    }
+                    let res = await config.updateChild(this.form)
+                }
             }
         };
     }
@@ -130,8 +265,8 @@
         height: 100rpx;
         line-height: 100rpx;
     }
-    .cu-item{
-        padding-top:20rpx !important;
-        padding-bottom:20rpx !important;
+    .cu-item {
+        padding-top: 20rpx !important;
+        padding-bottom: 20rpx !important;
     }
 </style>

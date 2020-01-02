@@ -4,8 +4,8 @@
         <view class="padding-xl padding-top padding-bottom bg-white text-red">
             请设置儿童及监护人的有效证件信息，以便签订电子旅游合同并购买保险
         </view>
-        <scroll-view class="main " scroll-y>
-            <repeat for="{{list}}" key="index" index="index" item="item">
+        <scroll-view wx:if="{{childs.length}}" class="main " scroll-y>
+            <repeat for="{{childs}}" key="index" index="index" item="item">
                 <view class="cu-list padding-bottom card-menu menu-avatar">
                     <view class="cu-item border-radius padding">
                         <view class="action">
@@ -21,24 +21,32 @@
                 </view>
             </repeat>
         </scroll-view>
+        <view wx:else @tap="toEdit(-1)" class="main flex flex-c flex-jc text-yellow">
+            尚未添加身份信息,去添加 >>
+        </view>
         <view @tap="toEdit(-1)" class="bg-yellow plus text-white text-center"><text class="cuIcon-add text-xl text-wihit padding-right-xs"></text>新增身份信息</view>
     </view>
 </template>
 
 <script>
     import wepy from "wepy";
+    import config from "@/api/config"
     export default class Dialog extends wepy.page {
         data = {
             close: "/static/images/close.png",
             ListTouchStart: 0,
             ListTouchDirection: null,
             modalName: null,
-            list: [1, 2, 3]
+            childs: []
         };
         config = {
             navigationBarTitleText: "身份信息管理"
         };
-        onLoad() {
+      async onShow() {
+            let {
+                childList
+            } = await config.getChildList()
+            this.childs = childList
             // this.ListTouchDirection = 'right'
             // if (this.list.length > 0) {
             //     setTimeout(() => {
@@ -52,9 +60,10 @@
             // }
         }
         methods = {
-            toEdit(id){
-                wepy.navigateTo({ url: './addChild?id=' + id });
-                
+            toEdit(id) {
+                wepy.navigateTo({
+                    url: './addChild?id=' + id
+                });
             }
             // ListTouchStart(e) {
             //     this.ListTouchStart = e.touches[0].pageX

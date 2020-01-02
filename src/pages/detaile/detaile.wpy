@@ -12,7 +12,7 @@
                     <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
                         <view class="padding-sm sku-item">
                             <view class="bg-orange padding light radius text-center shadow-blur">
-                                <view class="text-xs text-Abc">{{item.startTime}}~{{item.overTime}}</view>
+                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.overTimeStr}}</view>
                                 <view class="text-xs text-Abc">少量名额</view>
                             </view>
                         </view>

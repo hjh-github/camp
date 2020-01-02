@@ -43,7 +43,7 @@ export default class Lang {
   }
 
   // 格式化日期
-  static dateFormate (date, fmt) {
+  static dateFormate(date, fmt) {
     const o = {
       'M+': date.getMonth() + 1,
       'd+': date.getDate(),
@@ -59,26 +59,85 @@ export default class Lang {
     }
     return fmt;
   }
-   /**
-     * 获取距离当前日期第n天的日期
-     * @param {n} day 
-     */
-    static getDay(day) {
-      var today = new Date();
-      var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
-      today.setTime(targetday_milliseconds); //注意，这行是关键代码
-      var tYear = today.getFullYear();
-      var tMonth = today.getMonth();
-      var tDate = today.getDate();
-      tMonth = this.doHandleMonth(tMonth + 1);
-      tDate = this.doHandleMonth(tDate);
-      return tYear + "-" + tMonth + "-" + tDate;
+  /**
+    * 获取距离当前日期第n天的日期
+    * @param {n} day 
+    */
+  static getDay(day) {
+    var today = new Date();
+    var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+    today.setTime(targetday_milliseconds); //注意，这行是关键代码
+    var tYear = today.getFullYear();
+    var tMonth = today.getMonth();
+    var tDate = today.getDate();
+    tMonth = this.doHandleMonth(tMonth + 1);
+    tDate = this.doHandleMonth(tDate);
+    return tYear + "-" + tMonth + "-" + tDate;
   }
   static doHandleMonth(month) {
     var m = month;
     if (month.toString().length == 1) {
-        m = "0" + month;
+      m = "0" + month;
     }
     return m;
+  }
+  // 检验身份证
+  static checkIdCard(IDCard) {
+    var iSum = 0;
+    var info = "";
+    if (!/^\d{17}(\d|x)$/i.test(IDCard))
+      return {
+        status: false,
+        message: '输入的身份证长度或格式错误!'
+      };
+    IDCard = IDCard.replace(/x$/i, "a");
+    // if (areaID[parseInt(IDCard.substr(0, 2))] == null)
+    //   return {
+    //     status: false,
+    //     message: '输入的身份证有误!'
+    //   };
+    var sBirthday = IDCard.substr(6, 4) + "-" + Number(IDCard.substr(10, 2)) + "-" + Number(IDCard.substr(12, 2));
+    var d = new Date(sBirthday.replace(/-/g, "/"));
+    if (sBirthday != (d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate()))
+      return {
+        status: false,
+        message: '输入的身份证有误!'
+      };
+    for (var i = 17; i >= 0; i--)
+      iSum += (Math.pow(2, i) % 11) * parseInt(IDCard.charAt(17 - i), 11);
+    if (iSum % 11 != 1)
+      return {
+        status: false,
+        message: '输入的身份证有误!'
+      };
+    //aCity[parseInt(sId.substr(0,2))]+","+sBirthday+","+(sId.substr(16,1)%2?"男":"女");//此次还可以判断出输入的身份证号的人性别
+    return {
+      status: true,
+      message: '校验成功！'
+    };
+  }
+  // 身份证获取出生年月日
+  static getBirthdayByIdCard(idCard) {
+    // 校验身份证是否合法
+    let _r = this.checkIdCard(idCard)
+    if(! _r.status){
+      return {
+        ..._r
+      }
+    }
+    var birthStr;
+    if (15 == idCard.length) {
+      birthStr = idCard.charAt(6) + idCard.charAt(7);
+      if (parseInt(birthStr) < 10) {
+        birthStr = '20' + birthStr;
+      } else {
+        birthStr = '19' + birthStr;
+      }
+      birthStr = birthStr + '-' + idCard.charAt(8) + idCard.charAt(9) + '-' + idCard.charAt(10) + idCard.charAt(11);
+    } else if (18 == idCard.length) {
+      birthStr = idCard.charAt(6) + idCard.charAt(7) + idCard.charAt(8) + idCard.charAt(9) + '-' + idCard.charAt(10) + idCard.charAt(11) + '-' + idCard.charAt(12) + idCard.charAt(13);
+    }
+    return birthStr;
+  }
 }
-}
+

@@ -23,7 +23,7 @@ export default class config extends base {
     static async citys() {
         let url = `${this.baseUrl}/citys`;
         let params = {}
-        return this.get(url, params, false).then(res => {
+        return this.get(url, params, true).then(res => {
             return res;
         })
     }
@@ -33,25 +33,59 @@ export default class config extends base {
             cityCode: wepy.$instance.globalData.cityCode,
             ...opt
         }
-        return this.get(url, params, false).then(res => {
+        return this.get(url, params, true).then(res => {
             return res;
         })
     }
+
     static async getCourseInfo(id) {
         let url = `${this.baseUrl}/course/getInfo`;
         let params = {
             id
         }
-        return this.get(url, params, false).then(res => {
+        return this.get(url, params, true).then(res => {
             return res;
         })
     }
+    // 获取儿童列表
     static async getChildList() {
         let url = `${this.baseUrl}/member/getChildList`;
         let params = {
-            sessionId:wepy.getStorageSync('sessionId')
+            sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, false).then(res => {
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
+    // 获取监护人列表
+    static async getGuaList() {
+        let url = `${this.baseUrl}/member/getGuaList`;
+        let params = {
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
+    // 保存监护人
+    static async addGua(opt) {
+        let url = `${this.baseUrl}/member/addGua`;
+        let params = {
+            ...opt,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 保存儿童
+    static async updateChild(opt) {
+        let url = `${this.baseUrl}/member/updateChild`;
+        let params = {
+            ...opt,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true).then(res => {
             return res;
         })
     }

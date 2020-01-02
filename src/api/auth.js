@@ -7,7 +7,7 @@ export default class auth extends base {
   //  */
   static async login() {
     let self = this
-    if(!wepy.getStorageSync('sessionId')){
+    if(!wepy.$instance.globalData.sessionId){
       console.log('sessionId都没有，肯定要重新登录遍的啦')
       await self.toLogin()
       return false
@@ -39,7 +39,7 @@ export default class auth extends base {
     let params = {
       encryptedData:codes.encryptedData,
       iv:codes.iv,
-      sessionId:wepy.getStorageSync('sessionId')
+      sessionId:wepy.$instance.globalData.sessionId
     }
     const url = `${this.baseUrl}/member/getPhone.html`;
     return await this.post(url, params, false);
@@ -50,7 +50,7 @@ export default class auth extends base {
     let params = {
       encryptedData:codes.encryptedData,
       iv:codes.iv,
-      sessionId:wepy.getStorageSync('sessionId')
+      sessionId:wepy.$instance.globalData.sessionId
     }
     const url = `${this.baseUrl}/member/getUserinfo.html`;
     return await this.post(url, params, false);
@@ -74,10 +74,10 @@ export default class auth extends base {
     const url = `${this.baseUrl}/wxlogin`;
     let _code = await this.post(url, params, true, true);
     console.log(code)
-    wepy.setStorageSync('code',code);
     wepy.setStorageSync('mobile',_code.data.mobile);
     wepy.setStorageSync('isFans',_code.data.isFans);
-    wepy.setStorageSync('sessionId',_code.data.sessionId);
+    // wepy.setStorageSync('sessionId',_code.data.sessionId);
+    wepy.$instance.globalData.sessionId = _code.data.sessionId
   }
 
   /**
