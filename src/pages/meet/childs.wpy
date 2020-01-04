@@ -9,14 +9,14 @@
                 <view class="cu-list padding-bottom card-menu menu-avatar">
                     <view class="cu-item border-radius padding">
                         <view class="action">
-                            <view class="text-black text-df">儿童：<text class="text-orange">代练</text></view>
-                            <view class="text-gray text-sm">男 2020年1月1日 172cm 55kg 正常</view>
-                            <view class="text-black text-sm">证件号：450881199204240919</view>
-                            <view class="text-black text-df">监护人：<text class="text-orange">代练的爸爸</text></view>
-                            <view class="text-gray text-sm">男 2020年1月1日 172cm 55kg 正常</view>
-                            <view class="text-black text-sm">证件号：450881199204240919</view>
+                            <view class="text-black text-df">儿童：<text class="text-orange">{{item.name}}</text></view>
+                            <view class="text-gray text-sm">{{item.gender == 0? '女':'男'}} {{item.birthday}} {{item.height}}cm {{item.weight}}kg </view>
+                            <view class="text-black text-sm">证件号：{{item.cardNum}}</view>
+                            <view wx:if="{{item.guardianId}}" class="text-black text-df">监护人：<text class="text-orange">{{item.gname}}</text></view>
+                            <view wx:if="{{item.guardianId}}" class="text-gray text-sm">{{item.ggender == 0? '女':'男'}} {{item.gbirthday}}</view>
+                            <view wx:if="{{item.guardianId}}" class="text-black text-sm">证件号：{{item.gcardNum}}</view>
                         </view>
-                        <view class="edit text-yellow" @tap='toEdit(1)'>编辑</view>
+                        <view class="edit text-yellow" @tap='toEdit({{item.id}})'>编辑</view>
                     </view>
                 </view>
             </repeat>
@@ -47,6 +47,7 @@
                 childList
             } = await config.getChildList()
             this.childs = childList
+            this.$apply()
             // this.ListTouchDirection = 'right'
             // if (this.list.length > 0) {
             //     setTimeout(() => {

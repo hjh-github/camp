@@ -1,32 +1,47 @@
 
 <template>
     <view class="bg-white padding margin-top-sm dynamic {{isCard?'no-card':''}}">
+        <view class="cu-bar bg-white solid-bottom">
+            <view class="action">
+                <text><text class="padding-right-xs">整体评分</text>
+                <repeat for="{{5}}" key="index" index="index" item="item">
+                    <text class="cuIcon-{{index<3 ?'favorfill':'favor'}} text-orange"></text>
+                </repeat>
+                </text>
+            </view>
+            <view class="action text-orange" data-id="0" @tap="toMore">查看全部 >></view>
+        </view>
+        <view class=" padding-top bg-white">
+            <view data-id="0" @tap="toMore" class="cu-tag _flex__item round  line-orange margin-bottom-sm">全部<text wx:if="{{statistics.total}}">（{{statistics.total}}）</text></view>
+            <view data-id="6" @tap="toMore" class="cu-tag _flex__item round  line-orange margin-bottom-sm">有图<text wx:if="{{statistics.haveImages}}">（{{statistics.haveImages}}）</text></view>
+            <view data-id="1" @tap="toMore" class="cu-tag _flex__item round  line-orange margin-bottom-sm">领队专业<text wx:if="{{statistics.major}}">（{{statistics.major}}）</text></view>
+            <view data-id="2" @tap="toMore" class="cu-tag _flex__item round  line-orange margin-bottom-sm">教育意义<text wx:if="{{statistics.educational}}">（{{statistics.educational}}）</text></view>
+            <view data-id="3" @tap="toMore" class="cu-tag _flex__item round  line-orange margin-bottom-sm">安全<text wx:if="{{statistics.security}}">（{{statistics.security}}）</text></view>
+            <view data-id="4" @tap="toMore" class="cu-tag _flex__item round  line-orange margin-bottom-sm">性价比<text wx:if="{{statistics.affordable}}">（{{statistics.affordable}}）</text></view>
+        </view>
         <view class="cu-item">
             <view class="cu-list menu-avatar">
                 <view class="cu-item">
-                    <view class="cu-avatar round lg" style="left:0rpx;background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg);">
-                        <view class="cu-tag badge {{index%2==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}}"></view>
+                    <view class="cu-avatar round lg" style="left:0rpx;background-image:url({{CourseComment.userPhoto}});">
+                        <!-- <view class="cu-tag badge {{index%2==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}}"></view> -->
                     </view>
                     <view class="content flex-sub" style="left:116rpx;">
                         <view>
-                            <text class="padding-right-xs">戴大叔</text>
+                            <text class="padding-right-xs">{{CourseComment.userName}}</text>
                             <repeat for="{{5}}" key="index" index="index" item="item">
-                                <text class="cuIcon-{{index<3?'favorfill':'favor'}} text-orange"></text>
+                                <text class="cuIcon-{{index< CourseComment.grade?'favorfill':'favor'}} text-orange"></text>
                             </repeat>
                         </view>
-                        <view class="text-gray text-sm flex justify-between">
-                            2019-12-24 22:38:36
-                        </view>
+                        <view class="text-gray text-sm flex justify-between">{{CourseComment.createTime}}</view>
                     </view>
                 </view>
             </view>
-            <text class="text-content padding-bottom-sm" style="display:inline-block">    WE战队：应该是在小组赛中最让人感到意外的一支队伍，新人选手，特别是新人上单选手表现都非常出色，有冲劲；
-                　JDG战队：作为德玛西亚杯小组赛中唯一一支全胜晋级的队伍，伴随着打野选手Kanavi的成长，JDG应该也是本届德杯中配合最为默契的队伍；
-                　BLG战队：国豪与新中单FoFo的中野联动表现可圈可点；
-                　RW战队：有很多人把目光放在了EDG新人上单身上，但RW的新人中单Ruby也是在小组赛中表现最为出色的新人选手，连续三把稳定Carry的中路将RW带入了八强赛；</text>
+            <text class="text-content padding-bottom-sm" style="display:inline-block">{{CourseComment.content}}</text><text class="text-red">{{CourseComment.tag}}</text>
             <view class="bg-white " style="padding-top:0">
                 <view class="grid col-3 grid-square">
-                    <view class="bg-img" wx:for="{{9}}" wx:key style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big1000{{index+1}}.jpg);"></view>
+                    <repeat for="{{CourseComment.images}}" key="index" index="index" item="item">
+                        <view class="bg-img" style="background-image:url({{item}});"></view>
+                    </repeat>
                 </view>
             </view>
         </view>
@@ -36,13 +51,25 @@
 <script>
     import wepy from "wepy";
     export default class Dialog extends wepy.component {
+        props = ['statistics','CourseComment']
         data = {
             close: "/static/images/close.png"
         };
-        methods = {};
+        methods = {
+            toMore(e) {
+                let id = e.currentTarget.dataset.id || e.target.dataset.id
+                wepy.navigateTo({
+                    url: '/pages/meet/remarks?id=' + id
+                });
+            }
+        };
     }
 </script>
 
 <style lang="less" scoped>
-
+    ._flex__item {
+        width: 210rpx;
+        margin-left: 0 !important;
+        margin-right: 20rpx;
+    }
 </style>

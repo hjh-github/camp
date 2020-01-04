@@ -22,15 +22,15 @@
             </view>
             <view class="cu-item">
                 <view class="content">
-                    <text class="text-black text-df">本期已售4，</text>
-                    <text class="text-grey text-sm">累积已售{{model.campersNum}}</text>
+                    <!-- <text class="text-black text-df">本期已售4，</text> -->
+                    <text class="text-grey text-sm padding-left">累积已售{{model.campersNum}}</text>
                 </view>
                 <view class="action">
                     <view class="cu-avatar-group">
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10004.jpg);"></view>
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10003.jpg);"></view>
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10002.jpg);"></view>
-                        <view class="cu-avatar round sm" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big10001.jpg);"></view>
+                        <repeat for="{{companions}}" key="index" index="index" item="item">
+                            <view class="cu-avatar round sm" style="background-image:url({{item}});"></view>
+                        </repeat>
+                        
                     </view>
                 </view>
                 <view class="action">
@@ -43,7 +43,7 @@
 <script>
 import wepy from "wepy";
 export default class Dialog extends wepy.component {
-    props=['model']
+    props=['model','companions']
   data = {
     close: "/static/images/close.png"
   };

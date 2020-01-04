@@ -67,9 +67,31 @@ export default class config extends base {
             return res;
         })
     }
+    // 活动儿童详情
+    static async getChild(id) {
+        let url = `${this.baseUrl}/member/getChild`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
+    // 活动监护人详情
+    static async getGua(id) {
+        let url = `${this.baseUrl}/member/getGua`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
     // 保存监护人
-    static async addGua(opt) {
-        let url = `${this.baseUrl}/member/addGua`;
+    static async updateGua(opt) {
+        let url = `${this.baseUrl}/member/updateGua`;
         let params = {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
@@ -85,7 +107,29 @@ export default class config extends base {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true).then(res => {
+        return this.post(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 删除监护人
+    static async delGua(id) {
+        let url = `${this.baseUrl}/member/delGua`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 删除儿童信息
+    static async delChild(id) {
+        let url = `${this.baseUrl}/member/delChild`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true,true).then(res => {
             return res;
         })
     }

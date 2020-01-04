@@ -10,7 +10,7 @@
                 <!-- 选择规格 -->
                 <scroll-view wx:if="{{courseInfo.periodList.length}}" scroll-x class="sku-box bg-white margin-top-sm">
                     <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
-                        <view class="padding-sm sku-item">
+                        <view class="padding-sm sku-item" @tap="sku">
                             <view class="bg-orange padding light radius text-center shadow-blur">
                                 <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.overTimeStr}}</view>
                                 <view class="text-xs text-Abc">少量名额</view>
@@ -19,20 +19,14 @@
                     </repeat>
                 </scroll-view>
                 <!-- 更多信息 -->
-                <cInfo :model.sync="courseInfo"></cInfo>
-                <cRemake></cRemake>
+                <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
+                <cRemake :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
             </view>
             <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
                 <view class="flex text-center">
-                    <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">
-                        图文详情
-                    </view>
-                    <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">
-                        安全行程
-                    </view>
-                    <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">
-                        报名须知
-                    </view>
+                    <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
+                    <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
+                    <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
                 </view>
             </scroll-view>
             <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
@@ -53,28 +47,52 @@
                 </swiper-item>
             </swiper>
         </scroll-view>
+        <view class="cu-modal bottom-modal {{showSku?'show':''}}" bindtap="hideModal">
+            <view class="cu-dialog" @tap.stop="ret">
+                <view class="cu-bar bg-white padding-left">
+                    <text> 活动费：<text class="text-red text-price text-xxl">{{courseInfo.price}}</text></text>
+                </view>
+                <view class="padding-left padding-top-sm text-left ">
+                    选择营期
+                </view>
+                <view class="grid col-3 padding-sm">
+                    <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
+                        <view class="sku-item padding-xs">
+                            <view class="bg-{{index > 0? 'orange':'gray'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
+                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.overTimeStr}}</view>
+                            </view>
+                        </view>
+                    </repeat>
+                </view>
+                <view class="flex flex-sb padding padding-top-sm text-left ">
+                    <view> 购买数量 </view>
+                    <view class="text-lg ">
+                        <text @tap="minus" class="bg-{{num>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
+                        <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
+                        <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
+                </view>
+                <view @tap="plus()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
+            </view>
+        </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact">
-                                      <view class="cuIcon-weixin text-orange">
-                                      </view>
-                                      聊活动
-                                    </button>
+                                                    <view class="cuIcon-weixin text-orange"></view>聊活动
+                                                </button>
             <view class="action">
-                <view class="cuIcon-friend text-orange"></view>
-                结伴同行
+                <view class="cuIcon-friend text-orange"></view>邀请同伴
             </view>
-            <view class="bg-orange submit text-df">立即订购</view>
+            <view class="bg-orange submit text-lg">立即购买</view>
         </view>
     </view>
 </template>
 
 <script>
     import wepy from "wepy";
-    import cSwiper from "@/components/common/swiper"
-    import ctitle from "@/components/detaile/title"
-    import cInfo from "@/components/detaile/info"
-    import cRemake from "@/components/detaile/remake"
-    import config from "@/api/config"
+    import cSwiper from "@/components/common/swiper";
+    import ctitle from "@/components/detaile/title";
+    import cInfo from "@/components/detaile/info";
+    import cRemake from "@/components/detaile/remake";
+    import config from "@/api/config";
     export default class Dialog extends wepy.page {
         data = {
             TabCur: 0,
@@ -83,15 +101,21 @@
                 type: 1,
                 list: [{
                     id: 0,
-                    type: 'image',
-                    url: '',
-                    link: '/pages/meet/meet',
-                    linkType: 'switchTab'
+                    type: "image",
+                    url: "",
+                    link: "/pages/meet/meet",
+                    linkType: "switchTab"
                 }]
             },
             mainHeight: 0,
             courseInfo: {},
-            nodes: ['name', 'attrs', 'attrs']
+            nodes: ["name", "attrs", "attrs"],
+            num: 1,
+            showSku: false,
+            courseInx: 1,
+            companions: [],
+            statistics: {},
+            CourseComment: {}
         };
         components = {
             cSwiper,
@@ -105,25 +129,54 @@
         async onLoad(opt) {
             // 获取主内容高度，用于悬浮详情导航
             let view = wx.createSelectorQuery().select("#info-box");
-            view.fields({
-                size: true
-            }, data => {
-                console.log(data.height);
-                this.mainHeight = data.height
-            }).exec();
+            view
+                .fields({
+                        size: true
+                    },
+                    data => {
+                        console.log(data.height);
+                        this.mainHeight = data.height;
+                    }
+                )
+                .exec();
             let {
-                course
+                course,
+                companions,
+                statistics,
+                CourseComment
             } = await config.getCourseInfo(opt.id)
             this.swipers.list[0].url = course.image
-            course.courseChar = course.courseChar.split('|')
+            course.courseChar = course.courseChar.split("|")
             this.courseInfo = course
+            this.companions = companions
+            this.statistics = statistics
+            this.CourseComment = CourseComment
             console.log(this.courseInfo)
-            this.$apply()
+            this.$apply();
         }
         methods = {
+            ret() {
+                return false
+            },
             tabSelect(e) {
-                console.log(e)
-                this.TabCur = e.currentTarget.dataset.id || e.detail.current
+                console.log(e);
+                this.TabCur = e.currentTarget.dataset.id || e.detail.current;
+            },
+            hideModal() {
+                this.showSku = false
+            },
+            sku() {
+                this.showSku = true
+            },
+            plus() {
+                wx.vibrateShort()
+                this.num = this.num + 1
+            },
+            minus() {
+                if (this.num > 1) {
+                    wx.vibrateShort()
+                    this.num = this.num - 1
+                }
             }
         };
     }
@@ -136,10 +189,10 @@
 
 <style lang="less" scoped>
     .main-view {
-        height: calc(~'100% - 100rpx');
+        height: calc(~"100% - 100rpx");
     }
     .scroll-view {
-        height: calc(~'100% - 90rpx') !important;
+        height: calc(~"100% - 90rpx") !important;
     }
     .sku-item {
         display: inline-block;
@@ -148,5 +201,9 @@
     .sku-box {
         white-space: nowrap;
         width: 100%;
+    }
+    .plus {
+        height: 100rpx;
+        line-height: 100rpx;
     }
 </style>

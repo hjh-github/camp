@@ -1,0 +1,28 @@
+
+<template>
+    <view>
+    </view>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class Dialog extends wepy.page {
+  data = {
+    close: "/static/images/close.png"
+  };
+  onLoad(opt){
+      console.log(opt.id)
+  }
+  methods = {
+
+  };
+}
+</script>
+<style>
+page {
+  height: 100%;
+}
+</style>
+
+<style lang="less" scoped>
+</style>

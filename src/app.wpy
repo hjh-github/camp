@@ -35,12 +35,8 @@
       scene: null,
       base_store_id: "",
       appCode: "",
-      baseUrl: "https://wechat.hxqxly.com",
-      kdsUrl: "https://webapi.kuan1.cn",
-      fuUrl: "https://fu.kuan1.cn",
-      // baseUrl: "http://192.168.1.109:8809",
-      // kdsUrl: "https://twebapi.kuan1.cn",
-      // fuUrl: "https://testnewx1.kuan1.cn",
+      // baseUrl: "https://wechat.hxqxly.com",
+      baseUrl: "http://192.168.1.109:8809",
       themeColor: "#F4D000",
       cityCode:'',
       code:'',
@@ -140,7 +136,7 @@
       };
     }
     config = {
-      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile","pages/meet/childs","pages/meet/addChild","pages/meet/addMan"],
+      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks"],
       window: {
         backgroundTextStyle: "dark",
         navigationBarBackgroundColor: "#F4D000",

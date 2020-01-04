@@ -22,7 +22,7 @@
                 </view>
                 <view class="cu-form-group">
                     <view class="title">{{picker[cardInx].name}}</view>
-                    <input @input="input" data-target="cardNum" class="text-right" data-type="{{picker[cardInx].type}}" placeholder-class="text-sm" placeholder="请填写证件号码"></input>
+                    <input @input="input" data-target="cardNum" value="{{form.cardNum}}" class="text-right" data-type="{{picker[cardInx].type}}" placeholder-class="text-sm" placeholder="请填写证件号码"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">出生日期</view>
@@ -45,9 +45,9 @@
         </scroll-view>
         <view wx:if="{{id == '-1'}}" @tap="plus()" class="bg-yellow plus text-white text-center">保存</view>
         <view wx:else class="flex w100">
-            <view @tap="toEdit(-1)" class="flex__item  bg-red plus text-white text-center">
+            <view @tap="delGua()" class="flex__item  bg-red plus text-white text-center">
                 </text>删除</view>
-            <view @tap="toEdit(-1)" class="flex__item content bg-yellow plus text-white text-center">
+            <view @tap="plus()" class="flex__item content bg-yellow plus text-white text-center">
                 </text>修改</view>
         </view>
     </view>
@@ -59,6 +59,9 @@
     import Tips from "@/utils/Tips"
     import config from "@/api/config"
     export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "监护人信息编辑"
+        };
         data = {
             picker: [{
                 name: '内地身份证号',
@@ -96,7 +99,21 @@
             this.end_date = Lang.dateFormate(new Date(), 'yyyy-MM-dd')
             if (this.id == -1) {
                 this.form.birthdayStr = this.end_date
+            } else {
+                this.getGua(this.id)
             }
+        }
+        async getGua(id) {
+            let res = await config.getGua(id)
+            this.form = {
+                name: res.name,
+                cardType: res.cardType,
+                cardNum: res.cardNum,
+                gender: res.gender,
+                birthdayStr: res.birthday,
+                id: res.id
+            }
+            this.$apply()
         }
         methods = {
             PickerChange(e) {
@@ -136,7 +153,7 @@
                     Tips.toast('请填写监护人姓名', () => {}, 'none')
                     return false
                 }
-                let res = await config.addGua(this.form)
+                let res = await config.updateGua(this.form)
                 if (res.errcode == 200) {
                     Tips.toast('保存成功', () => {
                         wepy.navigateBack({
@@ -144,6 +161,25 @@
                         });
                     }, 'none')
                 }
+            },
+            async delGua() {
+                let self = this
+                wx.showModal({
+                    content: `确定删除监护人${self.form.name}吗？`,
+                    success:async function(res) {
+                        if (res.confirm) {
+                            let res = await config.delGua(self.id)
+                            if (res.errcode == 200) {
+                                Tips.toast('删除成功', () => {
+                                    wepy.navigateBack({
+                                        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                                    });
+                                }, 'none')
+                            }
+                        } else if (res.cancel) {
+                        }
+                    }
+                })
             }
         };
     }

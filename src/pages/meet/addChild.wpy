@@ -31,7 +31,7 @@
             <view>
                 <view class="cu-form-group">
                     <view class="title">姓名</view>
-                    <input @input="input" class="text-right" data-target="name" placeholder-class="text-sm" placeholder="请填写儿童姓名"></input>
+                    <input @input="input" value="{{form.name}}" class="text-right" data-target="name" placeholder-class="text-sm" placeholder="请填写儿童姓名"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">证件类型</view>
@@ -43,7 +43,7 @@
                 </view>
                 <view class="cu-form-group">
                     <view class="title">{{picker[cardInx].name}}</view>
-                    <input @input="input" class="text-right" data-target="cardNum" data-type="{{picker[cardInx].type}}" placeholder-class="text-sm" placeholder="请填写证件号码"></input>
+                    <input @input="input" class="text-right" value="{{form.cardNum}}" data-target="cardNum" data-type="{{picker[cardInx].type}}" placeholder-class="text-sm" placeholder="请填写证件号码"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">出生日期</view>
@@ -64,11 +64,11 @@
                 </view>
                 <view class="cu-form-group">
                     <view class="title">身高（cm）</view>
-                    <input @input="input" class="text-right" data-target="height" placeholder-class="text-sm" placeholder="请填写身高（cm），如 123"></input>
+                    <input @input="input" class="text-right" value="{{form.height}}" data-target="height" placeholder-class="text-sm" placeholder="请填写身高（cm），如 123"></input>
                 </view>
                 <view class="cu-form-group">
                     <view class="title">体重（KG）</view>
-                    <input @input="input" class="text-right" data-target="weight" placeholder-class="text-sm" placeholder="请填写体重（KG），如 32"></input>
+                    <input @input="input" class="text-right" value="{{form.weight}}" data-target="weight" placeholder-class="text-sm" placeholder="请填写体重（KG），如 32"></input>
                 </view>
             </view>
             <view class="cu-bar bg-white margin-top solid-bottom ">
@@ -81,7 +81,6 @@
             </view>
             <view class="cu-list menu bg-white padding-top-sm margin-bottom">
                 <view class="padding-left {{!gues.length?'padding-bottom':''}}"><text class="text-grey text-sm ">请选择儿童的一名监护人：</text><text @tap.stop="toEdit(-1)" class="text-yellow" wx:if="{{!gues.length}}">未添加监护人,去添加 >> </text></view>
-                
                 <repeat for="{{gues}}" key="index" index="index" item="item">
                     <view wx:if="{{gues.length}}" @tap="checkMan({{index}})" class="cu-item flex flex-c lg">
                         <view class="action text-xl padding-right">
@@ -100,9 +99,9 @@
         </scroll-view>
         <view wx:if="{{id=='-1'}}" @tap="plus()" class="bg-yellow plus text-white text-center">保存</view>
         <view wx:else class="flex w100">
-            <view @tap="del(-1)" class="flex__item  bg-red plus text-white text-center">
+            <view @tap="delChild()" class="flex__item  bg-red plus text-white text-center">
                 </text>删除</view>
-            <view @tap="plus(-1)" class="flex__item content bg-yellow plus text-white text-center">
+            <view @tap="plus()" class="flex__item content bg-yellow plus text-white text-center">
                 </text>修改</view>
         </view>
     </view>
@@ -114,6 +113,9 @@
     import Tips from "@/utils/Tips"
     import config from "@/api/config"
     export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "儿童信息编辑"
+        };
         data = {
             modalName: '',
             gues: [],
@@ -150,7 +152,7 @@
                 height: '',
                 weight: '',
                 shapes: 1,
-                guardianId:''
+                guardianId: ''
             },
             rules: [{
                     name: 'name',
@@ -166,25 +168,66 @@
                 }, {
                     name: 'weight',
                     msg: '请填写儿童体重'
+                }, {
+                    name: 'guardianId',
+                    msg: '请选择一位监护人'
                 }
-            ]
+            ],
+            isload: true
         };
         async onLoad(opt) {
             this.id = opt.id
             this.end_date = Lang.dateFormate(new Date(), 'yyyy-MM-dd')
+            await this.updata()
             if (this.id == -1) {
                 this.form.birthdayStr = this.end_date
             }
+            this.isload = false
         }
-        async onShow() {
+        onShow() {
+            if (this.isload) {
+                return false
+            }
+            this.updata()
+        }
+        async updata() {
+            await this.getGuaList()
+            if (this.id != '-1') {
+                await this.getChild(this.id)
+            }
+            // 重新选中，监护人项
+            if (this.gues.length) {
+                if (this.form.guardianId) {
+                    this.manInx = this.gues.findIndex(e => {
+                        return e.id == this.form.guardianId
+                    })
+                } else {
+                    this.form.guardianId = this.gues[this.manInx].id
+                }
+            }
+            this.$apply()
+        }
+        async getGuaList() {
             let {
                 guaList
             } = await config.getGuaList()
             this.gues = guaList
-            if (this.id == -1 && this.gues.length) {
-                this.form.guardianId = this.gues[0].id
-            }
             this.$apply()
+        }
+        async getChild(id) {
+            let res = await config.getChild(id)
+            this.form = {
+                name: res.name,
+                cardType: res.cardType,
+                cardNum: res.cardNum,
+                gender: res.gender,
+                birthdayStr: res.birthday,
+                height: res.height,
+                weight: res.weight,
+                shapes: res.shapes,
+                guardianId: res.guardianId,
+                id: res.id
+            }
         }
         rulesFn() {
             let flag = true
@@ -246,7 +289,33 @@
                         return false
                     }
                     let res = await config.updateChild(this.form)
+                    if (res.errcode == 200) {
+                        Tips.toast('保存成功', () => {
+                            wepy.navigateBack({
+                                delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                            });
+                        }, 'none')
+                    }
                 }
+            },
+            async delChild() {
+                let self = this
+                wx.showModal({
+                    content: `确定删除${self.form.name}的儿童信息吗？`,
+                    success:async function(res) {
+                        if (res.confirm) {
+                            let res = await config.delChild(self.id)
+                            if (res.errcode == 200) {
+                                Tips.toast('删除成功', () => {
+                                    wepy.navigateBack({
+                                        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                                    });
+                                }, 'none')
+                            }
+                        } else if (res.cancel) {
+                        }
+                    }
+                })
             }
         };
     }
