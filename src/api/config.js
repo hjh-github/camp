@@ -133,5 +133,27 @@ export default class config extends base {
             return res;
         })
     }
+    // 下单 
+    static async ordercommit(opt) {
+        let url = `${this.baseUrl}/order/ordercommit`;
+        let params = {
+            ...opt,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, false,true).then(res => {
+            return res;
+        })
+    }
+    // 支付 
+    static async wxpaytopay(opt) {
+        let url = `${this.baseUrl}/wxpay/topay`;
+        let params = {
+            ...opt,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, false,true).then(res => {
+            return res;
+        })
+    }
 }
 

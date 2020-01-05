@@ -73,6 +73,7 @@ export default class WxUtils {
   }
 
   static wxPay(param) {
+    console.log(param)
     return new Promise((resolve, reject) => {
       wx.requestPayment({
         ...param,

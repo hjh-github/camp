@@ -8,7 +8,7 @@
                 <!-- 标题部分 -->
                 <ctitle :model.sync="courseInfo"></ctitle>
                 <!-- 选择规格 -->
-                <scroll-view wx:if="{{courseInfo.periodList.length}}" scroll-x class="sku-box bg-white margin-top-sm">
+                <scroll-view wx:if="{{courseInfo.periodList.length}}" scroll-x class="sku-box bg-white margin-top-sm ">
                     <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
                         <view class="padding-sm sku-item" @tap="sku">
                             <view class="bg-orange padding light radius text-center shadow-blur">
@@ -58,7 +58,7 @@
                 <view class="grid col-3 padding-sm">
                     <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
                         <view class="sku-item padding-xs">
-                            <view class="bg-{{index > 0? 'orange':'gray'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
+                            <view @tap="course({{index}})" class="bg-{{item.signState != 2? 'orange':'gray dont-click'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
                                 <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.overTimeStr}}</view>
                             </view>
                         </view>
@@ -71,17 +71,17 @@
                         <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
                         <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
                 </view>
-                <view @tap="plus()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
+                <view @tap="buy()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
             </view>
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact">
-                                                    <view class="cuIcon-weixin text-orange"></view>聊活动
-                                                </button>
+                                                        <view class="cuIcon-weixin text-orange"></view>聊活动
+                                                    </button>
             <view class="action">
                 <view class="cuIcon-friend text-orange"></view>邀请同伴
             </view>
-            <view class="bg-orange submit text-lg">立即购买</view>
+            <view class="bg-orange submit text-lg" @tap="sku">立即购买</view>
         </view>
     </view>
 </template>
@@ -93,6 +93,8 @@
     import cInfo from "@/components/detaile/info";
     import cRemake from "@/components/detaile/remake";
     import config from "@/api/config";
+    import WxUtils from "@/utils/WxUtils";
+    import Tips from "@/utils/Tips";
     export default class Dialog extends wepy.page {
         data = {
             TabCur: 0,
@@ -112,7 +114,7 @@
             nodes: ["name", "attrs", "attrs"],
             num: 1,
             showSku: false,
-            courseInx: 1,
+            courseInx: -1,
             companions: [],
             statistics: {},
             CourseComment: {}
@@ -148,6 +150,7 @@
             this.swipers.list[0].url = course.image
             course.courseChar = course.courseChar.split("|")
             this.courseInfo = course
+            wepy.$instance.globalData.courseInfo = course
             this.companions = companions
             this.statistics = statistics
             this.CourseComment = CourseComment
@@ -177,6 +180,44 @@
                     wx.vibrateShort()
                     this.num = this.num - 1
                 }
+            },
+            course(inx) {
+                this.courseInx = inx
+            },
+            async buy() {
+                if (this.courseInx == -1) {
+                    Tips.toast("请选择一个营期", res => {},'none')
+                    return false
+                }
+                let params = {
+                    childIds: '1',
+                    courseId: this.courseInfo.id,
+                    courseNum: this.num,
+                    periodId: this.courseInfo.periodList[this.courseInx].id,
+                    remark: '888',
+                    paymentType: 1
+                }
+                wepy.$instance.globalData.orderInfo = params
+                // wepy.navigateTo({ url: './sureOrder' });
+                
+                // console.log(params)
+                // return false
+                let res = await config.ordercommit(params)
+                if (res.errcode == 200) {
+                    let _code = await config.wxpaytopay({
+                        orderPaySn: res.data.paySn,
+                        describe: '描述',
+                        money: 1
+                    })
+                    WxUtils.wxPay(_code.data).then(res => {
+                        Tips.toast("支付成功", res => {
+                            WxUtils.backOrRedirect(
+                                `/pages/home/index`
+                            );
+                        });
+                    })
+                }
+                console.log(res)
             }
         };
     }
@@ -188,6 +229,9 @@
 </style>
 
 <style lang="less" scoped>
+    .dont-click {
+        pointer-events: none;
+    }
     .main-view {
         height: calc(~"100% - 100rpx");
     }

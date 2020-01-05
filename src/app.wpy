@@ -36,11 +36,13 @@
       base_store_id: "",
       appCode: "",
       // baseUrl: "https://wechat.hxqxly.com",
-      baseUrl: "http://192.168.1.109:8809",
+      baseUrl: "http://10.0.3.150:8809",
       themeColor: "#F4D000",
       cityCode:'',
       code:'',
-      sessionId:''
+      sessionId:'',
+      courseInfo:{},
+      orderInfo:{}
     };
     constructor() {
       super();
@@ -136,7 +138,7 @@
       };
     }
     config = {
-      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks"],
+      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile","pages/detaile/sureOrder","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks"],
       window: {
         backgroundTextStyle: "dark",
         navigationBarBackgroundColor: "#F4D000",
