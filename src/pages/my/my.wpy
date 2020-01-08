@@ -11,31 +11,17 @@
       <!-- <image src="https://raw.githubusercontent.com/weilanwl/ColorUI/master/demo/images/wave.gif" mode="scaleToFill" class="gif-wave"></image> -->
     </view>
     <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx">
-      <view class="flex flex-sub flex-direction">
-        <view class="text-xxl text-orange"><text class="cuIcon-apps"></text></view>
-        <view>
-          全部</view>
-      </view>
-      <view class="flex flex-sub flex-direction">
-        <view class="text-xxl text-orange"><text class="cuIcon-pay"></text></view>
-        <view>
-          待付款</view>
-      </view>
-      <view class="flex flex-sub flex-direction">
-        <view class="text-xxl text-orange"><text class="cuIcon-activity"></text></view>
-        <view>
-          待参加</view>
-      </view>
-      <view class="flex flex-sub flex-direction">
-        <view class="text-xxl text-orange"><text class="cuIcon-comment"></text></view>
-        <view>
-          待评价</view>
-      </view>
-      <view class="flex flex-sub flex-direction">
-        <view class="text-xxl text-orange"><text class="cuIcon-refund"></text></view>
-        <view>
-          退款售后</view>
-      </view>
+      <repeat for="{{orderType}}" key="index" index="index" item="item">
+        <view class="flex flex-sub flex-direction" @tap="toOrder({{item.orderState}})">
+          <view class="text-xxl text-orange order-nav"><text class="{{item.icon}}"></text>
+            <view class="cu-tag badge">
+              <block>{{item.badge>99?"99+":item.badge}}</block>
+            </view>
+          </view>
+          <view>
+            {{item.name}}</view>
+        </view>
+      </repeat>
     </view>
     <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
       <view class="cu-item arrow">
@@ -69,7 +55,29 @@
       navigationBarTitleText: "我的"
     };
     data = {
-      close: "/static/images/close.png"
+      orderType: [{
+          name: '全部',
+          orderState: '0',
+          icon: 'cuIcon-apps'
+        }, {
+          name: '未付款',
+          orderState: '1',
+          icon: 'cuIcon-pay'
+        },
+        {
+          name: '待参加',
+          orderState: '2',
+          icon: 'cuIcon-activity'
+        }, {
+          name: '已完成',
+          orderState: '3',
+          icon: 'cuIcon-comment'
+        }, {
+          name: '待拼团',
+          orderState: '5',
+          icon: 'cuIcon-refund'
+        }
+      ]
     };
     methods = {
       childs() {
@@ -84,6 +92,11 @@
             });
           }, 'none')
         }
+      },
+      toOrder(id) {
+        wepy.navigateTo({
+          url: './orders?id=' + id
+        });
       }
     };
   }
@@ -91,6 +104,9 @@
 <style>
   page {
     height: 100%;
+  }
+  .order-nav {
+    position: relative;
   }
 </style>
 

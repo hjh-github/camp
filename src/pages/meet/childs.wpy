@@ -43,13 +43,15 @@
             modalName: null,
             childs: [],
             isget: false,
-            childsed: {}
+            childsed: {},
+            len: 1
         };
         config = {
             navigationBarTitleText: "身份信息管理"
         };
         onLoad(opt) {
             this.isget = opt.type == 1
+            this.len = opt.len
         }
         async onShow() {
             let {
@@ -69,6 +71,20 @@
             //     }, 300)
             // }
         }
+        getArr() {
+            let arr = []
+            console.log(this.childsed)
+            for (let i in this.childsed) {
+                let o = this.childsed[i];
+                arr.push(o)
+            }
+            wepy.$instance.globalData.childs = arr
+            if (arr.length == this.len) {
+                wepy.navigateBack({
+                    delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                });
+            }
+        }
         methods = {
             toEdit(id) {
                 wepy.navigateTo({
@@ -85,15 +101,9 @@
                 } else {
                     this.childsed[e.id] = e
                 }
+                this.getArr()
             },
             sureChilds() {
-                let arr = []
-                console.log(this.childsed)
-                for (let i in this.childsed) {
-                    let o = this.childsed[i];
-                    arr.push(o)
-                }
-                wepy.$instance.globalData.childs = arr
                 wepy.navigateBack({
                     delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
                 });

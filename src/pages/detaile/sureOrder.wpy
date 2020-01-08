@@ -5,7 +5,7 @@
       <view class="flex bg-white padding">
         <image class="img" src="{{orderInfo.image}}" mode="aspectFill">
         </image>
-        <view class="margin-left flex flex-y flex-sb">
+        <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
           <view>{{orderInfo.courseTittle}}</view>
           <view class="flex flex-sb"><text>{{payParams.periodName}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{payParams.courseNum}}</text>
           </view>
@@ -68,6 +68,9 @@
   import Tips from "@/utils/Tips"
   import WxUtils from "@/utils/WxUtils"
   export default class Dialog extends wepy.page {
+    config = {
+      navigationBarTitleText: "确认订单"
+    };
     data = {
       orderInfo: {},
       payParams: {},
@@ -76,11 +79,12 @@
     onLoad() {
       this.payParams = wepy.$instance.globalData.orderInfo
       this.orderInfo = wepy.$instance.globalData.courseInfo
-      console.log(this.orderInfo)
-      console.log(this.payParams)
     }
     onShow() {
       this.childs = wepy.$instance.globalData.childs
+    }
+    onUnload(){
+      this.childs = wepy.$instance.globalData.childs = []
     }
     computed = {
       orderPrice() {
@@ -111,12 +115,12 @@
       },
       getChilds() {
         wepy.navigateTo({
-          url: '/pages/meet/childs?type=1'
+          url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
         });
       },
       async pay() {
-        if (!this.childs.length) {
-          Tips.toast("请先选择出行人", res => {}, 'none');
+        if (!this.childs.length || this.childs.length != this.payParams.courseNum) {
+          Tips.toast(!this.childs.length?"请先选择出行人":"购买数量与出行人数量不匹配", res => {}, 'none');
           return false
         }
         let ids = this.childs.map(e => {
