@@ -139,6 +139,7 @@
                         } else if (typeof _res == 'string') {
                             this.form.birthdayStr = _res
                         }
+                        this.form.gender = Lang.getSexByIdCard(value)
                     }
                 }
                 this.form[target] = value

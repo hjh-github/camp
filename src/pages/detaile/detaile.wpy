@@ -12,7 +12,7 @@
                     <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
                         <view class="padding-sm sku-item" @tap="sku">
                             <view class="bg-orange padding light radius text-center shadow-blur">
-                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.overTimeStr}}</view>
+                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
                                 <view class="text-xs text-Abc">少量名额</view>
                             </view>
                         </view>
@@ -59,7 +59,7 @@
                     <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
                         <view class="sku-item padding-xs">
                             <view @tap="course({{index}})" class="bg-{{item.signState != 2? 'orange':'gray dont-click'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
-                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.overTimeStr}}</view>
+                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
                             </view>
                         </view>
                     </repeat>
@@ -190,34 +190,16 @@
                     return false
                 }
                 let params = {
-                    childIds: '1',
+                    childIds: '',
                     courseId: this.courseInfo.id,
                     courseNum: this.num,
                     periodId: this.courseInfo.periodList[this.courseInx].id,
-                    remark: '888',
-                    paymentType: 1
+                    remark: '',
+                    paymentType: 1,
+                    periodName:`${this.courseInfo.periodList[this.courseInx].startTimeStr} ~ ${this.courseInfo.periodList[this.courseInx].endTimeStr}`
                 }
                 wepy.$instance.globalData.orderInfo = params
-                // wepy.navigateTo({ url: './sureOrder' });
-                
-                // console.log(params)
-                // return false
-                let res = await config.ordercommit(params)
-                if (res.errcode == 200) {
-                    let _code = await config.wxpaytopay({
-                        orderPaySn: res.data.paySn,
-                        describe: '描述',
-                        money: 1
-                    })
-                    WxUtils.wxPay(_code.data).then(res => {
-                        Tips.toast("支付成功", res => {
-                            WxUtils.backOrRedirect(
-                                `/pages/home/index`
-                            );
-                        });
-                    })
-                }
-                console.log(res)
+                wepy.navigateTo({ url: './sureOrder' });
             }
         };
     }

@@ -139,5 +139,15 @@ export default class Lang {
     }
     return birthStr;
   }
+  static getSexByIdCard (idCard) {
+    if(idCard.length == 15) {
+      return idCard.substring(14, 15) % 2;
+    } else if(idCard.length == 18) {
+      return idCard.substring(14, 17) % 2;
+    } else {
+      //不是15或者18,null
+      return '';
+    }
+  }
 }
 

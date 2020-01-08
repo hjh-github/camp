@@ -6,10 +6,13 @@
         </view>
         <scroll-view wx:if="{{childs.length}}" class="main " scroll-y>
             <repeat for="{{childs}}" key="index" index="index" item="item">
-                <view class="cu-list padding-bottom card-menu menu-avatar">
+                <view @tap="getChilds({{item}})" class="cu-list padding-bottom card-menu menu-avatar">
                     <view class="cu-item border-radius padding">
+                        <view class="text-xxl padding-right">
+                            <text class="cuIcon-{{childsed[item.id]?'roundcheck': 'round'}} text-{{!item.guardianId ? 'gray':'yellow'}} "></text>
+                        </view>
                         <view class="action">
-                            <view class="text-black text-df">儿童：<text class="text-orange">{{item.name}}</text></view>
+                            <view class="text-black text-df">儿童：<text class="text-orange">{{item.name}}</text> <text wx:if="{{!item.guardianId && isget}}" class="text-sm text-red margin-left">（请先添加监护人）</text></view>
                             <view class="text-gray text-sm">{{item.gender == 0? '女':'男'}} {{item.birthday}} {{item.height}}cm {{item.weight}}kg </view>
                             <view class="text-black text-sm">证件号：{{item.cardNum}}</view>
                             <view wx:if="{{item.guardianId}}" class="text-black text-df">监护人：<text class="text-orange">{{item.gname}}</text></view>
@@ -24,7 +27,8 @@
         <view wx:else @tap="toEdit(-1)" class="main flex flex-c flex-jc text-yellow">
             尚未添加身份信息,去添加 >>
         </view>
-        <view @tap="toEdit(-1)" class="bg-yellow plus text-white text-center"><text class="cuIcon-add text-xl text-wihit padding-right-xs"></text>新增身份信息</view>
+        <view wx:if="{{!isget}}" @tap="toEdit(-1)" class="bg-yellow plus text-white text-center"><text class="cuIcon-add text-xl text-wihit padding-right-xs"></text>新增身份信息</view>
+        <view wx:else @tap="sureChilds()" class="bg-yellow plus text-white text-center">确定</view>
     </view>
 </template>
 
@@ -37,12 +41,17 @@
             ListTouchStart: 0,
             ListTouchDirection: null,
             modalName: null,
-            childs: []
+            childs: [],
+            isget: false,
+            childsed: {}
         };
         config = {
             navigationBarTitleText: "身份信息管理"
         };
-      async onShow() {
+        onLoad(opt) {
+            this.isget = opt.type == 1
+        }
+        async onShow() {
             let {
                 childList
             } = await config.getChildList()
@@ -64,6 +73,29 @@
             toEdit(id) {
                 wepy.navigateTo({
                     url: './addChild?id=' + id
+                });
+            },
+            getChilds(e) {
+                console.log(e)
+                if (!this.isget || !e.guardianId) {
+                    return false
+                }
+                if (this.childsed[e.id]) {
+                    delete this.childsed[e.id]
+                } else {
+                    this.childsed[e.id] = e
+                }
+            },
+            sureChilds() {
+                let arr = []
+                console.log(this.childsed)
+                for (let i in this.childsed) {
+                    let o = this.childsed[i];
+                    arr.push(o)
+                }
+                wepy.$instance.globalData.childs = arr
+                wepy.navigateBack({
+                    delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
                 });
             }
             // ListTouchStart(e) {
