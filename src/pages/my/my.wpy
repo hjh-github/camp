@@ -14,8 +14,8 @@
       <repeat for="{{orderType}}" key="index" index="index" item="item">
         <view class="flex flex-sub flex-direction" @tap="toOrder({{item.orderState}})">
           <view class="text-xxl text-orange order-nav"><text class="{{item.icon}}"></text>
-            <view class="cu-tag badge">
-              <block>{{item.badge>99?"99+":item.badge}}</block>
+            <view wx:if="{{myInfo.orderStats[item.orderState]}}" class="cu-tag badge">
+              <block>{{myInfo.orderStats[item.orderState]>99?"99+":myInfo.orderStats[item.orderState]}}</block>
             </view>
           </view>
           <view>
@@ -50,6 +50,7 @@
 <script>
   import wepy from "wepy";
   import Tips from "@/utils/Tips"
+  import config from "@/api/config"
   export default class My extends wepy.page {
     config = {
       navigationBarTitleText: "我的"
@@ -60,7 +61,7 @@
           orderState: '0',
           icon: 'cuIcon-apps'
         }, {
-          name: '未付款',
+          name: '待付款',
           orderState: '1',
           icon: 'cuIcon-pay'
         },
@@ -77,8 +78,14 @@
           orderState: '5',
           icon: 'cuIcon-refund'
         }
-      ]
+      ],
+      myInfo:{}
     };
+   async onLoad(){
+     let res = await config.center()
+     this.myInfo = res
+     console.log(res)
+    }
     methods = {
       childs() {
         if (wepy.getStorageSync('mobile')) {

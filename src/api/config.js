@@ -142,7 +142,7 @@ export default class config extends base {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, false,true).then(res => {
+        return this.post(url, params, true,true).then(res => {
             return res;
         })
     }
@@ -153,7 +153,7 @@ export default class config extends base {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, false,true).then(res => {
+        return this.post(url, params, true,true).then(res => {
             return res;
         })
     }
@@ -164,7 +164,7 @@ export default class config extends base {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, false,true).then(res => {
+        return this.get(url, params, true,true).then(res => {
             return res;
         })
     }
@@ -175,7 +175,28 @@ export default class config extends base {
             id,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, false,true).then(res => {
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 取消订单
+    static async cancalorder(id) {
+        let url = `${this.baseUrl}/member/cancalorder`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 取消订单
+    static async center() {
+        let url = `${this.baseUrl}/member/center`;
+        let params = {
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true,false).then(res => {
             return res;
         })
     }

@@ -70,7 +70,7 @@
       loading
     }
     config = {
-      navigationBarTitleText: "上线就能赚大钱",
+      navigationBarTitleText: "华心桥体验营",
       enablePullDownRefresh: true
     };
     async onLoad() {

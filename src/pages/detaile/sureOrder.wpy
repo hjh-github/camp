@@ -137,7 +137,7 @@
           WxUtils.wxPay(_code.data).then(res => {
             Tips.toast("支付成功", res => {
               WxUtils.backOrRedirect(
-                `/pages/home/index`
+                `/pages/my/order?id=` + res.data.id
               );
             });
           })

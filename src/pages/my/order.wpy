@@ -55,12 +55,43 @@
                     </view>
                 </view>
             </view>
+            <view class="cu-list menu border margin-top bg-white">
+                <view class="cu-item">
+                    <view class="content">
+                        <text>订单号</text>
+                    </view>
+                    <view class="action">
+                        <text class="text-grey">{{orderInfo.orderSn}}</text>
+                    </view>
+                </view>
+            </view>
+            <view class="cu-bar bg-white solid-bottom margin-top">
+                <view class="action">
+                    <text class="cuIcon-titles text-orange "></text> 消费码
+                </view>
+            </view>
+            <view class="cu-list menu border bg-white margin-bottom">
+                <repeat for="{{orderInfo.ordersConsumeCodes}}" key="index" index="index" item="item">
+                    <view class="cu-item">
+                        <view class="content">
+                            <text>{{item.childName}}</text>
+                        </view>
+                        <view class="content">
+                            <text class="text-grey">{{code||''}}</text>
+                        </view>
+                        <view class="action">
+                            <text class="text-grey">{{states[item.state]}}</text>
+                        </view>
+                    </view>
+                </repeat>
+            </view>
         </scroll-view>
         <view class="cu-bar tabbar border shop solid-top bg-gray">
-            <view class="action text-left padding-left " style="width:400rpx;">
+            <view wx:if="{{item.orderState == 1}}" class="action text-left padding-left" @tap="cancle({{orderInfo.id}})" style="width:400rpx;">
                 <text class="text-df">取消订单</text>
             </view>
-            <view class="bg-orange submit text-lg" @tap="pay">支付订单</view>
+            <view wx:if="{{item.orderState == 1}}" class="bg-orange submit text-lg" @tap="pay({{orderInfo.id}})">支付订单</view>
+            <view wx:if="{{item.orderState == 3}}" class="bg-orange submit text-lg"> 订单已完成 </view>
         </view>
     </view>
 </template>
@@ -75,7 +106,14 @@
             navigationBarTitleText: "订单详情"
         };
         data = {
-            orderInfo: {}
+            orderInfo: {},
+            states: {
+                1: '待付款',
+                2: '待使用',
+                3: '已使用',
+                4: '已失效'
+            },
+            id:''
         };
         async loadData(id) {
             let res = await config.orderdetail(id)
@@ -83,10 +121,35 @@
             this.$apply()
         }
         async onLoad(opt) {
+            this.id = opt.id
             await this.loadData(opt.id)
         }
+        async onPullDownRefresh() {
+            await this.loadData(this.id)
+            wx.stopPullDownRefresh()
+        }
         methods = {
-            async pay() {
+            cancle(id) {
+                let self = this
+                wx.showModal({
+                    content: '取消订单后将无法恢复！是否继续？',
+                    // confirmText:,
+                    success: async function(res) {
+                        if (res.confirm) {
+                            let res = await config.cancalorder(id)
+                            if (res.errcode == 200) {
+                                wepy.navigateBack({
+                                    delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                                });
+                            }
+                            console.log(res)
+                        } else if (res.cancel) {
+                            console.log('用户点击取消')
+                        }
+                    }
+                })
+            },
+            async pay(id) {
                 let _code = await config.wxpaytopay({
                     orderPaySn: this.orderInfo.paySn,
                     describe: '描述',
@@ -94,7 +157,7 @@
                 })
                 WxUtils.wxPay(_code.data).then(res => {
                     Tips.toast("支付成功", res => {
-                        this.loadData(opt.id)
+                        this.loadData(id)
                     });
                 })
             }
