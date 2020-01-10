@@ -34,6 +34,7 @@
                         <view class="action">
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn line-orange text-orange" bindtap="cancle({{item.id}})">取消订单</button>
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn bg-orange margin-left" bindtap="pay({{item}})">支付订单</button>
+                            <button class="cu-btn bg-orange margin-left" bindtap="remark({{item.id}})">去评价</button>
                         </view>
                     </view>
                 </view>
@@ -82,7 +83,7 @@
                 4: '已取消',
                 5: '拼团中'
             },
-            orderStats:{},
+            orderStats: {},
             TabCur: 0,
             scrollLeft: 0,
             pageIndex: 1,
@@ -135,6 +136,11 @@
             }
         }
         methods = {
+            remark(id) {
+                wepy.navigateTo({
+                    url: '/pages/meet/commiRemarke?id=' + id
+                });
+            },
             async getMore() {
                 if (this.loadmoring) {
                     return false
@@ -198,9 +204,9 @@
 </style>
 
 <style lang="less" scoped>
-    .badge{
+    .badge {
         right: 0;
-        top:20rpx;
+        top: 20rpx;
     }
     .posi {
         position: relative;

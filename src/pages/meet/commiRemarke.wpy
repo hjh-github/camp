@@ -1,0 +1,189 @@
+
+<template>
+    <view class="h100">
+        <scroll-view scroll-y class="main-view">
+            <view class="flex bg-white padding">
+                <image class="img" src="{{orderInfo.courseImage}}" mode="aspectFill">
+                </image>
+                <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
+                    <view>{{orderInfo.courseTittle}}</view>
+                    <view class="flex flex-sb"><text>{{orderInfo.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{orderInfo.courseNum}}</text>
+                    </view>
+                </view>
+            </view>
+            <view class="cu-bar bg-white margin-top" style="justify-content: flex-start">
+                <view class="action">
+                    课程满意度
+                </view>
+                <view class="action margin-left">
+                    <repeat for="{{5}}" key="index" index="index" item="item">
+                        <text @tap="favor({{index}})" class="cuIcon-{{index<favor ?'favorfill':'favor'}} text-orange"></text>
+                    </repeat>
+                </view>
+            </view>
+            <view class="cu-form-group align-start" style="position:relative">
+                <textarea maxlength="-1" class="textarea" disabled="{{modalName!=null}}" bindinput="textareaBInput" placeholder="写评论"></textarea>
+                <!-- <view class="num">{{payParams.remark.length}} / 140</view> -->
+            </view>
+            <view class="cu-bar bg-white">
+                <view class="action">
+                    图片上传
+                </view>
+                <view class="action">
+                    {{imgList.length}}/9
+                </view>
+            </view>
+            <view class="cu-form-group margin-bottom">
+                <view class="grid col-3 grid-square flex-sub">
+                    <view class="bg-img" wx:for="{{imgList}}" wx:key="{{index}}" bindtap="ViewImage" data-url="{{imgList[index]}}">
+                        <image src='{{imgList[index]}}' mode='aspectFill'></image>
+                        <view wx:if="{{imgloading}}" class="uploading flex flex-c flex-jc" data-index="{{index}}">
+                            <text> 上传中…</text>
+                            <!-- <text wx:if="{{index > imgloaded}}"> 等待上传 </text> -->
+                        </view>
+                        <view class="cu-tag bg-red" catchtap="DelImg" data-index="{{index}}">
+                            <text class="cuIcon-close"></text>
+                        </view>
+                    </view>
+                    <view class="solids" bindtap="ChooseImage" wx:if="{{imgList.length<9}}">
+                        <text class="cuIcon-cameraadd"></text>
+                    </view>
+                </view>
+            </view>
+        </scroll-view>
+        <view class="cu-bar tabbar border shop solid-top bg-gray">
+            <view wx:if="{{item.orderState == 1}}" class="action text-left padding-left" @tap="cancle({{orderInfo.id}})" style="width:400rpx;">
+                <text class="text-df">取消订单</text>
+            </view>
+            <view wx:if="{{item.orderState == 1}}" class="bg-orange submit text-lg" @tap="pay({{orderInfo.id}})">支付订单</view>
+            <view @tap="commit" class="bg-orange submit text-lg">提交 </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from "@/api/config"
+    export default class Dialog extends wepy.page {
+        data = {
+            orderInfo: {},
+            imgList: [],
+            favor: 5,
+            remark: '',
+            imgloaded: [],
+            imgloading: false
+        };
+        async loadData(id) {
+            let res = await config.orderdetail(id)
+            this.orderInfo = res.data.detail
+            this.$apply()
+        }
+        async onLoad(opt) {
+            this.id = opt.id
+            await this.loadData(opt.id)
+        }
+        methods = {
+            favor(inx) {
+                this.favor = inx + 1
+            },
+            ChooseImage() {
+                wx.chooseImage({
+                    count: 1, //默认9
+                    sizeType: [ 'compressed'], //可以指定是原图还是压缩图，默认二者都有
+                    sourceType: ['album'], //从相册选择
+                    success: (res) => {
+                        
+                        if (this.imgList.length != 0) {
+                            this.imgList = this.imgList.concat(res.tempFilePaths)
+                        } else {
+                            this.imgList = res.tempFilePaths
+                        }
+                        console.log(res.tempFiles )
+                        this.$apply()
+                    }
+                });
+            },
+            DelImg(e) {
+                this.imgList.splice(e.currentTarget.dataset.index, 1);
+            },
+            textareaBInput(e) {
+                this.remark = e.detail.value
+            },
+            async commit() {
+                this.imgloading = true
+                let images = await this.upImg()
+                this.imgloading = false
+                let params = {
+                    grade: this.favor,
+                    content: this.remark,
+                    images,
+                    tag: '1,2,3',
+                    orderSn: this.orderInfo.orderSn,
+                    courseId: this.orderInfo.courseId
+                }
+                console.log(params)
+                this.$apply()
+            }
+        };
+        upImg() {
+            let promisess = []
+            this.imgList.forEach((e, i) => {
+                let _promise = new Promise((rs, rj) => {
+                    config.uploadFile(e).then(_res => {
+                        rs(_res)
+                    }).catch(err => {
+                        rj('上传失败了')
+                    })
+                    // setTimeout(() => {
+                    //     this.imgloaded.push(e)
+                    //     rs(e)
+                    // }, 2000)
+                })
+                promisess.push(_promise)
+            })
+            return Promise.all(promisess).then(res => {
+                console.log(res)
+                return res
+            }).catch(err => {
+                return false
+            })
+        }
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .uploading {
+        width: 100%;
+        height: 100%;
+        line-height: 100%;
+        text-align: center;
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: rgba(0, 0, 0, 0.2);
+        color: #fff;
+    }
+    .img {
+        width: 200rpx;
+        height: 200rpx;
+    }
+    .main-view {
+        height: calc(~"100% - 100rpx");
+    }
+    .textarea {
+        background-color: #fafafa;
+        min-height: 250rpx;
+        padding: 20rpx 30rpx !important;
+        margin: 0;
+    }
+    .num {
+        position: absolute;
+        right: 30rpx;
+        bottom: 16rpx
+    }
+</style>

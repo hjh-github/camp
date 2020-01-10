@@ -52,7 +52,7 @@ export default class config extends base {
     static async getChildList() {
         let url = `${this.baseUrl}/member/getChildList`;
         let params = {
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
         return this.get(url, params, true).then(res => {
             return res;
@@ -62,7 +62,7 @@ export default class config extends base {
     static async getGuaList() {
         let url = `${this.baseUrl}/member/getGuaList`;
         let params = {
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
         return this.get(url, params, true).then(res => {
             return res;
@@ -73,7 +73,7 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/getChild`;
         let params = {
             id,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
         return this.get(url, params, true).then(res => {
             return res;
@@ -84,7 +84,7 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/getGua`;
         let params = {
             id,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
         return this.get(url, params, true).then(res => {
             return res;
@@ -95,9 +95,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/updateGua`;
         let params = {
             ...opt,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true,true).then(res => {
+        return this.post(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -106,9 +106,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/updateChild`;
         let params = {
             ...opt,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true,true).then(res => {
+        return this.post(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -117,9 +117,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/delGua`;
         let params = {
             id,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true,true).then(res => {
+        return this.post(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -128,9 +128,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/delChild`;
         let params = {
             id,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true,true).then(res => {
+        return this.post(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -140,9 +140,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/order/ordercommit`;
         let params = {
             ...opt,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true,true).then(res => {
+        return this.post(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -151,9 +151,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/wxpay/topay`;
         let params = {
             ...opt,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, true,true).then(res => {
+        return this.post(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -162,9 +162,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/order`;
         let params = {
             ...opt,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, true,true).then(res => {
+        return this.get(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -173,9 +173,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/orderdetail`;
         let params = {
             id,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, true,true).then(res => {
+        return this.get(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -184,9 +184,9 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/cancalorder`;
         let params = {
             id,
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, true,true).then(res => {
+        return this.get(url, params, true, true).then(res => {
             return res;
         })
     }
@@ -194,10 +194,34 @@ export default class config extends base {
     static async center() {
         let url = `${this.baseUrl}/member/center`;
         let params = {
-            sessionId:wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId
         }
-        return this.get(url, params, true,false).then(res => {
+        return this.get(url, params, true, false).then(res => {
             return res;
+        })
+    }
+
+    // ### 评论
+    // 上传图片 
+    static uploadFile(image_url) {
+        return new Promise((resolve, reject) => {
+            // 上传图片
+            wx.uploadFile({
+                url: `${this.baseUrl}/member/uploadFiles?sessionId=${wepy.$instance.globalData.sessionId}`, // 仅为示例，非真实的接口地址
+                filePath: image_url,
+                name: 'filename',
+                success: function (res) {
+                    let data = JSON.parse(res.data);
+                    if (data.errcode == 0) {
+                        resolve(data.data)
+                    } else {
+                        reject(data.errmsg)
+                    }
+                },
+                fail(err){
+                    reject(err)
+                }
+            })
         })
     }
 }
