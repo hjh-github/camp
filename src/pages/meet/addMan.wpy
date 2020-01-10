@@ -139,15 +139,18 @@
                         } else if (typeof _res == 'string') {
                             this.form.birthdayStr = _res
                         }
+                        this.form.gender = Lang.getSexByIdCard(value)
                     }
                 }
                 this.form[target] = value
             },
             async plus() {
-                let rules = Lang.checkIdCard(this.form.cardNum)
-                if (!rules.status) {
-                    Tips.toast(rules.message, () => {}, 'none')
-                    return false
+                if (this.form.cardType == 1) {
+                    let rules = Lang.checkIdCard(this.form.cardNum)
+                    if (!rules.status) {
+                        Tips.toast(rules.message, () => {}, 'none')
+                        return false
+                    }
                 }
                 if (Lang.isEmpty(this.form.name)) {
                     Tips.toast('请填写监护人姓名', () => {}, 'none')
@@ -166,7 +169,7 @@
                 let self = this
                 wx.showModal({
                     content: `确定删除监护人${self.form.name}吗？`,
-                    success:async function(res) {
+                    success: async function(res) {
                         if (res.confirm) {
                             let res = await config.delGua(self.id)
                             if (res.errcode == 200) {
@@ -176,8 +179,7 @@
                                     });
                                 }, 'none')
                             }
-                        } else if (res.cancel) {
-                        }
+                        } else if (res.cancel) {}
                     }
                 })
             }

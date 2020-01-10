@@ -47,6 +47,7 @@ export default class config extends base {
             return res;
         })
     }
+    // ########################  人员信息管理  ###################
     // 获取儿童列表
     static async getChildList() {
         let url = `${this.baseUrl}/member/getChildList`;
@@ -133,6 +134,7 @@ export default class config extends base {
             return res;
         })
     }
+    // ########################  订单管理  ###################
     // 下单 
     static async ordercommit(opt) {
         let url = `${this.baseUrl}/order/ordercommit`;
@@ -140,7 +142,7 @@ export default class config extends base {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, false,true).then(res => {
+        return this.post(url, params, true,true).then(res => {
             return res;
         })
     }
@@ -151,7 +153,50 @@ export default class config extends base {
             ...opt,
             sessionId:wepy.$instance.globalData.sessionId
         }
-        return this.post(url, params, false,true).then(res => {
+        return this.post(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 获取订单列表
+    static async orders(opt) {
+        let url = `${this.baseUrl}/member/order`;
+        let params = {
+            ...opt,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 获取订单详情
+    static async orderdetail(id) {
+        let url = `${this.baseUrl}/member/orderdetail`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 取消订单
+    static async cancalorder(id) {
+        let url = `${this.baseUrl}/member/cancalorder`;
+        let params = {
+            id,
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 取消订单
+    static async center() {
+        let url = `${this.baseUrl}/member/center`;
+        let params = {
+            sessionId:wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true,false).then(res => {
             return res;
         })
     }

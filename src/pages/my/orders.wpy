@@ -1,0 +1,236 @@
+
+<template>
+    <view class='h100'>
+        <view class="bg-white container">
+            <view class="bg-white container weui-flex flex-c {{isfixed?'fixed':'pr'}}">
+                <scroll-view scroll-x class="nav" scroll-with-animation scroll-left="{{scrollLeft}}">
+                    <repeat for="{{orderType}}" key="index" index="index" item="item">
+                        <view class="cu-item posi {{index == TabCur?'cur':''}}" style="color:{{index == TabCur?theme:''}}" @tap="tabSelect({{item.orderState}})" data-id="{{index}}">
+                            <view wx:if="{{orderStats[item.orderState]}}" class="cu-tag badge">
+                                <block>{{orderStats[item.orderState]>99?"99+":orderStats[item.orderState]}}</block>
+                            </view>
+                            {{item.name}}
+                        </view>
+                    </repeat>
+                </scroll-view>
+            </view>
+        </view>
+        <scroll-view scroll-y class="main-view" bindscrolltolower="getMore">
+            <repeat for="{{orders}}" key="index" index="index" item="item">
+                <view class="bg-white padding padding-bottom-xs {{!index ? 'margin-top margin-bottom': 'margin-bottom'}}">
+                    <view class="flex " @tap="todetaile({{item.id}})">
+                        <image class="img" src="{{item.courseImage}}" mode="aspectFill">
+                        </image>
+                        <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
+                            <view>{{item.courseTittle}}</view>
+                            <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.courseNum}}</text>
+                            </view>
+                        </view>
+                    </view>
+                    <view class="cu-bar bg-white justify-end margin-top solid-top">
+                        <view class="action flex__item margin-right" style="justify-content:flex-start">
+                            <tetx class="text-orange text-sm ">{{orderState[item.orderState]}}</tetx>
+                        </view>
+                        <view class="action">
+                            <button wx:if="{{item.orderState == 1}}" class="cu-btn line-orange text-orange" bindtap="cancle({{item.id}})">取消订单</button>
+                            <button wx:if="{{item.orderState == 1}}" class="cu-btn bg-orange margin-left" bindtap="pay({{item}})">支付订单</button>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+            <view class="cu-load {{!toload?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+        </scroll-view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import config from "@/api/config"
+    import Tips from "@/utils/Tips"
+    import WxUtils from "@/utils/WxUtils"
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "我的订单"
+        };
+        data = {
+            theme: wepy.$instance.globalData.themeColor,
+            orderType: [{
+                    name: '全部',
+                    orderState: '0'
+                }, {
+                    name: '待付款',
+                    orderState: '1'
+                },
+                {
+                    name: '待参加',
+                    orderState: '2'
+                }, {
+                    name: '已完成',
+                    orderState: '3'
+                }, {
+                    name: '已取消',
+                    orderState: '4'
+                }, {
+                    name: '待拼团',
+                    orderState: '5'
+                }
+            ],
+            orderState: {
+                1: '待付款',
+                2: '待参加',
+                3: '已完成',
+                4: '已取消',
+                5: '拼团中'
+            },
+            orderStats:{},
+            TabCur: 0,
+            scrollLeft: 0,
+            pageIndex: 1,
+            orders: [],
+            toload: false,
+            isload: true,
+            loadmoring: false,
+        };
+        async onLoad(opt) {
+            this.TabCur = this.orderType.findIndex(e => {
+                return e.orderState == opt.id
+            })
+            this.scrollLeft = (this.TabCur - 1) * 120
+            await this.loadData()
+            this.isload = false
+        }
+        async onShow() {
+            if (!this.isload) {
+                this.pageIndex = 1
+                await this.loadData()
+            }
+        }
+        async loadData(pageIndex) {
+            let params = {
+                orderState: this.orderType[this.TabCur].orderState,
+                pageIndex: pageIndex || this.pageIndex,
+                pageSize: 10
+            }
+            let res = await config.orders(params)
+            if (res.errcode == 200) {
+                let ordersList = res.data.ordersList
+                this.orderStats = res.data.orderStats
+                if (!ordersList.length) {
+                    if (pageIndex == 1) {
+                        this.orders = ordersList
+                    }
+                    this.pageIndex = pageIndex
+                    this.toload = true
+                    this.$apply()
+                    return false
+                } else {
+                    if (pageIndex > 1) this.pageIndex = pageIndex
+                    if (pageIndex == 1) {
+                        this.orders = ordersList
+                    } else {
+                        this.orders = this.orders.concat(ordersList)
+                    }
+                }
+                this.$apply()
+            }
+        }
+        methods = {
+            async getMore() {
+                if (this.loadmoring) {
+                    return false
+                }
+                this.loadmoring = true
+                this.toload = false
+                await this.loadData(this.pageIndex + 1)
+                this.loadmoring = false
+                this.$apply()
+            },
+            cancle(id) {
+                let self = this
+                wx.showModal({
+                    content: '取消订单后将无法恢复！是否继续？',
+                    // confirmText:,
+                    success: async function(res) {
+                        if (res.confirm) {
+                            let res = await config.cancalorder(id)
+                            if (res.errcode == 200) {
+                                await self.loadData(1)
+                            }
+                            console.log(res)
+                        } else if (res.cancel) {
+                            console.log('用户点击取消')
+                        }
+                    }
+                })
+            },
+            async tabSelect(id, e) {
+                if (this.TabCur == e.currentTarget.dataset.id) return false
+                this.TabCur = e.currentTarget.dataset.id;
+                this.scrollLeft = (e.currentTarget.dataset.id - 1) * 120
+                await this.loadData(1)
+            },
+            todetaile(id) {
+                wepy.navigateTo({
+                    url: './order?id=' + id
+                });
+            },
+            async pay(e) {
+                let _code = await config.wxpaytopay({
+                    orderPaySn: e.paySn,
+                    describe: '描述',
+                    money: e.moneyOrder * 100
+                })
+                WxUtils.wxPay(_code.data).then(res => {
+                    Tips.toast("支付成功", res => {
+                        WxUtils.backOrRedirect(
+                            `/pages/my/order?id=` + e.id
+                        );
+                    });
+                })
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .badge{
+        right: 0;
+        top:20rpx;
+    }
+    .posi {
+        position: relative;
+    }
+    .img {
+        width: 200rpx;
+        height: 200rpx;
+    }
+    .main-view {
+        height: calc(~"100% - 100rpx");
+    }
+    .fixed {
+        position: fixed;
+        left: 0;
+        top: 108rpx;
+    }
+    .pr {
+        position: relative;
+    }
+    .container {
+        border-bottom: 1px solid #eee;
+        height: 90rpx;
+        z-index: 9999;
+    }
+    .nav {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .cu-item {
+        width: 165rpx;
+        text-align: center;
+    }
+</style>

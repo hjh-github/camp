@@ -42,7 +42,8 @@
       code:'',
       sessionId:'',
       courseInfo:{},
-      orderInfo:{}
+      orderInfo:{},
+      childs:[]
     };
     constructor() {
       super();
@@ -138,7 +139,7 @@
       };
     }
     config = {
-      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/home/address","pages/detaile/detaile","pages/detaile/sureOrder","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks"],
+      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/my/orders","pages/my/order","pages/home/address","pages/detaile/detaile","pages/detaile/sureOrder","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks"],
       window: {
         backgroundTextStyle: "dark",
         navigationBarBackgroundColor: "#F4D000",

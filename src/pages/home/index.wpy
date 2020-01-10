@@ -27,6 +27,12 @@
   import config from "@/api/config"
   import auth from "@/api/auth"
   import store from "@/store/utils"
+  import {
+        connect
+    } from "wepy-redux"
+  @connect({
+        city: store.get("city")
+    })
   export default class Dialog extends wepy.page {
     data = {
       isfixed: false,
@@ -52,7 +58,8 @@
       pageSize: 10,
       toload: false,
       isLoad: true,
-      loadmoring: false
+      loadmoring: false,
+      _city:''
     };
     components = {
       cSwiper,
@@ -63,7 +70,7 @@
       loading
     }
     config = {
-      navigationBarTitleText: "上线就能赚大钱",
+      navigationBarTitleText: "华心桥体验营",
       enablePullDownRefresh: true
     };
     async onLoad() {
@@ -78,6 +85,13 @@
       this.$apply()
       // this.$invoke('cSwiper', 'load', this.model)
       // this.$invoke('Navs', 'load', this.model)
+    }
+    async onShow() {
+      if (!this.isShow || this._city == this.city.name) {
+        return false
+      }
+      await this.load(1)
+      this.$apply()
     }
     async onPullDownRefresh() {
       await this.loadcourses(1)
@@ -96,6 +110,7 @@
       this.navs.list = homeData.navs
       this.scrollNav.push(...homeData.types)
       this.courses = homeData.courses
+      this._city = homeData.cityName
       if (!wepy.$instance.globalData.cityCode) {
         store.save('city', {
           name: homeData.cityName,
