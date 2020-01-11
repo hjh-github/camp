@@ -13,7 +13,7 @@
             </view>
             <view class="cu-bar bg-white margin-top" style="justify-content: flex-start">
                 <view class="action">
-                    课程满意度
+                    活动满意度
                 </view>
                 <view class="action margin-left">
                     <repeat for="{{5}}" key="index" index="index" item="item">
@@ -21,8 +21,16 @@
                     </repeat>
                 </view>
             </view>
+            <!-- <view class="text-gray text-sm padding-left bg-white">
+                                                给活动贴标签
+                                            </view> -->
+            <view class="padding-sm flex flex-wrap bg-white">
+                <view class="padding-xs" wx:for="{{tags}}" wx:key>
+                    <view @tap="setTag({{item.id}})" class="cu-tag {{tagsed[item.id]?'bg-orange':'line-orange'}} ">{{item.describe}}</view>
+                </view>
+            </view>
             <view class="cu-form-group align-start" style="position:relative">
-                <textarea maxlength="-1" class="textarea" disabled="{{modalName!=null}}" bindinput="textareaBInput" placeholder="写评论"></textarea>
+                <textarea maxlength="-1" class="textarea" disabled="{{modalName!=null}}" bindinput="textareaBInput" placeholder="活动给您带哪些难忘的记忆呢 ~"></textarea>
                 <!-- <view class="num">{{payParams.remark.length}} / 140</view> -->
             </view>
             <view class="cu-bar bg-white">
@@ -56,7 +64,7 @@
                 <text class="text-df">取消订单</text>
             </view>
             <view wx:if="{{item.orderState == 1}}" class="bg-orange submit text-lg" @tap="pay({{orderInfo.id}})">支付订单</view>
-            <view @tap="commit" class="bg-orange submit text-lg">提交 </view>
+            <view @tap="commit" class="bg-orange submit text-lg">提交评论</view>
         </view>
     </view>
 </template>
@@ -64,14 +72,20 @@
 <script>
     import wepy from "wepy";
     import config from "@/api/config"
+    import Tips from "@/utils/Tips"
     export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "写评论"
+        };
         data = {
             orderInfo: {},
             imgList: [],
             favor: 5,
             remark: '',
             imgloaded: [],
-            imgloading: false
+            imgloading: false,
+            tags: {},
+            tagsed: {}
         };
         async loadData(id) {
             let res = await config.orderdetail(id)
@@ -81,24 +95,32 @@
         async onLoad(opt) {
             this.id = opt.id
             await this.loadData(opt.id)
+            this.tags = await config.commentTag()
+            // console.log(tags)
+            this.$apply()
         }
         methods = {
+            setTag(id) {
+                if (this.tagsed[id]) {
+                    delete this.tagsed[id]
+                } else {
+                    this.tagsed[id] = id
+                }
+            },
             favor(inx) {
                 this.favor = inx + 1
             },
             ChooseImage() {
                 wx.chooseImage({
                     count: 1, //默认9
-                    sizeType: [ 'compressed'], //可以指定是原图还是压缩图，默认二者都有
-                    sourceType: ['album'], //从相册选择
+                    sizeType: ['compressed'], //可以指定是原图还是压缩图，默认二者都有
+                    sourceType: ['album', 'camera'], //从相册选择
                     success: (res) => {
-                        
                         if (this.imgList.length != 0) {
                             this.imgList = this.imgList.concat(res.tempFilePaths)
                         } else {
                             this.imgList = res.tempFilePaths
                         }
-                        console.log(res.tempFiles )
                         this.$apply()
                     }
                 });
@@ -113,18 +135,33 @@
                 this.imgloading = true
                 let images = await this.upImg()
                 this.imgloading = false
+                let tags = this.getTags(this.tagsed)
                 let params = {
                     grade: this.favor,
                     content: this.remark,
+                    // content: encodeURIComponent(this.remark),
                     images,
-                    tag: '1,2,3',
+                    tag: tags.join(','),
                     orderSn: this.orderInfo.orderSn,
                     courseId: this.orderInfo.courseId
                 }
-                console.log(params)
-                this.$apply()
+                let res = await config.savecommen(params)
+                if (res.errcode == 200) {
+                    Tips.toast("评论成功", res => {
+                        wepy.navigateBack({
+                            delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                        });
+                    });
+                }
             }
         };
+        getTags(obj) {
+            let arr = []
+            for (let i in obj) {
+                arr.push(i)
+            }
+            return arr
+        }
         upImg() {
             let promisess = []
             this.imgList.forEach((e, i) => {
@@ -142,7 +179,6 @@
                 promisess.push(_promise)
             })
             return Promise.all(promisess).then(res => {
-                console.log(res)
                 return res
             }).catch(err => {
                 return false

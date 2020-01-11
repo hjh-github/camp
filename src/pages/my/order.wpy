@@ -87,11 +87,13 @@
             </view>
         </scroll-view>
         <view class="cu-bar tabbar border shop solid-top bg-gray">
-            <view wx:if="{{item.orderState == 1}}" class="action text-left padding-left" @tap="cancle({{orderInfo.id}})" style="width:400rpx;">
+            <view wx:if="{{orderInfo.orderState == 1}}" class="action text-left padding-left" @tap="cancle({{orderInfo.id}})" style="width:400rpx;">
                 <text class="text-df">取消订单</text>
             </view>
-            <view wx:if="{{item.orderState == 1}}" class="bg-orange submit text-lg" @tap="pay({{orderInfo.id}})">支付订单</view>
-            <view wx:if="{{item.orderState == 3}}" class="bg-orange submit text-lg"> 订单已完成 </view>
+            <view wx:if="{{orderInfo.orderState == 1}}" class="bg-orange submit text-lg" @tap="pay({{orderInfo.id}})">支付订单</view>
+            <view wx:if="{{orderInfo.orderState == 2 }}" class="bg-orange submit text-lg"> 活动时间：{{orderInfo.periods}} </view>
+            <view wx:if="{{orderInfo.orderState == 3 && orderInfo.evaluateState == 2 }}" class="bg-orange submit text-lg"> 订单已完成 </view>
+            <view wx:if="{{orderInfo.orderState == 3 && orderInfo.evaluateState == 1}}" bindtap="remark({{orderInfo.id}})" class="bg-orange submit text-lg"> 去评价 </view>
         </view>
     </view>
 </template>
@@ -129,6 +131,11 @@
             wx.stopPullDownRefresh()
         }
         methods = {
+             remark(id) {
+                wepy.navigateTo({
+                    url: '/pages/meet/commiRemarke?id=' + id
+                });
+            },
             cancle(id) {
                 let self = this
                 wx.showModal({

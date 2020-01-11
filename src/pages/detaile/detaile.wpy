@@ -13,7 +13,7 @@
                         <view class="padding-sm sku-item" @tap="sku">
                             <view class="bg-orange padding light radius text-center shadow-blur">
                                 <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
-                                <view class="text-xs text-Abc">少量名额</view>
+                                <view class="text-xs text-Abc">{{sign_states[item.signState]}}</view>
                             </view>
                         </view>
                     </repeat>
@@ -76,8 +76,8 @@
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact">
-                                                        <view class="cuIcon-weixin text-orange"></view>聊活动
-                                                    </button>
+                                                            <view class="cuIcon-weixin text-orange"></view>聊活动
+                                                        </button>
             <view class="action">
                 <view class="cuIcon-friend text-orange"></view>邀请同伴
             </view>
@@ -117,7 +117,12 @@
             courseInx: -1,
             companions: [],
             statistics: {},
-            CourseComment: {}
+            CourseComment: {},
+            sign_states: {
+                0: '火热招生中',
+                1: '少量名额',
+                2: '已满员'
+            }
         };
         components = {
             cSwiper,
@@ -186,7 +191,7 @@
             },
             async buy() {
                 if (this.courseInx == -1) {
-                    Tips.toast("请选择一个营期", res => {},'none')
+                    Tips.toast("请选择一个营期", res => {}, 'none')
                     return false
                 }
                 let params = {
@@ -196,10 +201,12 @@
                     periodId: this.courseInfo.periodList[this.courseInx].id,
                     remark: '',
                     paymentType: 1,
-                    periodName:`${this.courseInfo.periodList[this.courseInx].startTimeStr} ~ ${this.courseInfo.periodList[this.courseInx].endTimeStr}`
+                    periodName: `${this.courseInfo.periodList[this.courseInx].startTimeStr} ~ ${this.courseInfo.periodList[this.courseInx].endTimeStr}`
                 }
                 wepy.$instance.globalData.orderInfo = params
-                wepy.navigateTo({ url: './sureOrder' });
+                wepy.navigateTo({
+                    url: './sureOrder'
+                });
             }
         };
     }

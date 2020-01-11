@@ -209,10 +209,10 @@ export default class config extends base {
             wx.uploadFile({
                 url: `${this.baseUrl}/member/uploadFiles?sessionId=${wepy.$instance.globalData.sessionId}`, // 仅为示例，非真实的接口地址
                 filePath: image_url,
-                name: 'filename',
+                name: 'imgFile',
                 success: function (res) {
                     let data = JSON.parse(res.data);
-                    if (data.errcode == 0) {
+                    if (data.errcode == 200) {
                         resolve(data.data)
                     } else {
                         reject(data.errmsg)
@@ -222,6 +222,37 @@ export default class config extends base {
                     reject(err)
                 }
             })
+        })
+    }
+    // 获取tag
+    static async commentTag() {
+        let url = `${this.baseUrl}/member/commentTag`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, false).then(res => {
+            return res;
+        })
+    }
+    // 提交评论
+    static async savecommen(opt) {
+        let url = `${this.baseUrl}/member/savecomment`;
+        let params = {
+            ...opt,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true, true).then(res => {
+            return res;
+        })
+    }
+    // 获取家长心声
+    static async aspirations() {
+        let url = `${this.baseUrl}/comment/aspirations`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, false).then(res => {
+            return res;
         })
     }
 }

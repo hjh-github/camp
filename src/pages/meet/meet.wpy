@@ -24,8 +24,8 @@
         <view>每日记录</view>
       </view>
     </view>
-    <repeat for="{{5}}" key="index" index="index" item="item">
-      <cCard></cCard>
+    <repeat for="{{remarks}}" key="index" index="index" item="item">
+      <cCard :remark.sync="item"></cCard>
     </repeat>
   </view>
 </template>
@@ -39,7 +39,8 @@
     data = {
       theme: wepy.$instance.globalData.themeColor,
       mobile: '',
-      childs: []
+      childs: [],
+      remarks: []
     };
     config = {
       navigationBarTitleText: "成长记录"
@@ -54,16 +55,22 @@
         } = await config.getChildList()
         this.childs = childList
       }
+      let {
+        Comments
+      } = await config.aspirations()
+      this.remarks = Comments
+      this.$apply()
     }
     onShow() {
       this.mobile = wepy.getStorageSync('mobile');
     }
     methods = {
-     async onGotUserInfo(e) {
+      async onGotUserInfo(e) {
         if (e.detail.errMsg == "getUserInfo:ok") {
-           await auth.getUserinfo(e.detail)
-           wepy.navigateTo({ url: './childs' });
-           
+          await auth.getUserinfo(e.detail)
+          wepy.navigateTo({
+            url: './childs'
+          });
         }
       },
       async bindgetphonenumber(e) {

@@ -34,12 +34,12 @@
                         <view class="action">
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn line-orange text-orange" bindtap="cancle({{item.id}})">取消订单</button>
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn bg-orange margin-left" bindtap="pay({{item}})">支付订单</button>
-                            <button class="cu-btn bg-orange margin-left" bindtap="remark({{item.id}})">去评价</button>
+                            <button wx:if="{{item.orderState == 3 && item.evaluateState ==1}}" class="cu-btn bg-orange margin-left" bindtap="remark({{item.id}})">去评价</button>
                         </view>
                     </view>
                 </view>
             </repeat>
-            <view class="cu-load {{!toload?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+            <view hidden="{{!loadmoring}}" class="cu-load {{!toload?'loading':'over'}}" style="background-color:#f5f5f5"></view>
         </scroll-view>
     </view>
 </template>
@@ -102,8 +102,9 @@
         }
         async onShow() {
             if (!this.isload) {
+                this.loadmoring = false
                 this.pageIndex = 1
-                await this.loadData()
+                await this.loadData(1)
             }
         }
         async loadData(pageIndex) {
@@ -122,6 +123,7 @@
                     }
                     this.pageIndex = pageIndex
                     this.toload = true
+                    this.loadmoring = true
                     this.$apply()
                     return false
                 } else {
@@ -131,6 +133,7 @@
                     } else {
                         this.orders = this.orders.concat(ordersList)
                     }
+                    this.loadmoring = false
                 }
                 this.$apply()
             }
@@ -148,7 +151,6 @@
                 this.loadmoring = true
                 this.toload = false
                 await this.loadData(this.pageIndex + 1)
-                this.loadmoring = false
                 this.$apply()
             },
             cancle(id) {
@@ -173,6 +175,7 @@
                 if (this.TabCur == e.currentTarget.dataset.id) return false
                 this.TabCur = e.currentTarget.dataset.id;
                 this.scrollLeft = (e.currentTarget.dataset.id - 1) * 120
+                this.pageIndex = 1
                 await this.loadData(1)
             },
             todetaile(id) {
