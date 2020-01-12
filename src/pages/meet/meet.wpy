@@ -1,12 +1,12 @@
 
 <template>
-  <view style="padding-bottom:30rpx;">
-    <view class="UCenter-bg bg-white" style="text-shadow:none">
+  <view style="padding-bottom:30rpx;" >
+    <view class="UCenter-bg bg-white shadow-warp" style="text-shadow:none">
       <view class="text-xl text-orange padding-bottom"><text class="cuIcon-footprint padding-right"></text>成长，是我们最值得珍藏的记忆</view>
       <button wx:if="{{!mobile}}" class="cu-btn bg-green shadow-blur round lg" open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">绑定手机号</button>
       <button wx:if="{{mobile}}" class="cu-btn bg-green shadow-blur round lg" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" style="background-color:{{theme}}">{{!childs.length?'未添加儿童信息，去添加':'查看儿童信息'}}</button>
     </view>
-    <view class="padding flex text-center text-grey bg-white shadow-warp">
+    <!-- <view class="padding flex text-center text-grey bg-white shadow-warp">
       <view class="flex flex-sub flex-direction solid-right">
         <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
         <view>亲自护照</view>
@@ -23,7 +23,8 @@
         <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
         <view>每日记录</view>
       </view>
-    </view>
+    </view> -->
+    <view class="flex padding text-xxl flex-c flex-jc text-orange margin-top"> ~ <text class="cuIcon-discoverfill padding-left-sm padding-right-sm"></text> <text class="text-lg  padding-right-sm">家长心声</text>~ </view>
     <repeat for="{{remarks}}" key="index" index="index" item="item">
       <cCard :remark.sync="item"></cCard>
     </repeat>
