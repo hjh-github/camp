@@ -23,7 +23,7 @@ export default class location extends wepy.mixin {
                     url
                 });
             } else if (type == 'web') {
-                console.log('暂时先只打开本地路径')
+                wepy.navigateTo({ url: '/pages/home/web?src='+ encodeURIComponent(url)});
             }
         }
     };

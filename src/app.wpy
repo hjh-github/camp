@@ -139,7 +139,7 @@
       };
     }
     config = {
-      pages: ["pages/home/index","pages/meet/meet","pages/my/my","pages/my/orders","pages/my/order","pages/home/address","pages/detaile/detaile","pages/detaile/sureOrder","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks","pages/meet/commiRemarke"],
+      pages: ["pages/home/index","pages/home/web","pages/meet/meet","pages/my/my","pages/my/orders","pages/my/order","pages/home/address","pages/detaile/detaile","pages/detaile/sureOrder","pages/meet/childs","pages/meet/addChild","pages/meet/addMan","pages/meet/remarks","pages/meet/commiRemarke"],
       window: {
         backgroundTextStyle: "dark",
         navigationBarBackgroundColor: "#F4D000",

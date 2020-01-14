@@ -1,0 +1,25 @@
+<template>
+    <web-view src="{{jump_url}}" @message="message">
+    </web-view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class H5pay extends wepy.page {
+        data = {
+            jump_url: ''
+        }
+        onLoad(opt) {
+            this.jump_url = decodeURIComponent(opt.src);
+        }
+        methods = {
+            message(e) {
+                console.log(e, '#web-view# message')
+            }
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+
+</style>

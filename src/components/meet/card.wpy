@@ -22,7 +22,7 @@
             </view>
             <view class="bg-white padding" style="padding-top:0">
                 <view class="grid col-3 grid-square">
-                    <view class="bg-img" wx:for="{{remark.courseImageList}}" wx:key wx:for-item="item" style="background-image:url({{item}});"></view>
+                    <view class="bg-img" wx:for="{{remark.commentImageList}}" wx:key wx:for-item="item" style="background-image:url({{item}});"></view>
                 </view>
             </view>
             <view class="cu-list menu-avatar margin" style="margin-top:0">
@@ -33,7 +33,8 @@
                             <text class="text-cut">{{remark.courseName}}</text>
                         </view>
                         <view class="text-gray text-sm flex">
-                            <text class="text-cut">zhen shi yi ge chaoji bang de</text>
+                            <text class="text-cut text-price margin-left">{{remark.coursePrice}}</text>
+                            <text class="text-cut text-price">累计{{remark.totalCount}}人</text>
                         </view>
                     </view>
                     <view class="action">

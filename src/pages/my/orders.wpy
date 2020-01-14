@@ -69,9 +69,6 @@
                     name: '已完成',
                     orderState: '3'
                 }, {
-                    name: '已取消',
-                    orderState: '4'
-                }, {
                     name: '待拼团',
                     orderState: '5'
                 }

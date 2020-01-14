@@ -246,9 +246,10 @@ export default class config extends base {
         })
     }
     // 获取家长心声
-    static async aspirations() {
+    static async aspirations(opt) {
         let url = `${this.baseUrl}/comment/aspirations`;
         let params = {
+            ...opt,
             sessionId: wepy.$instance.globalData.sessionId
         }
         return this.get(url, params, true, false).then(res => {

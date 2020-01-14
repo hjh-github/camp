@@ -18,6 +18,7 @@
               <text>出行人</text>
               <text class="text-red text-xs">（购买保险并生成旅游合同）</text>
             </view>
+            
             <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
               <view class="padding-bottom-xs">
                 <text class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
@@ -27,7 +28,8 @@
             </repeat>
           </view>
           <view class="action">
-            <text wx:if="{{!childs.length}}" class="text-grey">请选择</text>
+            <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
+            <text wx:if="{{!childs.length && mobile}}" class="text-grey">请选择</text>
           </view>
         </view>
       </view>
@@ -67,6 +69,7 @@
   import config from "@/api/config"
   import Tips from "@/utils/Tips"
   import WxUtils from "@/utils/WxUtils"
+  import auth from "@/api/auth"
   export default class Dialog extends wepy.page {
     config = {
       navigationBarTitleText: "确认订单"
@@ -74,9 +77,11 @@
     data = {
       orderInfo: {},
       payParams: {},
-      childs: []
+      childs: [],
+      mobile:''
     };
     onLoad() {
+      this.mobile = wepy.getStorageSync('mobile');
       this.payParams = wepy.$instance.globalData.orderInfo
       this.orderInfo = wepy.$instance.globalData.courseInfo
     }
@@ -95,6 +100,16 @@
       }
     }
     methods = {
+      async bindgetphonenumber(e) {
+        if (e.detail.errMsg == "getPhoneNumber:ok") {
+          let mobile = await auth.getPhone(e.detail)
+          if (mobile) {
+            wepy.setStorageSync('mobile', mobile);
+            this.mobile = mobile
+          }
+          this.$apply()
+        }
+      },
       textareaBInput(e) {
         this.payParams.remark = e.detail.value
       },
@@ -114,6 +129,9 @@
         }
       },
       getChilds() {
+        if(!this.mobile){
+          return false
+        }
         wepy.navigateTo({
           url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
         });
@@ -134,8 +152,9 @@
             describe: '描述',
             money: this.orderPrice * 100
           })
-          WxUtils.wxPay(_code.data).then(res => {
-            Tips.toast("支付成功", res => {
+          console.log(res)
+          WxUtils.wxPay(_code.data).then(r => {
+            Tips.toast("支付成功", r => {
               WxUtils.backOrRedirect(
                 `/pages/my/order?id=` + res.data.id
               );
