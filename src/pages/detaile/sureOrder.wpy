@@ -83,7 +83,7 @@
     onShow() {
       this.childs = wepy.$instance.globalData.childs
     }
-    onUnload(){
+    onUnload() {
       this.childs = wepy.$instance.globalData.childs = []
     }
     computed = {
@@ -120,7 +120,7 @@
       },
       async pay() {
         if (!this.childs.length || this.childs.length != this.payParams.courseNum) {
-          Tips.toast(!this.childs.length?"请先选择出行人":"购买数量与出行人数量不匹配", res => {}, 'none');
+          Tips.toast(!this.childs.length ? "请先选择出行人" : "购买数量与出行人数量不匹配", res => {}, 'none');
           return false
         }
         let ids = this.childs.map(e => {
@@ -140,6 +140,10 @@
                 `/pages/my/order?id=` + res.data.id
               );
             });
+          }).catch(err => {
+            WxUtils.backOrRedirect(
+              `/pages/my/order?id=` + res.data.id
+            );
           })
         }
       }

@@ -27,8 +27,8 @@
         <view wx:else @tap="toEdit(-1)" class="main flex flex-c flex-jc text-yellow">
             尚未添加身份信息,去添加 >>
         </view>
-        <view wx:if="{{!isget}}" @tap="toEdit(-1)" class="bg-yellow plus text-white text-center"><text class="cuIcon-add text-xl text-wihit padding-right-xs"></text>新增身份信息</view>
-        <view wx:else @tap="sureChilds()" class="bg-yellow plus text-white text-center">确定</view>
+        <view @tap="toEdit(-1)" class="bg-yellow plus text-white text-center"><text class="cuIcon-add text-xl text-wihit padding-right-xs"></text>新增身份信息</view>
+        <!-- <view wx:else @tap="sureChilds()" class="bg-yellow plus text-white text-center">确定</view> -->
     </view>
 </template>
 

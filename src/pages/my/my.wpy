@@ -81,7 +81,7 @@
       ],
       myInfo:{}
     };
-   async onLoad(){
+   async onShow(){
      let res = await config.center()
      this.myInfo = res
      console.log(res)
