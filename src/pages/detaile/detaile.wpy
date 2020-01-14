@@ -20,7 +20,7 @@
                 </scroll-view>
                 <!-- 更多信息 -->
                 <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
-                <cRemake :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
+                <cRemake wx:if="{{CourseComment}}" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
             </view>
             <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
                 <view class="flex text-center">

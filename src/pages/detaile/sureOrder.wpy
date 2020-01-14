@@ -156,12 +156,12 @@
           WxUtils.wxPay(_code.data).then(r => {
             Tips.toast("支付成功", r => {
               WxUtils.backOrRedirect(
-                `/pages/my/order?id=` + res.data.id
+                `/pages/my/order?id=` + res.data.orderId
               );
             });
           }).catch(err => {
             WxUtils.backOrRedirect(
-              `/pages/my/order?id=` + res.data.id
+              `/pages/my/order?id=` + res.data.orderId
             );
           })
         }
