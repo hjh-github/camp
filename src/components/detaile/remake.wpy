@@ -39,7 +39,7 @@
             <text class="text-content padding-bottom-sm" style="display:inline-block">{{CourseComment.content}}</text><text class="text-red">{{CourseComment.tag}}</text>
             <view class="bg-white " style="padding-top:0">
                 <view class="grid col-3 grid-square">
-                    <repeat for="{{CourseComment.images}}" key="index" index="index" item="item">
+                    <repeat for="{{CourseComment.imageList}}" key="index" index="index" item="item">
                         <view class="bg-img" style="background-image:url({{item}});"></view>
                     </repeat>
                 </view>
