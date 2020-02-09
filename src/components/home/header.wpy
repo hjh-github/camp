@@ -5,9 +5,9 @@
         <view class="cu-avatar round">
             <open-data class="img" type="userAvatarUrl"></open-data>
         </view>
-        <view class="search-form radius">
+        <view class="search-form radius" @tap="toser">
             <text class="cuIcon-search"></text>
-            <input disabled type="text" placeholder="搜索图片、文章、视频" confirm-type="search"></input>
+            <input disabled type="text" placeholder="输入课程名称" confirm-type="search"></input>
         </view>
         <view class="action" @tap="navigator">
             <text>{{city?city.name:'请选择城市'}}</text>
@@ -32,6 +32,9 @@
         methods = {
             navigator(){
                 wepy.navigateTo({ url: '/pages/home/address' });
+            },
+            toser(){
+                wepy.navigateTo({ url: '/pages/home/search' });
             }
         };
     }

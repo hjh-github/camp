@@ -47,6 +47,16 @@ export default class config extends base {
             return res;
         })
     }
+    // 搜索
+    static async search(opt) {
+        let url = `${this.baseUrl}/course/search`;
+        let params = {
+            ...opt
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
     // ########################  人员信息管理  ###################
     // 获取儿童列表
     static async getChildList() {

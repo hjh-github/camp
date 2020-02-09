@@ -1,0 +1,99 @@
+
+<template>
+    <view class="h100">
+        <view class="cu-bar search" style="background-color:{{theme}}">
+            <view class="search-form radius">
+                <text class="cuIcon-search"></text>
+                <input type="text" placeholder="输入课程名称" @input="input" confirm-type="search"></input>
+            </view>
+            <view class="action text-white" @tap="search">
+                搜索
+            </view>
+        </view>
+        <scroll-view class="main" scroll-y @scroll="scroll" lower-threshold="20" scroll-anchoring="{{true}}" bindscrolltolower="getMore">
+            <cCard :model.sync="courses"></cCard>
+            <view wx:if="{{isUp}}" class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+        </scroll-view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import config from "@/api/config"
+    import cCard from "@/components/home/cCard"
+    import store from "@/store/utils"
+    import {
+        connect
+    } from "wepy-redux"
+    @connect({
+        city: store.get("city")
+    })
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "搜索"
+        };
+        data = {
+            theme: wepy.$instance.globalData.themeColor,
+            courses: [],
+            key: '',
+            isLoad: false,
+            pageIndex: 1,
+            isUp: false
+        };
+        components = {
+            cCard
+        }
+        async loadcourses(pageIndex = 1) {
+            this.isUp = true
+            this.isLoad = false
+            let params = {
+                keywords: this.key,
+                cityCode: this.city.code,
+                pageIndex: pageIndex
+            }
+            let courses = await config.search(params)
+            if (!courses.courses.length) {
+                if (pageIndex == 1) {
+                    this.courses = courses.courses
+                }
+                // this.pageIndex = pageIndex
+                this.isLoad = true
+                this.$apply()
+                return false
+            } else {
+                if (pageIndex > 1) this.pageIndex = pageIndex
+                if (pageIndex == 1) {
+                    this.courses = courses.courses
+                } else {
+                    this.courses = this.courses.concat(courses.courses)
+                }
+                this.isLoad = true
+                this.isUp = false
+                this.$apply()
+            }
+        }
+        methods = {
+            input(e) {
+                this.key = e.detail.value
+            },
+            search() {
+                this.loadcourses()
+            },
+            async getMore() {
+                if(this.isLoad) await this.loadcourses(this.pageIndex + 1)
+                
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .main {
+        height: calc(~'100% - 110rpx');
+    }
+</style>
