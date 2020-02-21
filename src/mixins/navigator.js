@@ -2,7 +2,7 @@ import wepy from 'wepy'
 export default class location extends wepy.mixin {
     methods = {
         navigator(url, type) {
-            console.log(url,type)
+            console.log(url, type)
             if (type == 'none' || !type) {
                 return false
             }
@@ -14,7 +14,7 @@ export default class location extends wepy.mixin {
                 wepy.redirectTo({
                     url
                 });
-            }else if (type == 'switchTab') {
+            } else if (type == 'switchTab') {
                 wepy.switchTab({
                     url
                 });
@@ -23,8 +23,9 @@ export default class location extends wepy.mixin {
                     url
                 });
             } else if (type == 'web') {
-                wepy.navigateTo({ url: '/pages/home/web?src='+ encodeURIComponent(url)});
-            }
+                wepy.navigateTo({ url: '/pages/home/web?src=' + encodeURIComponent(url) });
+
+            } 
         }
     };
 }

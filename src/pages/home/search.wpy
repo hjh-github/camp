@@ -43,6 +43,12 @@
         components = {
             cCard
         }
+        onLoad(opt){
+            if(opt.kw){
+                this.key = opt.kw
+            }
+            this.loadcourses()
+        }
         async loadcourses(pageIndex = 1) {
             this.isUp = true
             this.isLoad = false
