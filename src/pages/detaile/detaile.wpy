@@ -18,6 +18,15 @@
                         </view>
                     </repeat>
                 </scroll-view>
+                <!-- 这个部分是活动tag -->
+                <view wx:if="{{courseInfo.bargainId}}" class="cu-bar bg-white margin-top">
+                    <view class="action text-df">
+                        <text class="cu-tag round line-orange margin-right-sm">砍价</text> 最高可省2000元开团
+                    </view>
+                    <view class="action">
+                        <button class="cu-btn sm bg-orange shadow" @tap="sku('bargain')">发起砍价</button>
+                    </view>
+                </view>
                 <!-- 更多信息 -->
                 <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
                 <cRemake wx:if="{{CourseComment}}" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
@@ -71,13 +80,14 @@
                         <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
                         <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
                 </view>
-                <view @tap="buy()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
+                <view wx:if="{{buyTypt == 'normal'}}" @tap="buy()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
+                <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain()" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
             </view>
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact">
-                                                            <view class="cuIcon-weixin text-orange"></view>聊活动
-                                                        </button>
+                                                                                    <view class="cuIcon-weixin text-orange"></view>聊活动
+                                                                                </button>
             <view class="action">
                 <view class="cuIcon-friend text-orange"></view>邀请同伴
             </view>
@@ -114,6 +124,7 @@
             nodes: ["name", "attrs", "attrs"],
             num: 1,
             showSku: false,
+            buyTypt: 'normal',
             courseInx: -1,
             companions: [],
             statistics: {},
@@ -133,6 +144,19 @@
         config = {
             navigationBarTitleText: "活动详情"
         };
+        // 转发暂时先不开启
+        // async onShareAppMessage(res) {
+        //     console.log(this.courseInfo)
+        //     if (res.from === 'button') {
+        //         await config.
+        //         // 来自页面内转发按钮
+        //         console.log(res.target)
+        //     }
+        //     return {
+        //         title: '自定义转发标题',
+        //         path: '/page/user?id=123'
+        //     }
+        // }
         async onLoad(opt) {
             // 获取主内容高度，用于悬浮详情导航
             let view = wx.createSelectorQuery().select("#info-box");
@@ -163,6 +187,33 @@
             this.$apply();
         }
         methods = {
+            async bargain() {
+                if (this.courseInx == -1) {
+                    Tips.toast("请选择一个营期", res => {}, 'none')
+                    return false
+                }
+                let {
+                    errcode,
+                    errmsg,
+                    data
+                } = await config.regBargain({
+                    bargainId: this.courseInfo.bargainId,
+                    courseId: this.courseInfo.id,
+                    periodId: this.courseInfo.periodList[this.courseInx].id,
+                })
+                if (errcode == 200) {
+                    wepy.redirectTo({
+                        url: '/pages/activity/bargain?regId=' + data.regId
+                    });
+                } else {
+                    // 发起砍价异常
+                    Tips.toast(errmsg, res => {
+                        wepy.redirectTo({
+                            url: '/pages/activity/bargain?regId=' + data.actBargainReg.id
+                        });
+                    }, 'none')
+                }
+            },
             ret() {
                 return false
             },
@@ -173,8 +224,9 @@
             hideModal() {
                 this.showSku = false
             },
-            sku() {
+            sku(type = 'normal') {
                 this.showSku = true
+                this.buyTypt = type
             },
             plus() {
                 wx.vibrateShort()

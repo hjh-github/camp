@@ -1,0 +1,231 @@
+
+<template>
+    <view class="container bg-gradual-orange_vertical padding-top flex flex-y flex-c">
+        <view style="width:690rpx;" class="flex flex-c flex-sb padding-left padding-right">
+            <view wx:if="{{routes.length < 1}}"></view>
+            <navigator wx:else class="line-white radius cu-tag" url="/pages/home/index" open-type="switchTab">返回首页</navigator>
+            <view>活动规则</view>
+        </view>
+        <view class="content-bar">
+            <view class="cu-avatar xl round margin-left" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big99008.jpg);"></view>
+            <view class="bg-white radius content ">
+                <view class="margin-top-sm tetx-gray text-center">华心桥_戴炼</view>
+                <view class="margin-top-sm tetx-black text-center">我发现了一件好货，来一起砍价优惠购！</view>
+                <view class="content-msg margin-top-sm">
+                    <view class="flex bg-white padding">
+                        <image class="img radius" src="{{courseInfo.image}}" mode="aspectFill">
+                        </image>
+                        <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
+                            <view>{{courseInfo.courseTittle}}</view>
+                            <view class="flex flex-sb text-yellow">{{status[ActBargainReg.awardsStatus].a}}</view>
+                            <view class="flex flex-sb {{success ? 'text-green' : 'text-red'}}">{{status[ActBargainReg.awardsStatus].b}}</view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <view class="progress margin-top-xl margin-left margin-right">
+            <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent}}%">已砍{{cutPrice}}</view>
+            <view class="cu-progress round striped {{active?'active':''}}">
+                <view class="bg-orange" style="width:{{percent}}%"></view>
+            </view>
+            <view class="flex flex-c flex-sb margin-left margin-right margin-top-sm text-df">
+                <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
+                <view>底价：<text class="text-price">3000</text></view>
+            </view>
+            <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" @tap="helpBargain">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
+            <view wx:if="{{info.status == 1}}" class="flex flex-c">
+                <button style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" open-type="share">邀请好友砍价</button>
+                <button style="width:300rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
+            </view>
+        </view>
+        <view class="log-box radius padding">
+            <view class="text-center text-lg solid-bottom padding-bottom">砍价记录</view>
+            <repeat for="{{bargainRecords}}" key="index" index="index" item="item">
+                <view class="flex flex-c flex-sa margin-top text-df">
+                    <view class="cu-avatar lg round" style="background-image:url({{item.profilePhoto}});"></view>
+                    <view>{{item.name}}</view>
+                    <view>砍掉 {{item.cutPrice}}元</view>
+                </view>
+            </repeat>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import config from "@/api/config"
+    import auth from "@/api/auth"
+    import Lang from "@/utils/Lang"
+    export default class Dialog extends wepy.page {
+        data = {
+            close: "/static/images/close.png",
+            active: true,
+            routes: 0,
+            regId:'',
+            courseInfo: {},
+            ActBargainReg: null,
+            bargainRecords: [],
+            dj: 3000,
+            percent: 0,
+            info: {},
+            status: {
+                0: {
+                    a: '砍价中',
+                    b: ''
+                },
+                1: {
+                    a: '砍价完成',
+                    b: '待支付'
+                },
+                2: {
+                    a: '砍价完成',
+                    b: '已支付'
+                },
+                3: {
+                    a: '已过期',
+                    b: '砍价失败'
+                }
+            }
+        };
+        config = {
+            navigationBarBackgroundColor: '#ed1c24',
+            navigationBarTitleText: '砍价'
+        }
+        computed = {
+            cutPrice() {
+                if (this.ActBargainReg) {
+                    let act = this.ActBargainReg
+                    let _p = Lang.sum([act.coursePrice, -act.courseNewPrice], 2),
+                        _sp = Lang.sum([act.coursePrice, -2000], 2)
+                    this.percent = parseInt(_p / _sp * 100)
+                    return _p
+                }
+            }
+        }
+        onShareAppMessage(res) {
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                // console.log(res.target)
+            }
+            return {
+                title: '我发现了一件好货，来一起砍价优惠购！',
+                path: '/pages/activity/bargain?regId=' + this.ActBargainReg.id
+            }
+        }
+        async onLoad(opt) {
+            this.regId = opt.regId
+            this.routes = getCurrentPages()
+            await auth.login()
+            await this.load()
+            this.$apply()
+        }
+        methods = {
+            async onGotUserInfo(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    await this.helpBargain()
+                    await this.load()
+                    this.$apply()
+                }
+            },
+        };
+        async helpBargain() {
+            let res = await config.helpBargain({
+                bargainId: this.courseInfo.bargainId,
+                courseId: this.courseInfo.id,
+                periodId: this.courseInfo.periodId || 0,
+            })
+        }
+        async load() {
+            let {
+                errcode,
+                data
+            } = await config.toCutDetai(this.regId)
+            if (errcode == 200) {
+                this.info = data
+                this.courseInfo = data.courseInfo
+                this.ActBargainReg = data.ActBargainReg
+                this.bargainRecords = data.bargainRecords
+            }
+        }
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+
+<style lang="less" scoped>
+    .log-box {
+        margin-top: 70rpx;
+        background-color: rgba(255, 255, 255, 0.4);
+        width: 690rpx;
+    }
+    .solid-bottom {
+        border-color: #eee !important;
+    }
+    .opacity {
+        opacity: 0;
+    }
+    .border-2 {
+        border: 2px solid #fff;
+    }
+    .container {
+        min-height: 100%;
+        box-sizing: border-box;
+        padding-bottom: 60rpx;
+        .progress {
+            width: 690rpx;
+            position: relative;
+            .cu-progress {
+                border: 2px solid #fff;
+                margin-top: 70rpx;
+            }
+            .cuted {
+                position: absolute;
+                top: 10rpx;
+                min-width: 20rpx;
+                margin-left: -46rpx;
+                white-space: nowrap;
+            }
+            .cu-btn {
+                box-sizing: border-box;
+                width: 550rpx;
+                height: 90rpx;
+                margin: 70rpx 70rpx 0;
+                &.bg-gray {
+                    pointer-events: none
+                }
+            }
+        }
+    }
+    .cu-avatar {
+        border: 2px solid #fff;
+    }
+    .content-bar {
+        width: 690rpx;
+        box-sizing: border-box;
+        padding-top: 64rpx;
+        position: relative;
+        .cu-avatar {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            margin-left: -64rpx;
+        }
+        .content {
+            padding-top: 64rpx;
+            overflow: hidden;
+        }
+        .img {
+            width: 180rpx;
+            height: 180rpx;
+        }
+        .content-msg {
+            border-top: 2px solid #eee;
+        }
+    }
+</style>

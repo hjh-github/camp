@@ -57,6 +57,39 @@ export default class config extends base {
             return res;
         })
     }
+    // 发起砍价
+    static async regBargain(opt) {
+        let url = `${this.baseUrl}/bargain/regBargain`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            ...opt
+        }
+        return this.post(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 帮砍价
+    static async helpBargain(opt) {
+        let url = `${this.baseUrl}/bargain/helpBargain`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            ...opt
+        }
+        return this.post(url, params, true,true).then(res => {
+            return res;
+        })
+    }
+    // 砍价详情
+    static async toCutDetai(regId) {
+        let url = `${this.baseUrl}/bargain/toCutDetai`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            regId
+        }
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
     // ########################  人员信息管理  ###################
     // 获取儿童列表
     static async getChildList() {
