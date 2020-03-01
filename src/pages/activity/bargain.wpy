@@ -132,9 +132,7 @@
         };
         async helpBargain() {
             let res = await config.helpBargain({
-                bargainId: this.courseInfo.bargainId,
-                courseId: this.courseInfo.id,
-                periodId: this.courseInfo.periodId || 0,
+                regId: this.regId
             })
         }
         async load() {

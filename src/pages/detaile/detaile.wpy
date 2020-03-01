@@ -91,7 +91,7 @@
             <view class="action">
                 <view class="cuIcon-friend text-orange"></view>邀请同伴
             </view>
-            <view class="bg-orange submit text-lg" @tap="sku">立即购买</view>
+            <view class="bg-orange submit text-lg" @tap="sku('normal')">立即购买</view>
         </view>
     </view>
 </template>

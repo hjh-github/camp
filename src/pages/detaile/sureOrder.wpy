@@ -80,7 +80,7 @@
       childs: [],
       mobile:''
     };
-    onLoad() {
+    onLoad(opt) {
       this.mobile = wepy.getStorageSync('mobile');
       this.payParams = wepy.$instance.globalData.orderInfo
       this.orderInfo = wepy.$instance.globalData.courseInfo
