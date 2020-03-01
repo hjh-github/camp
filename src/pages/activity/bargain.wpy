@@ -33,10 +33,10 @@
                 <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
                 <view>底价：<text class="text-price">3000</text></view>
             </view>
-            <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" @tap="helpBargain">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
+            <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
             <view wx:if="{{info.status == 1}}" class="flex flex-c">
                 <button style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" open-type="share">邀请好友砍价</button>
-                <button style="width:300rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
+                <button style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
             </view>
         </view>
         <view class="log-box radius padding">
@@ -121,6 +121,11 @@
             this.$apply()
         }
         methods = {
+            async buy() {
+                wepy.navigateTo({
+                    url: `/pages/detaile/sureOrder?type=2&pid=${this.info.reg.periodId}&cid=${this.info.reg.courseId}&num=1&aid=${this.info.regId}`
+                });
+            },
             async onGotUserInfo(e) {
                 if (e.detail.errMsg == "getUserInfo:ok") {
                     await auth.getUserinfo(e.detail)
@@ -131,9 +136,7 @@
             },
         };
         async helpBargain() {
-            let res = await config.helpBargain({
-                regId: this.regId
-            })
+            let res = await config.helpBargain(this.regId)
         }
         async load() {
             let {

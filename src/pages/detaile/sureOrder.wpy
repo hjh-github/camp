@@ -41,7 +41,7 @@
             <radio checked="{{payParams.paymentType == 2}}" class="radio margin-right-sm yellow"></radio>先付定金</view>
         </view>
       </view>
-      <view class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
+      <view wx:if="{{payParams.orderType == 1}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
         <view> 购买数量 </view>
         <view class="text-lg ">
           <text @tap="minus" class="bg-{{payParams.courseNum>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
@@ -82,16 +82,55 @@
     async onLoad(opt) {
       console.log(opt)
       this.mobile = wepy.getStorageSync('mobile');
-      this.payParams = wepy.$instance.globalData.orderInfo
-      this.orderInfo = wepy.$instance.globalData.courseInfo
-      let res = await config.orderInfo({
-      })
+      // this.payParams = wepy.$instance.globalData.orderInfo
+      // this.orderInfo = wepy.$instance.globalData.courseInfo
+      await this.getorderInfo(opt)
     }
     onShow() {
       this.childs = wepy.$instance.globalData.childs
     }
     onUnload() {
       this.childs = wepy.$instance.globalData.childs = []
+    }
+    // 根据课程详情参数，生成支付订单信息
+    async getorderInfo(opt) {
+      /*
+        params ={
+          orderType: ${opt.type}, // 订单类型
+          courseId: ${opt.cid}, // 课程id
+          periodId: ${opt.pid}, // 营期id
+          num: ${opt.num}, // 数量
+          actId: ${opt.aId}, // 活动id
+        }
+      */
+      let params = {
+        orderType: opt.type,
+        courseId: opt.cid,
+        periodId: opt.pid,
+        num: opt.num,
+        actId: opt.aid,
+      }
+      let {
+        errcode,
+        data
+      } = await config.orderInfo(params)
+      if (errcode == 200) {
+        this.orderInfo = data.course
+        let _data = data
+        this.payParams = {
+          childIds: '',
+          courseId: _data.courseId,
+          courseNum:_data.num,
+          periodId: _data.periodId,
+          remark: '',
+          paymentType: 1,
+          orderType:_data.orderType,
+          periodName:_data.period,
+          actId:_data.actId
+        }
+      }
+      this.$apply()
+      //  console.log(res)
     }
     computed = {
       orderPrice() {
