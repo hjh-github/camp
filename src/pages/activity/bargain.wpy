@@ -131,7 +131,9 @@
             },
         };
         async helpBargain() {
-            await config.helpBargain(this.regId)
+            let res = await config.helpBargain({
+                regId: this.regId
+            })
         }
         async load() {
             let {
