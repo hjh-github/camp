@@ -18,7 +18,6 @@
               <text>出行人</text>
               <text class="text-red text-xs">（购买保险并生成旅游合同）</text>
             </view>
-            
             <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
               <view class="padding-bottom-xs">
                 <text class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
@@ -78,12 +77,15 @@
       orderInfo: {},
       payParams: {},
       childs: [],
-      mobile:''
+      mobile: ''
     };
-    onLoad() {
+    async onLoad(opt) {
+      console.log(opt)
       this.mobile = wepy.getStorageSync('mobile');
       this.payParams = wepy.$instance.globalData.orderInfo
       this.orderInfo = wepy.$instance.globalData.courseInfo
+      let res = await config.orderInfo({
+      })
     }
     onShow() {
       this.childs = wepy.$instance.globalData.childs
@@ -129,7 +131,7 @@
         }
       },
       getChilds() {
-        if(!this.mobile){
+        if (!this.mobile) {
           return false
         }
         wepy.navigateTo({

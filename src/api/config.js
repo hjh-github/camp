@@ -69,11 +69,11 @@ export default class config extends base {
         })
     }
     // 帮砍价
-    static async helpBargain(opt) {
+    static async helpBargain(regId) {
         let url = `${this.baseUrl}/bargain/helpBargain`;
         let params = {
             sessionId: wepy.$instance.globalData.sessionId,
-            ...opt
+            regId
         }
         return this.post(url, params, true,true).then(res => {
             return res;
@@ -178,6 +178,17 @@ export default class config extends base {
         })
     }
     // ########################  订单管理  ###################
+    // 生成支付订单信息 
+    static async orderInfo(opt) {
+        let url = `${this.baseUrl}/order/info`;
+        let params = {
+            ...opt,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true, true).then(res => {
+            return res;
+        })
+    }
     // 下单 
     static async ordercommit(opt) {
         let url = `${this.baseUrl}/order/ordercommit`;

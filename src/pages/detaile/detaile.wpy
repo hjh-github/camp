@@ -257,7 +257,7 @@
                 }
                 wepy.$instance.globalData.orderInfo = params
                 wepy.navigateTo({
-                    url: './sureOrder'
+                    url: `./sureOrder?type=1&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}`
                 });
             }
         };
