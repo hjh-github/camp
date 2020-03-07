@@ -4,14 +4,13 @@
     <loading wx:if="{{!isShow}}" />
     <view wx:if="{{isShow}}" class="h100">
       <cHeader></cHeader>
-      <scroll-view class="main" scroll-y @scroll="scroll" lower-threshold="20" scroll-anchoring="{{true}}" bindscrolltolower="getMore">
+      <view class="main">
         <cSwiper :model.sync="swipers"></cSwiper>
         <Navs :model.sync="navs"></Navs>
         <scrollNav :isfixed.sync="isfixed" :model.sync="scrollNav" @ret.user="getScreen"></scrollNav>
-        <!-- <scrollNav hidden="{{!isfixed}}" :model.sync="model" @ret.user="getScreen" class="fixed"></scrollNav> -->
         <cCard :model.sync="courses"></cCard>
         <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5"></view>
-      </scroll-view>
+      </view>
     </view>
   </view>
 </template>
@@ -154,6 +153,32 @@
         }
       }
     }
+    onPageScroll(e) {
+      if (e.scrollTop > 410) {
+        if (!this.isfixed) {
+          this.isfixed = true
+          this.$apply()
+        }
+      } else {
+        if (this.isfixed) {
+          this.isfixed = false
+          this.$apply()
+        }
+      }
+    }
+    onReachBottom() {
+      this.getMore()
+    }
+    async getMore() {
+      if (this.loadmoring) {
+        return false
+      }
+      this.loadmoring = true
+      this.showMore()
+      await this.loadcourses(this.pageIndex + 1)
+      this.loadmoring = false
+      this.$apply()
+    }
     methods = {
       async getScreen(key, screen) {
         this.courseTypeId = key
@@ -161,26 +186,6 @@
         await this.loadcourses(1)
         this.$apply()
       },
-      scroll(e) {
-        if (e.detail.scrollTop < 5) {
-          wx.startPullDownRefresh()
-        }
-        if (e.detail.scrollTop > 428) {
-          if (!this.isfixed) this.isfixed = true
-        } else {
-          if (this.isfixed) this.isfixed = false
-        }
-      },
-      async getMore() {
-        if (this.loadmoring) {
-          return false
-        }
-        this.loadmoring = true
-        this.showMore()
-        await this.loadcourses(this.pageIndex + 1)
-        this.loadmoring = false
-        this.$apply()
-      }
     };
   }
 </script>

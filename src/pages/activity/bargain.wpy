@@ -7,9 +7,9 @@
             <view>活动规则</view>
         </view>
         <view class="content-bar">
-            <view class="cu-avatar xl round margin-left" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big99008.jpg);"></view>
+            <view class="cu-avatar xl round margin-left" style="background-image:url({{info.reg.profilePhoto}});"></view>
             <view class="bg-white radius content ">
-                <view class="margin-top-sm tetx-gray text-center">华心桥_戴炼</view>
+                <view class="margin-top-sm tetx-gray text-center">{{info.reg.name}}</view>
                 <view class="margin-top-sm tetx-black text-center">我发现了一件好货，来一起砍价优惠购！</view>
                 <view class="content-msg margin-top-sm">
                     <view class="flex bg-white padding">
@@ -33,18 +33,25 @@
                 <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
                 <view>底价：<text class="text-price">3000</text></view>
             </view>
-            <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
-            <view wx:if="{{info.status == 1}}" class="flex flex-c">
-                <button style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" open-type="share">邀请好友砍价</button>
-                <button style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
+            
+            <view wx:if="{{info.owner == 1}}"  class="flex flex-c flex-jc">
+                <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" open-type="share">邀请好友砍价</button>
+                <button wx:if="{{info.status == 1}}" style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
+                <button wx:if="{{info.status == 4}}" style="width:300rpx;" @tap="topay" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去付款</button>
             </view>
+            <view wx:if="{{info.owner == 0}}" class="flex flex-c flex-jc" >
+                <button style="width:300rpx;" @tap="tocut" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">我也去砍价</button>
+                <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
+            </view>
+            
+            
         </view>
         <view class="log-box radius padding">
             <view class="text-center text-lg solid-bottom padding-bottom">砍价记录</view>
             <repeat for="{{bargainRecords}}" key="index" index="index" item="item">
-                <view class="flex flex-c flex-sa margin-top text-df">
+                <view class="flex flex-c margin-top text-df">
                     <view class="cu-avatar lg round" style="background-image:url({{item.profilePhoto}});"></view>
-                    <view>{{item.name}}</view>
+                    <view class="weui-flex__item text-center">{{item.name}}</view>
                     <view>砍掉 {{item.cutPrice}}元</view>
                 </view>
             </repeat>
@@ -62,7 +69,7 @@
             close: "/static/images/close.png",
             active: true,
             routes: 0,
-            regId:'',
+            regId: '',
             courseInfo: {},
             ActBargainReg: null,
             bargainRecords: [],
@@ -121,9 +128,19 @@
             this.$apply()
         }
         methods = {
-            async buy() {
+            tocut(){
+                wepy.navigateTo({
+                    url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
+                });
+            },
+            buy() {
                 wepy.navigateTo({
                     url: `/pages/detaile/sureOrder?type=2&pid=${this.info.reg.periodId}&cid=${this.info.reg.courseId}&num=1&aid=${this.info.regId}`
+                });
+            },
+            topay(){
+                wepy.navigateTo({
+                    url: `/pages/my/order?id=${this.info.orderId}`
                 });
             },
             async onGotUserInfo(e) {
@@ -146,7 +163,7 @@
             if (errcode == 200) {
                 this.info = data
                 this.courseInfo = data.courseInfo
-                this.ActBargainReg = data.ActBargainReg
+                this.ActBargainReg = data.reg
                 this.bargainRecords = data.bargainRecords
             }
         }

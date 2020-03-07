@@ -23,6 +23,7 @@
                         </image>
                         <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
                             <view>{{item.courseTittle}}</view>
+                            <view class="text-orange"><text class="text-price">{{item.moneyOrder}}</text></view>
                             <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.courseNum}}</text>
                             </view>
                         </view>

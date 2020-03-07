@@ -1,24 +1,28 @@
 
   
 <template>
-    <view class="cu-bar search" style="background-color:{{theme}}">
-        <view class="cu-avatar round">
-            <open-data class="img" type="userAvatarUrl"></open-data>
+    <view>
+        <view class="cu-bar search rel" style="background-color:{{theme}}">
+            <view class="cu-avatar round">
+                <open-data class="img" type="userAvatarUrl"></open-data>
+            </view>
+            <view class="search-form radius" @tap="toser">
+                <text class="cuIcon-search"></text>
+                <input disabled type="text" placeholder="输入课程名称" confirm-type="search"></input>
+            </view>
+            <view class="action" @tap="navigator">
+                <text>{{city?city.name:'请选择城市'}}</text>
+                <text class="cuIcon-triangledownfill"></text>
+            </view>
         </view>
-        <view class="search-form radius" @tap="toser">
-            <text class="cuIcon-search"></text>
-            <input disabled type="text" placeholder="输入课程名称" confirm-type="search"></input>
-        </view>
-        <view class="action" @tap="navigator">
-            <text>{{city?city.name:'请选择城市'}}</text>
-            <text class="cuIcon-triangledownfill"></text>
+        <view class="w100 bg-white search">
         </view>
     </view>
 </template>
 
 <script>
     import wepy from "wepy";
-     import {
+    import {
         connect
     } from "wepy-redux"
     import store from "@/store/utils"
@@ -30,11 +34,15 @@
             theme: wepy.$instance.globalData.themeColor
         };
         methods = {
-            navigator(){
-                wepy.navigateTo({ url: '/pages/home/address' });
+            navigator() {
+                wepy.navigateTo({
+                    url: '/pages/home/address'
+                });
             },
-            toser(){
-                wepy.navigateTo({ url: '/pages/home/search' });
+            toser() {
+                wepy.navigateTo({
+                    url: '/pages/home/search'
+                });
             }
         };
     }
@@ -42,13 +50,20 @@
 
 
 <style lang="less" scoped>
-    .search{
+    .rel {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 9999;
+        width: 100%;
+    }
+    .search {
         height: 110rpx;
     }
-    .round{
+    .round {
         overflow: hidden;
-        .img{
-            width:100%;
+        .img {
+            width: 100%;
             height: 100%;
         }
     }

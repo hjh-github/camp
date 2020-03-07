@@ -69,7 +69,7 @@
     .fixed {
         position: fixed;
         left: 0;
-        top: 108rpx;
+        top: 110rpx;
         
     }
     .pr{
