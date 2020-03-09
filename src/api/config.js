@@ -233,6 +233,17 @@ export default class config extends base {
             return res;
         })
     }
+    // 我的砍价
+    static async bargains(opt) {
+        let url = `${this.baseUrl}/member/bargain/list`;
+        let params = {
+            ...opt,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, true).then(res => {
+            return res;
+        })
+    }
     // 取消订单
     static async cancalorder(id) {
         let url = `${this.baseUrl}/member/cancalorder`;

@@ -1,0 +1,158 @@
+
+<template>
+    <view class='h100'>
+        <repeat for="{{orders}}" key="index" index="index" item="item">
+            <view class="bg-white padding padding-bottom-xs {{!index ? 'margin-top margin-bottom': 'margin-bottom'}}">
+                <view class="flex " @tap="todetaile({{item.id}})">
+                    <image class="img" src="{{item.courseImage}}" mode="aspectFill">
+                    </image>
+                    <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
+                        <view>{{item.courseTittle}}</view>
+                        <view class="text-orange"><text class="text-price">{{item.courseNewPrice}}</text></view>
+                        <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.cutNumber}}</text>
+                        </view>
+                    </view>
+                </view>
+                <view class="cu-bar bg-white justify-end margin-top solid-top">
+                    <view class="action flex__item margin-right" style="justify-content:flex-start">
+                        <tetx class="text-orange text-sm ">{{orderState[item.awardsStatus]}}</tetx>
+                    </view>
+                    <view class="action">
+                        <button wx:if="{{item.awardsStatus < 2}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">继续砍价</button>
+                    </view>
+                </view>
+            </view>
+        </repeat>
+        <view hidden="{{!loadmoring}}" class="cu-load {{!toload?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import config from "@/api/config"
+    import Tips from "@/utils/Tips"
+    import WxUtils from "@/utils/WxUtils"
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "我的砍价"
+        };
+        data = {
+            theme: wepy.$instance.globalData.themeColor,
+            orderState: {
+                0: '砍价中',
+                1: '待付款',
+                2: '已完成',
+                3: '已过期'
+            },
+            orderStats: {},
+            scrollLeft: 0,
+            pageIndex: 1,
+            orders: [],
+            toload: false,
+            isload: true,
+            loadmoring: false,
+        };
+        async onLoad(opt) {
+            await this.loadData()
+            this.isload = false
+        }
+        async loadData(pageIndex) {
+            let params = {
+                pageIndex: pageIndex || this.pageIndex,
+                pageSize: 10
+            }
+            let res = await config.bargains(params)
+            if (res.errcode == 200) {
+                let ordersList = res.data.reg
+                if (!ordersList.length) {
+                    if (pageIndex == 1) {
+                        this.orders = ordersList
+                    }
+                    this.pageIndex = pageIndex
+                    this.toload = true
+                    this.loadmoring = true
+                    this.$apply()
+                    return false
+                } else {
+                    if (pageIndex > 1) this.pageIndex = pageIndex
+                    if (pageIndex == 1) {
+                        this.orders = ordersList
+                    } else {
+                        this.orders = this.orders.concat(ordersList)
+                    }
+                    this.loadmoring = false
+                }
+                this.$apply()
+            }
+        }
+        onShareAppMessage(res) {
+            let id = ''
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+                id = res.target.dataset.id
+            }
+            return {
+                title: '我发现了一件好货，来一起砍价优惠购！',
+                path: '/pages/activity/bargain?regId=' + id
+            }
+        }
+        async onReachBottom() {
+            await this.getMore()
+        }
+        async getMore() {
+            if (this.loadmoring) {
+                return false
+            }
+            this.loadmoring = true
+            this.toload = false
+            await this.loadData(this.pageIndex + 1)
+            this.$apply()
+        }
+        methods = {
+            tocut(e){
+                wepy.navigateTo({
+                    url: '/pages/activity/bargain?regId=' + e.id
+                });
+            }
+        };
+    }
+</script>
+
+<style lang="less" scoped>
+    .badge {
+        right: 0;
+        top: 20rpx;
+    }
+    .posi {
+        position: relative;
+    }
+    .img {
+        width: 200rpx;
+        height: 200rpx;
+    }
+    .main-view {
+        height: calc(~"100% - 100rpx");
+    }
+    .fixed {
+        position: fixed;
+        left: 0;
+        top: 108rpx;
+    }
+    .pr {
+        position: relative;
+    }
+    .container {
+        border-bottom: 1px solid #eee;
+        height: 90rpx;
+        z-index: 9999;
+    }
+    .nav {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    .cu-item {
+        width: 165rpx;
+        text-align: center;
+    }
+</style>

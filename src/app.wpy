@@ -147,6 +147,7 @@
       "pages/my/my",
       "pages/my/orders",
       "pages/my/order",
+      "pages/my/bargaining",
       "pages/home/address",
       "pages/detaile/detaile",
       "pages/detaile/sureOrder",
