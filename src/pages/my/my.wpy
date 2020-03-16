@@ -24,6 +24,12 @@
       </repeat>
     </view>
     <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
+      <!-- <view class="cu-item arrow">
+        <view class="content" bindtap="childs">
+          <text class="cuIcon-card text-red"></text>
+          <text class="text-grey">身份信息管理</text>
+        </view>
+      </view> -->
       <view class="cu-item arrow">
         <view class="content" bindtap="childs">
           <text class="cuIcon-card text-red"></text>
@@ -125,7 +131,7 @@
     overflow: hidden;
   }
   .UCenter-bg {
-    background-image: url(https://images.kuan1.cn/kuan1/upload/image/20191212/20191212105653_66237.jpeg);
+    background-image: url(https://images.hxqxly.com/banner/grzx.jpg);
     background-size: cover;
     height: 550rpx;
     display: flex;
