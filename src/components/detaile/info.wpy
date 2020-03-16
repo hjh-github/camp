@@ -20,7 +20,7 @@
                     <text class="text-black text-df">{{model.effect}}</text>
                 </view>
             </view>
-            <view class="cu-item">
+            <view class="cu-item" @tap="tolist">
                 <view class="content">
                     <!-- <text class="text-black text-df">本期已售4，</text> -->
                     <text class="text-grey text-sm padding-left">累积已售{{model.campersNum}}</text>
@@ -48,7 +48,10 @@ export default class Dialog extends wepy.component {
     close: "/static/images/close.png"
   };
   methods = {
-
+      tolist(){
+          wepy.navigateTo({ url: '/pages/detaile/partners?id=' + this.model.id });
+          
+      }
   };
 }
 </script>

@@ -76,6 +76,17 @@
       navigationBarTitleText: "华心桥体验营",
       enablePullDownRefresh: true
     };
+    // 转发暂时先不开启
+        onShareAppMessage(res) {
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+            }
+            return {
+                title: '华心桥体验营',
+                path: '/pages/home/index'
+            }
+        }
     async onLoad() {
       wepy.setNavigationBarColor({
         frontColor: '#ffffff', //前景颜色值，包括按钮、标题、状态栏的颜色，仅支持 #ffffff 和 #000000,
