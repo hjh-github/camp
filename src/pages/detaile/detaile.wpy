@@ -21,10 +21,18 @@
                 <!-- 这个部分是活动tag -->
                 <view wx:if="{{courseInfo.bargainId}}" class="cu-bar bg-white margin-top">
                     <view class="action text-df">
-                        <text class="cu-tag round line-orange margin-right-sm">砍价</text> 最高可省2000元开团
+                        <text class="cu-tag round line-orange margin-right-sm">砍价</text> {{courseInfo.bargainDes}}
                     </view>
                     <view class="action">
                         <button class="cu-btn sm bg-orange shadow" @tap="sku('bargain')">发起砍价</button>
+                    </view>
+                </view>
+                <view wx:if="{{courseInfo.pintuanId}}" class="cu-bar bg-white margin-top">
+                    <view class="action text-df">
+                        <text class="cu-tag round line-green margin-right-sm">拼团</text> {{courseInfo.bargainDes}}
+                    </view>
+                    <view class="action">
+                        <button class="cu-btn sm bg-green shadow" @tap="toPintuanfy()">发起拼团</button>
                     </view>
                 </view>
                 <!-- 更多信息 -->
@@ -56,6 +64,40 @@
                 </swiper-item>
             </swiper>
         </scroll-view>
+        <view class="cu-modal bottom-modal {{toPintuan?'show':''}}" bindtap="hideModal">
+            <view class="cu-dialog" @tap.stop="ret">
+                <view class="cu-timeline">
+                    <view class="cu-time text-black" style="width:100%;color:#333;font-size:32rpx;">拼团规则</view>
+                    <view class="cu-item">
+                        <view class="content bg-gray shadow-blur text-black">
+                            【立即开团】原价购买活动
+                        </view>
+                    </view>
+                    <view class="cu-item">
+                        <view class="content bg-gray shadow-blur text-black">
+                            购买成功后，邀请好友拼团
+                        </view>
+                    </view>
+                    <view class="cu-item">
+                        <view class="content bg-gray shadow-blur text-black">
+                            订单详情，查看拼团结果
+                        </view>
+                    </view>
+                    <view class="cu-item">
+                        <view class="bg-gray content text-orange">
+                            拼团成功，结束后现金返还
+                        </view>
+                        <view class="bg-gray content text-black">
+                            拼团失败，原价参加活动
+                        </view>
+                    </view>
+                </view>
+                <view class="bg-white padding-sm content text-gray">
+                    注：根据实际拼团人数，活动结束后现金原路返还。
+                </view>
+                <view @tap="sku('pintuan')" class="bg-orange plus text-white text-lg text-center">立即开团</view>
+            </view>
+        </view>
         <view class="cu-modal bottom-modal {{showSku?'show':''}}" bindtap="hideModal">
             <view class="cu-dialog" @tap.stop="ret">
                 <view class="cu-bar bg-white padding-left">
@@ -82,15 +124,12 @@
                 </view>
                 <view wx:if="{{buyTypt == 'normal'}}" @tap="buy()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
                 <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain()" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
+                <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy({{courseInfo.pintuanId}},3)" class="bg-orange plus text-white text-lg text-center">发起拼团</view>
             </view>
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
-            <button class="action" open-type="contact">
-                                                                                    <view class="cuIcon-weixin text-orange"></view>聊活动
-                                                                                </button>
-            <view class="action">
-                <view class="cuIcon-friend text-orange"></view>邀请同伴
-            </view>
+            <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
+            <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
             <view class="bg-orange submit text-lg" @tap="sku('normal')">立即购买</view>
         </view>
     </view>
@@ -133,7 +172,8 @@
                 0: '火热招生中',
                 1: '少量名额',
                 2: '已满员'
-            }
+            },
+            toPintuan: false
         };
         components = {
             cSwiper,
@@ -145,18 +185,16 @@
             navigationBarTitleText: "活动详情"
         };
         // 转发暂时先不开启
-        // async onShareAppMessage(res) {
-        //     console.log(this.courseInfo)
-        //     if (res.from === 'button') {
-        //         await config.
-        //         // 来自页面内转发按钮
-        //         console.log(res.target)
-        //     }
-        //     return {
-        //         title: '自定义转发标题',
-        //         path: '/page/user?id=123'
-        //     }
-        // }
+        onShareAppMessage(res) {
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+            }
+            return {
+                title: this.courseInfo.courseTittle,
+                path: '/pages/detaile/detaile?id=' + this.courseInfo.id
+            }
+        }
         async onLoad(opt) {
             // 获取主内容高度，用于悬浮详情导航
             let view = wx.createSelectorQuery().select("#info-box");
@@ -187,6 +225,9 @@
             this.$apply();
         }
         methods = {
+            toPintuanfy() {
+                this.toPintuan = true
+            },
             async bargain() {
                 if (this.courseInx == -1) {
                     Tips.toast("请选择一个营期", res => {}, 'none')
@@ -222,10 +263,12 @@
                 this.TabCur = e.currentTarget.dataset.id || e.detail.current;
             },
             hideModal() {
+                this.toPintuan = false
                 this.showSku = false
             },
             sku(type = 'normal') {
                 this.showSku = true
+                this.toPintuan = false
                 this.buyTypt = type
             },
             plus() {
@@ -241,13 +284,13 @@
             course(inx) {
                 this.courseInx = inx
             },
-            async buy() {
+            async buy(aid = 0, ot = 1) {
                 if (this.courseInx == -1) {
                     Tips.toast("请选择一个营期", res => {}, 'none')
                     return false
                 }
                 wepy.navigateTo({
-                    url: `./sureOrder?type=1&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=0`
+                    url: `./sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}`
                 });
             }
         };

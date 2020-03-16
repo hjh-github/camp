@@ -34,7 +34,7 @@
                         </view>
                         <view class="text-gray text-sm flex">
                             <text class="text-cut text-price margin-left">{{remark.coursePrice}}</text>
-                            <text class="text-cut text-price">累计{{remark.totalCount}}人</text>
+                            <text class="text-cut ">累计{{remark.totalCount}}人</text>
                         </view>
                     </view>
                     <view class="action">

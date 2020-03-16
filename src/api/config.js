@@ -38,6 +38,17 @@ export default class config extends base {
         })
     }
 
+    static async getCompanions(courseId) {
+        let url = `${this.baseUrl}/course/getCompanions`;
+        let params = {
+            courseId,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
+
     static async getCourseInfo(id) {
         let url = `${this.baseUrl}/course/getInfo`;
         let params = {
@@ -227,6 +238,17 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/orderdetail`;
         let params = {
             id,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, true).then(res => {
+            return res;
+        })
+    }
+    // 我的砍价
+    static async bargains(opt) {
+        let url = `${this.baseUrl}/member/bargain/list`;
+        let params = {
+            ...opt,
             sessionId: wepy.$instance.globalData.sessionId
         }
         return this.get(url, params, true, true).then(res => {

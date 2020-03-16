@@ -1,28 +1,32 @@
 
 <template>
-    <view>
-    </view>
+  <view>
+    <cRemake wx:if="{{CourseComment}}" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
+  </view>
 </template>
 
 <script>
-import wepy from "wepy";
-export default class Dialog extends wepy.page {
-  data = {
-    close: "/static/images/close.png"
-  };
-  onLoad(opt){
-      console.log(opt.id)
+  import wepy from "wepy";
+  import cRemake from "@/components/detaile/remake";
+  export default class Dialog extends wepy.page {
+    data = {
+      close: "/static/images/close.png"
+    };
+    onLoad(opt) {
+      console.log(opt.id);
+    }
+    components = {
+      cRemake
+    };
+    methods = {};
   }
-  methods = {
-
-  };
-}
 </script>
 <style>
-page {
-  height: 100%;
-}
+  page {
+    height: 100%;
+  }
 </style>
 
 <style lang="less" scoped>
+
 </style>

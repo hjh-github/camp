@@ -1,0 +1,60 @@
+
+<template>
+    <view>
+        <view wx:if="{{!partners.length}}" class="text-center" style="margin:320rpx auto;">暂无数据</view>
+        <repeat wx:if="{{partners.length}}" for="{{partners}}" key="index" index="index" item="item">
+            <view class="cu-bar bg-white solid-bottom margin-top">
+                <view class="action">
+                    <text class="cuIcon-title text-orange "></text>{{ABC[index]}}班： {{item.period}} 小孩{{item.count}}人
+                </view>
+            </view>
+            <repeat for="{{item.members}}" key="_index" index="_index" item="_item">
+                <view class="cu-list menu-avatar">
+                    <view class="cu-item ">
+                        <view class="cu-avatar radius lg" style="background-image:url({{_item.portrait}});"></view>
+                        <view class="content">
+                            <view class="text-pink">
+                                <text class="text-cut">{{_item.name}}</text>
+                            </view>
+                            <view class="text-gray text-sm flex">
+                                <text class="text-cut"></text>
+                            </view>
+                        </view>
+                        <view class="action">
+                            <view class="text-grey text-xs">{{_item.joinConnt}}人</view>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+        </repeat>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import config from "@/api/config"
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "同行伙伴"
+        };
+        data = {
+            partners: [],
+            ABC: []
+        };
+        async onLoad(opt) {
+            let list = [];
+            for (let i = 0; i < 26; i++) {
+                list[i] = String.fromCharCode(65 + i)
+            }
+            this.ABC = list
+            let res = await config.getCompanions(opt.id)
+            this.partners = res || []
+            this.$apply()
+        }
+        methods = {};
+    }
+</script>
+
+<style lang="less" scoped>
+
+</style>

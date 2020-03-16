@@ -24,30 +24,30 @@
       </repeat>
     </view>
     <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
-      <!-- <view class="cu-item arrow">
-        <view class="content" bindtap="childs">
-          <text class="cuIcon-card text-red"></text>
-          <text class="text-grey">身份信息管理</text>
+      <view class="cu-item arrow" bindtap="bargaining">
+        <view class="content" >
+          <text class="cuIcon-recharge text-red"></text>
+          <text class="text-grey">我的砍价</text>
         </view>
-      </view> -->
-      <view class="cu-item arrow">
-        <view class="content" bindtap="childs">
+      </view>
+      <view class="cu-item arrow" bindtap="childs">
+        <view class="content" >
           <text class="cuIcon-card text-red"></text>
           <text class="text-grey">身份信息管理</text>
         </view>
       </view>
-      <view class="cu-item arrow">
-        <view class="content" bindtap="showQrcode">
+      <view class="cu-item arrow" bindtap="showQrcode">
+        <view class="content" >
           <text class="cuIcon-group text-red"></text>
           <text class="text-grey">关于我们</text>
         </view>
       </view>
-      <view class="cu-item arrow">
+      <!-- <view class="cu-item arrow">
         <view class="content" bindtap="showQrcode">
           <text class="cuIcon-settingsfill text-red"></text>
           <text class="text-grey">设置</text>
         </view>
-      </view>
+      </view> -->
     </view>
     <view class="cu-tabbar-height"></view>
   </view>
@@ -90,9 +90,13 @@
    async onShow(){
      let res = await config.center()
      this.myInfo = res
-     console.log(res)
     }
     methods = {
+      bargaining(){
+          wepy.navigateTo({
+            url: './bargaining'
+          });
+      },
       childs() {
         if (wepy.getStorageSync('mobile')) {
           wepy.navigateTo({

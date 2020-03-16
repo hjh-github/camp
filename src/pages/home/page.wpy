@@ -7,6 +7,9 @@
 <script>
 import wepy from "wepy";
 export default class Dialog extends wepy.page {
+  config = {
+      navigationBarTitleText: "page_name"
+    };
   data = {
     close: "/static/images/close.png"
   };
