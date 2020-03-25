@@ -68,6 +68,16 @@ export default class config extends base {
             return res;
         })
     }
+    // 获取评论列表
+    static async comments(opt) {
+        let url = `${this.baseUrl}/comment/list`;
+        let params = {
+            ...opt
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }
     // 发起砍价
     static async regBargain(opt) {
         let url = `${this.baseUrl}/bargain/regBargain`;

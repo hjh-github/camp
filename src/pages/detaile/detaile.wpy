@@ -37,7 +37,7 @@
                 </view>
                 <!-- 更多信息 -->
                 <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
-                <cRemake wx:if="{{CourseComment}}" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
+                <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
             </view>
             <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
                 <view class="flex text-center">
@@ -122,9 +122,9 @@
                         <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
                         <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
                 </view>
-                <view wx:if="{{buyTypt == 'normal'}}" @tap="buy()" class="bg-orange plus text-white text-lg text-center">立即购买</view>
-                <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain()" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
-                <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy({{courseInfo.pintuanId}},3)" class="bg-orange plus text-white text-lg text-center">发起拼团</view>
+                <view wx:if="{{buyTypt == 'normal'}}" @tap="buy('',1)" class="bg-orange plus text-white text-lg text-center">立即购买</view>
+                <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
+                <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">发起拼团</view>
             </view>
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
@@ -284,13 +284,13 @@
             course(inx) {
                 this.courseInx = inx
             },
-            async buy(aid = 0, ot = 1) {
+            async buy(aid = 0, ot = 1,) {
                 if (this.courseInx == -1) {
                     Tips.toast("请选择一个营期", res => {}, 'none')
                     return false
                 }
                 wepy.navigateTo({
-                    url: `./sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}`
+                    url: `./sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}&actpid=${this.courseInfo.pintuanId}`
                 });
             }
         };

@@ -108,7 +108,7 @@
         courseId: opt.cid,
         periodId: opt.pid,
         num: opt.num,
-        actId: opt.aid,
+        actId: opt.aid
       }
       let {
         errcode,
@@ -127,11 +127,11 @@
           orderType:_data.orderType,
           periodName:_data.period,
           actId:_data.actId,
-          price:_data.totalPrice
+          price:_data.totalPrice,
+          actPintuanId:opt.actpid
         }
       }
       this.$apply()
-      //  console.log(res)
     }
     computed = {
       orderPrice() {

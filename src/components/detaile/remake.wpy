@@ -51,7 +51,7 @@
 <script>
     import wepy from "wepy";
     export default class Dialog extends wepy.component {
-        props = ['statistics','CourseComment']
+        props = ['statistics','CourseComment','model']
         data = {
             close: "/static/images/close.png"
         };
@@ -59,7 +59,7 @@
             toMore(e) {
                 let id = e.currentTarget.dataset.id || e.target.dataset.id
                 wepy.navigateTo({
-                    url: '/pages/meet/remarks?id=' + id
+                    url: '/pages/meet/remarks?tag=' + id + '&courseId=' + this.model.id
                 });
             }
         };

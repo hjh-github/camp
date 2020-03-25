@@ -1,24 +1,92 @@
 
 <template>
-  <view>
-    <cRemake wx:if="{{CourseComment}}" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
+  <view class="margin-top-sm dynamic {{isCard?'no-card':''}}">
+    <view class="padding bg-white solid-bottom">
+      <view data-id="0" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">全部<text wx:if="{{statistics.total}}">（{{statistics.total}}）</text></view>
+      <view data-id="6" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">有图<text wx:if="{{statistics.haveImages}}">（{{statistics.haveImages}}）</text></view>
+      <view data-id="1" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">领队专业<text wx:if="{{statistics.major}}">（{{statistics.major}}）</text></view>
+      <view data-id="2" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">教育意义<text wx:if="{{statistics.educational}}">（{{statistics.educational}}）</text></view>
+      <view data-id="3" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">安全<text wx:if="{{statistics.security}}">（{{statistics.security}}）</text></view>
+      <view data-id="4" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">性价比<text wx:if="{{statistics.affordable}}">（{{statistics.affordable}}）</text></view>
+    </view>
+    <repeat for="{{CourseComments}}" key="index" index="index" item="CourseComment">
+      <view class="cu-item bg-white padding-left margin-bottom">
+        <view class="cu-list menu-avatar">
+          <view class="cu-item">
+            <view class="cu-avatar round lg" style="left:0rpx;background-image:url({{CourseComment.userPhoto}});">
+              <!-- <view class="cu-tag badge {{index%2==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}}"></view> -->
+            </view>
+            <view class="content flex-sub" style="left:116rpx;">
+              <view>
+                <text class="padding-right-xs">{{CourseComment.userName}}</text>
+                <repeat for="{{5}}" key="index" index="index" item="item">
+                  <text class="cuIcon-{{index< CourseComment.grade?'favorfill':'favor'}} text-orange"></text>
+                </repeat>
+              </view>
+              <view class="text-gray text-sm flex justify-between">{{CourseComment.createTime}}</view>
+            </view>
+          </view>
+        </view>
+        <text class="text-content padding-bottom-sm" style="display:inline-block">{{CourseComment.content}}</text><text class="text-red">{{CourseComment.tag}}</text>
+        <view class="bg-white " style="padding-top:0">
+          <view class="grid col-3 grid-square">
+            <repeat for="{{CourseComment.imageList}}" key="index" index="index" item="item">
+              <view class="bg-img" style="background-image:url({{item}});"></view>
+            </repeat>
+          </view>
+        </view>
+      </view>
+    </repeat>
   </view>
 </template>
 
 <script>
   import wepy from "wepy";
+  import config from "@/api/config";
+  import Tips from "@/utils/Tips"
   import cRemake from "@/components/detaile/remake";
   export default class Dialog extends wepy.page {
-    data = {
-      close: "/static/images/close.png"
+    config = {
+      navigationBarTitleText: "全部评论"
     };
-    onLoad(opt) {
-      console.log(opt.id);
+    data = {
+      statistics: [],
+      CourseComments: [],
+      opt: {},
+      pageIndex: 1
+    };
+    async onLoad(opt) {
+      this.opt = opt
+      this.CourseComments = await this.load()
+      this.$apply()
+    }
+    async load() {
+      let res = await config.comments({
+        ...this.opt,
+        pageIndex: this.pageIndex
+      })
+      return res
     }
     components = {
       cRemake
     };
-    methods = {};
+    async onReachBottom() {
+      this.pageIndex++
+        let newlist = await this.load()
+      if (newlist.length) {
+        this.CourseComments = this.CourseComments.concat(newlist)
+      } else {
+        Tips.toast('人家也是有底线的啦 ~', () => {}, 'none')
+        this.pageIndex--
+      }
+      this.$apply()
+    }
+    methods = {
+      async turnTag(e) {
+        this.opt.tag = e.currentTarget.dataset.id || e.target.dataset.id
+        this.CourseComments = await this.load()
+      }
+    };
   }
 </script>
 <style>
