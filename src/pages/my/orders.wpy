@@ -36,6 +36,7 @@
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn line-orange text-orange" bindtap="cancle({{item.id}})">取消订单</button>
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn bg-orange margin-left" bindtap="pay({{item}})">支付订单</button>
                             <button wx:if="{{item.orderState == 3 && item.evaluateState ==1}}" class="cu-btn bg-orange margin-left" bindtap="remark({{item.id}})">去评价</button>
+                            <button wx:if="{{item.orderState == 5}}" open-type="share" data-act="pt" data-title="{{item.courseTittle}}" data-actid="{{item.activityId}}" data-images="{{item.courseImage}}" class="cu-btn bg-orange margin-left">邀请拼团</button>
                         </view>
                     </view>
                 </view>
@@ -134,6 +135,30 @@
                     this.loadmoring = false
                 }
                 this.$apply()
+            }
+        }
+        
+        onShareAppMessage(res) {
+            let params = {
+                title: '',
+                imageUrl:'',
+                path: ''
+            }
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+                let tar = res.target
+                if(tar.dataset.act == 'pt'){
+                    params.title = tar.dataset.title
+                    params.imageUrl = tar.dataset.images
+                    params.path ='/pages/activity/pintuan?aid=' +  tar.dataset.actid
+                }
+
+            }
+            return {
+                title: params.title,
+                imageUrl:params.imageUrl,
+                path:params.path
             }
         }
         methods = {

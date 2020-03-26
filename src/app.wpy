@@ -158,6 +158,7 @@
       "pages/meet/remarks",
       "pages/meet/commiRemarke",
       "pages/activity/bargain",
+      "pages/activity/pintuan",
       ],
       window: {
         backgroundTextStyle: "dark",

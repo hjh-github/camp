@@ -94,6 +94,7 @@
             <view wx:if="{{orderInfo.orderState == 2 }}" class="bg-orange submit text-lg"> 活动时间：{{orderInfo.periods}} </view>
             <view wx:if="{{orderInfo.orderState == 3 && orderInfo.evaluateState == 2 }}" class="bg-orange submit text-lg"> 订单已完成 </view>
             <view wx:if="{{orderInfo.orderState == 3 && orderInfo.evaluateState == 1}}" bindtap="remark({{orderInfo.id}})" class="bg-orange submit text-lg"> 去评价 </view>
+            <button wx:if="{{orderInfo.orderState == 5}}" open-type="share" data-act="pt" data-title="{{orderInfo.courseTittle}}" data-actid="{{orderInfo.activityId}}" data-images="{{orderInfo.courseImage}}" class="bg-orange submit text-lg">邀请拼团</button>
         </view>
     </view>
 </template>
@@ -129,6 +130,29 @@
         async onPullDownRefresh() {
             await this.loadData(this.id)
             wx.stopPullDownRefresh()
+        }
+        onShareAppMessage(res) {
+            let params = {
+                title: '',
+                imageUrl:'',
+                path: ''
+            }
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+                let tar = res.target
+                if(tar.dataset.act == 'pt'){
+                    params.title = tar.dataset.title
+                    params.imageUrl = tar.dataset.images
+                    params.path ='/pages/activity/pintuan?aid=' +  tar.dataset.actid
+                }
+
+            }
+            return {
+                title: params.title,
+                imageUrl:params.imageUrl,
+                path:params.path
+            }
         }
         methods = {
              remark(id) {

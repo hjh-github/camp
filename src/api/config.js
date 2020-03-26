@@ -111,6 +111,17 @@ export default class config extends base {
             return res;
         })
     }
+    // 拼团详情
+    static async pintuanDetai(activityId) {
+        let url = `${this.baseUrl}/pintuan/share/detai`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            activityId
+        }
+        return this.get(url, params, true,true).then(res => {
+            return res;
+        })
+    }
     // ########################  人员信息管理  ###################
     // 获取儿童列表
     static async getChildList() {
