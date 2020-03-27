@@ -31,15 +31,68 @@
                                 <view class="cu-avatar round lg" style="background-image:url({{item}});"></view>
                             </repeat>
                         </view>
-                        <view class="text-orange text-sm margin-left-sm">当前拼团优惠：300元</view>
+                        <view class="text-orange text-sm margin-left-sm">拼团最高可返现金：300元</view>
                     </view>
                     <view class="action">
-                        <button class="cu-btn bg-orange margin-top shadow" @tap="buy('',3)">参团购买</button>
+                        <button class="cu-btn bg-orange margin-top shadow" @tap="toPintuanfy()">参团购买</button>
+                    </view>
+                </view>
+                <view class="bg-white padding-left padding-right">
+                    <view class="bg-white padding-sm content text-gray">
+                        拼团详情
+                    </view>
+                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
+                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
+                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
+                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
+                </view>
+                <view class="bg-white padding-left padding-right padding-bottom ">
+                    <view class="bg-white padding-sm content text-gray">
+                        报名流程
+                    </view>
+                    <view class="cu-steps">
+                        <view class="cu-item text-orange" wx:for="{{numList}}" wx:key>
+                            <text class="num" data-index="{{index + 1}}"></text> {{item.name}}
+                        </view>
                     </view>
                 </view>
                 <!-- 更多信息 -->
                 <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
                 <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
+            </view>
+            <view class="cu-modal bottom-modal {{toPintuan?'show':''}}" bindtap="hideModal">
+                <view class="cu-dialog" @tap.stop="ret">
+                    <view class="cu-timeline">
+                        <view class="cu-time text-black" style="width:100%;color:#333;font-size:32rpx;">拼团规则</view>
+                        <view class="cu-item">
+                            <view class="content bg-gray shadow-blur text-black">
+                                【立即参团】原价购买活动
+                            </view>
+                        </view>
+                        <view class="cu-item">
+                            <view class="content bg-gray shadow-blur text-black">
+                                购买成功后，邀请好友拼团
+                            </view>
+                        </view>
+                        <view class="cu-item">
+                            <view class="content bg-gray shadow-blur text-black">
+                                订单详情，查看拼团结果
+                            </view>
+                        </view>
+                        <view class="cu-item">
+                            <view class="bg-gray content text-orange">
+                                拼团成功，结束后现金返还
+                            </view>
+                            <view class="bg-gray content text-black">
+                                拼团失败，原价参加活动
+                            </view>
+                        </view>
+                    </view>
+                    <view class="bg-white padding-sm content text-gray">
+                        注：根据实际拼团人数，活动结束后现金原路返还。
+                    </view>
+                    <view @tap="sku('pintuan')" class="bg-orange plus text-white text-lg text-center">立即参团</view>
+                </view>
             </view>
             <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
                 <view class="flex text-center">
@@ -92,14 +145,14 @@
                 </view>
                 <view wx:if="{{buyTypt == 'normal'}}" @tap="buy('',1)" class="bg-orange plus text-white text-lg text-center">立即购买</view>
                 <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
-                <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">发起拼团</view>
+                <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">立即参团</view>
             </view>
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
             <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
             <view class="line submit text-lg text-sm" @tap="sku('normal')">原价购买<text class="text-price">{{courseInfo.price}}</text></view>
-            <view class="bg-orange submit text-lg" @tap="sku('normal')">拼团购买</view>
+            <view class="bg-orange submit text-lg" @tap="sku('pintuan')">拼团购买</view>
         </view>
     </view>
 </template>
@@ -143,7 +196,16 @@
                 1: '少量名额',
                 2: '已满员'
             },
-            toPintuan: false
+            toPintuan: false,
+            numList: [{
+                name: '参团',
+                name1:'支付完成'
+            }, {
+                name: '参团人数达到',
+                name1:'最高可返'
+            }, {
+                name: '老师会主动联系你'
+            }]
         };
         components = {
             cSwiper,
@@ -269,8 +331,8 @@
         height: 100rpx;
         line-height: 100rpx;
     }
-    .submit.line{
-        border:1px solid var(--orange);
-        color:var(--orange)
+    .submit.line {
+        border: 1px solid var(--orange);
+        color: var(--orange)
     }
 </style>
