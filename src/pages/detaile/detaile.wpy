@@ -29,7 +29,7 @@
                 </view>
                 <view wx:if="{{courseInfo.pintuanId}}" class="cu-bar bg-white margin-top">
                     <view class="action text-df">
-                        <text class="cu-tag round line-green margin-right-sm">拼团</text> {{courseInfo.bargainDes}}
+                        <text class="cu-tag round line-green margin-right-sm">拼团</text> {{courseInfo.pintuanDes}}
                     </view>
                     <view class="action">
                         <button class="cu-btn sm bg-green shadow" @tap="toPintuanfy()">发起拼团</button>
