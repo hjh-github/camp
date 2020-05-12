@@ -31,7 +31,7 @@
             </view>
             <view class="flex flex-c flex-sb margin-left margin-right margin-top-sm text-df">
                 <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
-                <view>底价：<text class="text-price">3000</text></view>
+                <view>底价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
             </view>
             
             <view wx:if="{{info.owner == 1}}"  class="flex flex-c flex-jc">

@@ -1,6 +1,5 @@
 import wepy from 'wepy';
 import Tips from '../utils/Tips';
-import store from "@/store/utils";
 // HTTP工具类
 export default class http {
   static async request(method, url, data, loading = true, msg = false, form = false, needToken = true) {
@@ -27,6 +26,13 @@ export default class http {
         // store.save('loading', false)
         // Tips.loaded();
         wx.hideNavigationBarLoading()
+      }
+      if(res.data.errcode == 401){
+          if (res.data.errmsg) Tips.toast(res.data.errmsg, () => { 
+            wepy.$instance.globalData.sessionId = ''
+            wepy.reLaunch({ url: '/pages/home/index' });
+          }, "none");
+        return
       }
       if (res.data.errcode != 200) {
         if (res.data.errmsg) Tips.toast(res.data.errmsg, () => { }, "none");

@@ -1,3 +1,6 @@
 node_modules
 dist
 .DS_Store
+.pub
+ssh--hjhkey
+ssh--hjhkey.pub

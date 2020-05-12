@@ -27,11 +27,11 @@
                 <view class="cu-bar bg-white padding-bottom-xl">
                     <view class="action text-df padding-top-sm">
                         <view class="cu-avatar-group" style="padding:0">
-                            <repeat for="3" key="index" index="index" item="item">
-                                <view class="cu-avatar round lg" style="background-image:url({{item}});"></view>
+                            <repeat for="1" key="index" index="index" item="item">
+                                <view class="cu-avatar round lg" style="background-image:url({{actPintuanActivity.profilePhoto}});"></view>
                             </repeat>
                         </view>
-                        <view class="text-orange text-sm margin-left-sm">拼团最高可返现金：300元</view>
+                        <view class="text-orange text-sm margin-left-sm">拼团最多可尊享{{ActPintuan.price}}元低价</view>
                     </view>
                     <view class="action">
                         <button class="cu-btn bg-orange margin-top shadow" @tap="toPintuanfy()">参团购买</button>
@@ -41,10 +41,9 @@
                     <view class="bg-white padding-sm content text-gray">
                         拼团详情
                     </view>
-                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
-                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
-                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
-                    <view class="padding-left padding-right padding-bottom-xs">参团人数达到3人，可返现金200元</view>
+                    <repeat for="{{ActPintuan.actPintuanPrice}}" key="index" index="index" item="item">
+                        <view class="padding-left padding-right padding-bottom-xs _1c412fe">参团人数达到{{item.memberNum}}人，尊享{{item.price}}元低价</view>
+                    </repeat>
                 </view>
                 <view class="bg-white padding-left padding-right padding-bottom ">
                     <view class="bg-white padding-sm content text-gray">
@@ -52,7 +51,9 @@
                     </view>
                     <view class="cu-steps">
                         <view class="cu-item text-orange" wx:for="{{numList}}" wx:key>
-                            <text class="num" data-index="{{index + 1}}"></text> {{item.name}}
+                            <text class="num" data-index="{{index + 1}}"/>
+                            <view> {{item.name}}</view>
+                            <view class="text-xs"> {{item.name1}}</view>
                         </view>
                     </view>
                 </view>
@@ -181,6 +182,9 @@
                     linkType: "switchTab"
                 }]
             },
+            actPintuanActivity:{},
+            ActPintuanMember:{},
+            ActPintuan:{},
             mainHeight: 0,
             courseInfo: {},
             nodes: ["name", "attrs", "attrs"],
@@ -199,12 +203,13 @@
             toPintuan: false,
             numList: [{
                 name: '参团',
-                name1:'支付完成'
+                name1: '支付完成'
             }, {
-                name: '参团人数达到',
-                name1:'最高可返'
+                name: '获得更多优惠',
+                name1: '分享活动'
             }, {
-                name: '老师会主动联系你'
+                name: '拼团成功',
+                name1: '老师主动联系您'
             }]
         };
         components = {
@@ -247,7 +252,10 @@
                 course,
                 companions,
                 statistics,
-                CourseComment
+                CourseComment,
+                actPintuanActivity,
+                ActPintuan,
+                ActPintuanMember
             } = res.data
             this.swipers.list[0].url = course.image
             course.courseChar = course.courseChar.split("|")
@@ -256,6 +264,7 @@
             this.companions = companions
             this.statistics = statistics
             this.CourseComment = CourseComment
+            this.actPintuanActivity = actPintuanActivity
             this.$apply();
         }
         methods = {
