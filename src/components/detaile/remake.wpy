@@ -5,7 +5,7 @@
             <view class="action">
                 <text><text class="padding-right-xs">整体评分</text>
                 <repeat for="{{5}}" key="index" index="index" item="item">
-                    <text class="cuIcon-{{index<3 ?'favorfill':'favor'}} text-orange"></text>
+                    <text class="cuIcon-{{index<statistics.grade ?'favorfill':'favor'}} text-orange"></text>
                 </repeat>
                 </text>
             </view>

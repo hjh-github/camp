@@ -2,14 +2,14 @@
 <template>
   <view class="margin-top-sm dynamic {{isCard?'no-card':''}}">
     <view class="padding bg-white solid-bottom">
-      <view data-id="0" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">全部<text wx:if="{{statistics.total}}">（{{statistics.total}}）</text></view>
-      <view data-id="6" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">有图<text wx:if="{{statistics.haveImages}}">（{{statistics.haveImages}}）</text></view>
-      <view data-id="1" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">领队专业<text wx:if="{{statistics.major}}">（{{statistics.major}}）</text></view>
-      <view data-id="2" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">教育意义<text wx:if="{{statistics.educational}}">（{{statistics.educational}}）</text></view>
-      <view data-id="3" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">安全<text wx:if="{{statistics.security}}">（{{statistics.security}}）</text></view>
-      <view data-id="4" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">性价比<text wx:if="{{statistics.affordable}}">（{{statistics.affordable}}）</text></view>
+      <view data-id="0" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">全部<text wx:if="{{CourseComments.statistics.total}}">（{{CourseComments.statistics.total}}）</text></view>
+      <view data-id="6" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">有图<text wx:if="{{CourseComments.statistics.haveImages}}">（{{CourseComments.statistics.haveImages}}）</text></view>
+      <view data-id="1" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">领队专业<text wx:if="{{CourseComments.statistics.major}}">（{{CourseComments.statistics.major}}）</text></view>
+      <view data-id="2" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">教育意义<text wx:if="{{CourseComments.statistics.educational}}">（{{CourseComments.statistics.educational}}）</text></view>
+      <view data-id="3" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">安全<text wx:if="{{CourseComments.statistics.security}}">（{{CourseComments.statistics.security}}）</text></view>
+      <view data-id="4" @tap="turnTag" class="cu-tag _flex__item round  line-orange margin-bottom-sm">性价比<text wx:if="{{CourseComments.statistics.affordable}}">（{{CourseComments.statistics.affordable}}）</text></view>
     </view>
-    <repeat for="{{CourseComments}}" key="index" index="index" item="CourseComment">
+    <repeat for="{{CourseComments.comments}}" key="index" index="index" item="CourseComment">
       <view class="cu-item bg-white padding-left margin-bottom">
         <view class="cu-list menu-avatar">
           <view class="cu-item">
@@ -58,6 +58,7 @@
     async onLoad(opt) {
       this.opt = opt
       this.CourseComments = await this.load()
+      console.log(this.CourseComments)
       this.$apply()
     }
     async load() {
