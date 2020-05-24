@@ -101,7 +101,7 @@
       // this.$invoke('Navs', 'load', this.model)
     }
     async onShow() {
-      if (!this.isShow || this._city == this.city.name) {
+      if (!this.isShow || !this.city) {
         return false
       }
       await this.load(1)

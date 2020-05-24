@@ -331,6 +331,17 @@ export default class config extends base {
             return res;
         })
     }
+    //更新评论关注
+    static async dolike(opt) {
+        let url = `${this.baseUrl}/member/dolike`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            ...opt
+        }
+        return this.get(url, params, true, false).then(res => {
+            return res;
+        })
+    }
     // 提交评论
     static async savecommen(opt) {
         let url = `${this.baseUrl}/member/savecomment`;

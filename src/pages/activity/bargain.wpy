@@ -133,7 +133,7 @@
             },
             buy() {
                 wepy.navigateTo({
-                    url: `/pages/detaile/sureOrder?type=2&pid=${this.info.reg.periodId}&cid=${this.info.reg.courseId}&num=1&aid=${this.info.regId}`
+                    url: `/pages/detaile/sureOrder?type=2&pid=${this.info.reg.periodId}&cid=${this.info.reg.courseId}&num=1&aid=${this.info.regId}&actpid=0`
                 });
             },
             topay(){

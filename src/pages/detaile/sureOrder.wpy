@@ -120,15 +120,15 @@
         this.payParams = {
           childIds: '',
           courseId: _data.courseId,
-          courseNum:_data.num,
+          courseNum: _data.num,
           periodId: _data.periodId,
           remark: '',
           paymentType: 1,
-          orderType:_data.orderType,
-          periodName:_data.period,
-          actId:_data.actId,
-          price:_data.totalPrice,
-          actPintuanId:opt.actpid
+          orderType: _data.orderType,
+          periodName: _data.period,
+          actId: _data.actId,
+          price: _data.totalPrice,
+          actPintuanId: opt.actpid, 
         }
       }
       this.$apply()
