@@ -8,17 +8,17 @@
                     </image>
                     <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
                         <view>{{item.courseTittle}}</view>
-                        <view class="text-orange"><text class="text-price text-lg margin-right-sm">{{item.courseNewPrice}}</text><text class="text-price text-gray text-old margin-right">{{item.coursePrice}}</text></view>
+                        <view class="text-orange"><text class="text-price">{{item.moneyOrder}}</text></view>
                         <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.courseNum}}</text>
                         </view>
                     </view>
                 </view>
                 <view class="cu-bar bg-white justify-end margin-top solid-top">
                     <view class="action flex__item margin-right" style="justify-content:flex-start">
-                        <tetx class="text-orange text-sm ">{{orderState[item.awardsStatus]}}</tetx>
+                        <tetx class="text-orange text-sm ">{{orderState[item.state]}}</tetx>
                     </view>
                     <view class="action">
-                        <button wx:if="{{item.awardsStatus < 2}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">继续砍价</button>
+                        <button wx:if="{{item.state == 1}}" open-type="share" data-act="pt" data-title="{{item.courseTittle}}" data-actid="{{item.id}}" data-images="{{item.courseImage}}" class="cu-btn bg-orange margin-left">邀请拼团</button>
                     </view>
                 </view>
             </view>
@@ -34,15 +34,15 @@
     import WxUtils from "@/utils/WxUtils"
     export default class Dialog extends wepy.page {
         config = {
-            navigationBarTitleText: "我的砍价"
+            navigationBarTitleText: "我的拼团"
         };
         data = {
             theme: wepy.$instance.globalData.themeColor,
             orderState: {
-                0: '砍价中',
-                1: '待付款',
-                2: '已完成',
-                3: '已过期'
+                0: '拼团取消',
+                1: '进行中',
+                2: '拼团成功',
+                3: '拼图失败'
             },
             orderStats: {},
             scrollLeft: 0,
@@ -61,9 +61,9 @@
                 pageIndex: pageIndex || this.pageIndex,
                 pageSize: 10
             }
-            let res = await config.bargains(params)
+            let res = await config.pintuans(params)
             if (res.errcode == 200) {
-                let ordersList = res.data.reg
+                let ordersList = res.data.pintuan
                 if (!ordersList.length) {
                     if (pageIndex == 1) {
                         this.orders = ordersList
@@ -86,15 +86,26 @@
             }
         }
         onShareAppMessage(res) {
-            let id = ''
+            let params = {
+                title: '',
+                imageUrl:'',
+                path: ''
+            }
             if (res.from === 'button') {
                 // 来自页面内转发按钮
                 console.log(res.target)
-                id = res.target.dataset.id
+                let tar = res.target
+                if(tar.dataset.act == 'pt'){
+                    params.title = tar.dataset.title
+                    params.imageUrl = tar.dataset.images
+                    params.path ='/pages/activity/pintuan?aid=' +  tar.dataset.actid
+                }
+
             }
             return {
-                title: '我发现了一件好货，来一起砍价优惠购！',
-                path: '/pages/activity/bargain?regId=' + id
+                title: params.title,
+                imageUrl:params.imageUrl,
+                path:params.path
             }
         }
         async onReachBottom() {
@@ -110,7 +121,7 @@
             this.$apply()
         }
         methods = {
-            tocut(e) {
+            tocut(e){
                 wepy.navigateTo({
                     url: '/pages/activity/bargain?regId=' + e.id
                 });
@@ -120,9 +131,6 @@
 </script>
 
 <style lang="less" scoped>
-    .text-old {
-        text-decoration: line-through
-    }
     .badge {
         right: 0;
         top: 20rpx;

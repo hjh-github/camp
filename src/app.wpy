@@ -147,6 +147,7 @@
       "pages/my/my",
       "pages/my/orders",
       "pages/my/order",
+      "pages/my/pintuan",
       "pages/my/bargaining",
       "pages/home/address",
       "pages/detaile/detaile",
@@ -159,6 +160,7 @@
       "pages/meet/commiRemarke",
       "pages/activity/bargain",
       "pages/activity/pintuan",
+      
       ],
       window: {
         backgroundTextStyle: "dark",

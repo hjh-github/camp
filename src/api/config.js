@@ -276,6 +276,17 @@ export default class config extends base {
             return res;
         })
     }
+    // 我的拼团
+    static async pintuans(opt) {
+        let url = `${this.baseUrl}/member/pintuan/list`;
+        let params = {
+            ...opt,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, true).then(res => {
+            return res;
+        })
+    }
     // 取消订单
     static async cancalorder(id) {
         let url = `${this.baseUrl}/member/cancalorder`;
