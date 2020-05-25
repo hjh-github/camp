@@ -11,9 +11,10 @@
                         <view class="text-orange"><text class="text-price text-lg margin-right-sm">{{item.courseNewPrice}}</text><text class="text-price text-gray text-old margin-right">{{item.coursePrice}}</text></view>
                         <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.courseNum}}</text>
                         </view>
+                        <l-countdown time="{{item.invalidTime}}"/>
                     </view>
                 </view>
-                <view class="cu-bar bg-white justify-end margin-top solid-top">
+                <view class="cu-bar bg-white justify-end solid-top">
                     <view class="action flex__item margin-right" style="justify-content:flex-start">
                         <tetx class="text-orange text-sm ">{{orderState[item.awardsStatus]}}</tetx>
                     </view>
@@ -34,7 +35,10 @@
     import WxUtils from "@/utils/WxUtils"
     export default class Dialog extends wepy.page {
         config = {
-            navigationBarTitleText: "我的砍价"
+            navigationBarTitleText: "我的砍价",
+            "usingComponents": {
+                "l-countdown": "../../components/countdown/index"
+            }
         };
         data = {
             theme: wepy.$instance.globalData.themeColor,
