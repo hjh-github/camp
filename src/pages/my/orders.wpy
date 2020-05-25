@@ -70,17 +70,13 @@
                 }, {
                     name: '已完成',
                     orderState: '3'
-                }, {
-                    name: '待拼团',
-                    orderState: '5'
                 }
             ],
             orderState: {
                 1: '待付款',
                 2: '待参加',
                 3: '已完成',
-                4: '已取消',
-                5: '拼团中'
+                4: '已取消'
             },
             orderStats: {},
             TabCur: 0,

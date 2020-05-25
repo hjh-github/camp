@@ -17,8 +17,8 @@
             </view>
             <view class="text-content">
                 <text decode>
-                    {{remark.content}}
-                </text>
+                                        {{remark.content}}
+                                    </text>
             </view>
             <view class="bg-white padding" style="padding-top:0">
                 <view class="grid col-3 grid-square">
@@ -44,11 +44,9 @@
             </view>
             <view class="text-gray text-sm text-right padding weui-flex flex-c flex-sb">
                 <view class="cu-avatar-group">
-                    <view class="cu-avatar round lg" wx:for="{{ remark.likePhotos}}" wx:key wx:for-item="item" style="background-image:url({{item}});"></view>
+                    <view class="cu-avatar round " wx:for="{{remark.likePhotos}}" wx:key wx:for-item="item" style="background-image:url({{item}});"></view>
                 </view>
-                <view style="font-size:28rpx;">
-                    <text class="cuIcon-{{!remark.isLike ?'like':'likefill'}} margin-lr-xs"></text> {{remark.likeCount || "" }}
-                </view>
+                <button style="font-size:32rpx;" open-type="getUserInfo" bindgetuserinfo="targgetLike"><text class="cuIcon-appreciatefill {{!remark.isLike ?'text-gray':'text-red'}} margin-lr-xs"></text> {{remark.likeCount || "" }}</button>
             </view>
         </view>
     </view>
@@ -56,16 +54,32 @@
 
 <script>
     import wepy from "wepy";
+    import config from '@/api/config'
+    import auth from '@/api/auth'
     export default class Dialog extends wepy.component {
-        props=['remark']
+        props = ['remark']
         data = {
             close: "/static/images/close.png"
         };
         methods = {
-            toCourse(id){
-                wepy.navigateTo({ url: '/pages/detaile/detaile?id=' + this.remark.courseId});
-                
-            }
+            toCourse(id) {
+                wepy.navigateTo({
+                    url: '/pages/detaile/detaile?id=' + this.remark.courseId
+                });
+            },
+            async targgetLike(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    this.remark.isLike = this.remark.isLike ? 0 : 1
+                    let res = await config.dolike({
+                        commentId: this.remark.commentId,
+                        state: this.remark.isLike
+                    })
+                    this.remark.likePhotos = res.likePhotos
+                    this.remark.likeCount = res.likeCount
+                    this.$apply()
+                }
+            },
         };
     }
 </script>

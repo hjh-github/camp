@@ -120,7 +120,7 @@
                     <view class="text-lg ">
                         <text @tap="minus" class="bg-{{num>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
                         <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
-                        <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
+                        <text @tap="plus" class="cuIcon-add lg text-white bg-{{buyTypt != 'bargain'?'orange':'gray'}} padding-sm padding-top-xs padding-bottom-xs"></text></view>
                 </view>
                 <view wx:if="{{buyTypt == 'normal'}}" @tap="buy('',1)" class="bg-orange plus text-white text-lg text-center">立即购买</view>
                 <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
@@ -272,6 +272,9 @@
                 this.buyTypt = type
             },
             plus() {
+                if(this.buyTypt == 'bargain'){
+                    return false
+                }
                 wx.vibrateShort()
                 this.num = this.num + 1
             },

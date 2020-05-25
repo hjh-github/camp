@@ -9,11 +9,11 @@
                 </view>
             </view>
             <repeat for="{{item.members}}" key="_index" index="_index" item="_item">
-                <view class="cu-list menu-avatar">
+                <view class="cu-list menu-avatar"  style="margin-top:0">
                     <view class="cu-item ">
                         <view class="cu-avatar radius lg" style="background-image:url({{_item.portrait}});"></view>
                         <view class="content">
-                            <view class="text-pink">
+                            <view class="text-orange">
                                 <text class="text-cut">{{_item.name}}</text>
                             </view>
                             <view class="text-gray text-sm flex">
@@ -21,7 +21,7 @@
                             </view>
                         </view>
                         <view class="action">
-                            <view class="text-grey text-xs">{{_item.joinConnt}}人</view>
+                            <view class="text-black text-xs">{{_item.joinConnt}}人</view>
                         </view>
                     </view>
                 </view>

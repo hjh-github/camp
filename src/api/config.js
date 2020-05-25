@@ -276,6 +276,17 @@ export default class config extends base {
             return res;
         })
     }
+    // 我的拼团
+    static async pintuans(opt) {
+        let url = `${this.baseUrl}/member/pintuan/list`;
+        let params = {
+            ...opt,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, true).then(res => {
+            return res;
+        })
+    }
     // 取消订单
     static async cancalorder(id) {
         let url = `${this.baseUrl}/member/cancalorder`;
@@ -326,6 +337,17 @@ export default class config extends base {
         let url = `${this.baseUrl}/member/commentTag`;
         let params = {
             sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, false).then(res => {
+            return res;
+        })
+    }
+    //更新评论关注
+    static async dolike(opt) {
+        let url = `${this.baseUrl}/member/dolike`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            ...opt
         }
         return this.get(url, params, true, false).then(res => {
             return res;

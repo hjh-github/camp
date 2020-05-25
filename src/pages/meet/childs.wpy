@@ -8,7 +8,7 @@
             <repeat for="{{childs}}" key="index" index="index" item="item">
                 <view @tap="getChilds({{item}})" class="cu-list padding-bottom card-menu menu-avatar">
                     <view class="cu-item border-radius padding">
-                        <view class="text-xxl padding-right">
+                        <view wx:if="{{isget}}" class="text-xxl padding-right">
                             <text class="cuIcon-{{childsed[item.id]?'roundcheck': 'round'}} text-{{!item.guardianId ? 'gray':'yellow'}} "></text>
                         </view>
                         <view class="action">

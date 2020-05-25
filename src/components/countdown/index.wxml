@@ -1,0 +1,12 @@
+<view class="l-countdown l-class nowrap" wx:if="{{diffSecond != 0}}">
+    <view class="l-countdown-item" wx:for="{{date}}" wx:key="{{index}}">
+        <block>
+        <text class="text-xs nowrap">{{ item.value == '00' && index == 0 ? "" : item.value}}</text>
+        {{index == 0 && item.value != '00'?'天':''}}
+        {{index == 1?'时':''}}
+        {{index == 2?'分':''}}
+        {{index == 3?'秒':''}}
+        </block>
+    </view>
+    <text>后结束</text>
+</view>

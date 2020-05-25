@@ -252,6 +252,7 @@
             },
             PickerChange(e) {
                 this.cardInx = e.detail.value
+                this.form.cardType = this.picker[this.cardInx].type
             },
             checkMan(inx) {
                 this.manInx = inx
@@ -284,10 +285,13 @@
             },
             async plus() {
                 if (this.rulesFn()) {
-                    let rules = Lang.checkIdCard(this.form.cardNum)
-                    if (!rules.status) {
-                        Tips.toast(rules.message, () => {}, 'none')
-                        return false
+                    console.log(this.form)
+                    if (this.form.cardType == 1) {
+                        let rules = Lang.checkIdCard(this.form.cardNum)
+                        if (!rules.status) {
+                            Tips.toast(rules.message, () => {}, 'none')
+                            return false
+                        }
                     }
                     let res = await config.updateChild(this.form)
                     if (res.errcode == 200) {
@@ -303,7 +307,7 @@
                 let self = this
                 wx.showModal({
                     content: `确定删除${self.form.name}的儿童信息吗？`,
-                    success:async function(res) {
+                    success: async function(res) {
                         if (res.confirm) {
                             let res = await config.delChild(self.id)
                             if (res.errcode == 200) {
@@ -313,8 +317,7 @@
                                     });
                                 }, 'none')
                             }
-                        } else if (res.cancel) {
-                        }
+                        } else if (res.cancel) {}
                     }
                 })
             }
