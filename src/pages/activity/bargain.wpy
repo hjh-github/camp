@@ -119,12 +119,14 @@
                 // console.log(res.target)
             }
             return {
-                title: '我发现了一件好货，来一起砍价优惠购！',
-                path: '/pages/activity/bargain?regId=' + this.ActBargainReg.id
+                title: this.courseInfo.courseTittle,
+                imageUrl:this.courseInfo.image,
+                path: '/pages/activity/bargain?id=' + this.ActBargainReg.id
             }
         }
         async onLoad(opt) {
-            this.regId = opt.regId
+            console.log(opt)
+            this.regId = opt.id
             this.routes = getCurrentPages()
             await auth.login()
             await this.load()

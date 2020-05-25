@@ -34,7 +34,8 @@
                         <view class="text-orange text-sm margin-left-sm">拼团最多可尊享{{ActPintuan.price}}元低价</view>
                     </view>
                     <view class="action">
-                        <button class="cu-btn bg-orange margin-top shadow" @tap="toPintuanfy()">参团购买</button>
+                        <button wx:if="{{isIn}}" open-type="share" class="cu-btn bg-orange margin-top shadow" >邀请拼团</button>
+                        <button wx:else class="cu-btn bg-orange margin-top shadow" @tap="toPintuanfy()">参团购买</button>
                     </view>
                 </view>
                 <view class="bg-white padding-left padding-right">
@@ -149,12 +150,14 @@
                 <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">立即参团</view>
             </view>
         </view>
-        <view class="cu-bar bg-white tabbar border shop solid-top">
+        <button wx:if="{{isIn}}" class="bg-orange tabbar  shop solid-top text-center padding-xs" style="border-radius:0" open-type="share" >邀请拼团</button>
+        <view wx:else class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
             <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
             <view class="line submit text-lg text-sm" @tap="sku('normal')">原价购买<text class="text-price">{{courseInfo.price}}</text></view>
-            <view class="bg-orange submit text-lg" @tap="sku('pintuan')">拼团购买</view>
+            <view class="bg-orange submit text-lg" @tap="toPintuanfy()">参团购买</view>
         </view>
+        
     </view>
 </template>
 
@@ -189,6 +192,7 @@
             courseInfo: {},
             nodes: ["name", "attrs", "attrs"],
             num: 1,
+            isIn:'',
             showSku: false,
             buyTypt: 'normal',
             courseInx: -1,
@@ -229,7 +233,8 @@
             }
             return {
                 title: this.courseInfo.courseTittle,
-                path: '/pages/detaile/detaile?id=' + this.courseInfo.id
+                imageUrl:this.courseInfo.image,
+                path: '/pages/activity/pintuan?id=' + this.actPintuanActivity.id
             }
         }
         async onLoad(opt) {
@@ -247,7 +252,8 @@
                 )
                 .exec();
             await auth.login()
-            let res = await config.pintuanDetai(opt.aid)
+            
+            let res = await config.pintuanDetai(opt.id)
             let {
                 course,
                 companions,
@@ -255,7 +261,8 @@
                 CourseComment,
                 actPintuanActivity,
                 ActPintuan,
-                ActPintuanMember
+                ActPintuanMember,
+                isIn
             } = res.data
             this.swipers.list[0].url = course.image
             course.courseChar = course.courseChar.split("|")
@@ -267,6 +274,7 @@
             this.actPintuanActivity = actPintuanActivity
             this.ActPintuan = ActPintuan
             this.ActPintuanMember = ActPintuanMember
+            this.isIn = isIn
             this.$apply();
         }
         methods = {

@@ -98,7 +98,7 @@
                 if(tar.dataset.act == 'pt'){
                     params.title = tar.dataset.title
                     params.imageUrl = tar.dataset.images
-                    params.path ='/pages/activity/pintuan?aid=' +  tar.dataset.actid
+                    params.path ='/pages/activity/pintuan?id=' +  tar.dataset.actid
                 }
 
             }
@@ -121,11 +121,11 @@
             this.$apply()
         }
         methods = {
-            tocut(e){
+            todetaile(id) {
                 wepy.navigateTo({
-                    url: '/pages/activity/bargain?regId=' + e.id
+                    url: '/pages/activity/pintuan?id=' + id 
                 });
-            }
+            },
         };
     }
 </script>

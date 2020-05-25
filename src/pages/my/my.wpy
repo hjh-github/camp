@@ -32,7 +32,7 @@
       </view>
       <view class="cu-item arrow" bindtap="pintuan">
         <view class="content" >
-          <text class="cuIcon-group text-red"></text>
+          <text class="cuIcon-friendfill  text-red"></text>
           <text class="text-grey">我的拼团</text>
         </view>
       </view>

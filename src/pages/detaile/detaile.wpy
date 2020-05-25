@@ -244,13 +244,13 @@
                 })
                 if (errcode == 200) {
                     wepy.redirectTo({
-                        url: '/pages/activity/bargain?regId=' + data.regId
+                        url: '/pages/activity/bargain?id=' + data.regId
                     });
                 } else {
                     // 发起砍价异常
                     Tips.toast(errmsg, res => {
                         wepy.redirectTo({
-                            url: '/pages/activity/bargain?regId=' + data.actBargainReg.id
+                            url: '/pages/activity/bargain?id=' + data.actBargainReg.id
                         });
                     }, 'none')
                 }

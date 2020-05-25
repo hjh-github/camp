@@ -3,7 +3,7 @@
     <view class='h100'>
         <repeat for="{{orders}}" key="index" index="index" item="item">
             <view class="bg-white padding padding-bottom-xs {{!index ? 'margin-top margin-bottom': 'margin-bottom'}}">
-                <view class="flex " @tap="todetaile({{item.id}})">
+                <view class="flex">
                     <image class="img" src="{{item.courseImage}}" mode="aspectFill">
                     </image>
                     <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
@@ -94,7 +94,7 @@
             }
             return {
                 title: '我发现了一件好货，来一起砍价优惠购！',
-                path: '/pages/activity/bargain?regId=' + id
+                path: '/pages/activity/bargain?id=' + id
             }
         }
         async onReachBottom() {
@@ -112,7 +112,7 @@
         methods = {
             tocut(e) {
                 wepy.navigateTo({
-                    url: '/pages/activity/bargain?regId=' + e.id
+                    url: '/pages/activity/bargain?id=' + e.id
                 });
             }
         };
