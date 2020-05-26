@@ -144,6 +144,7 @@
       "pages/home/index",
       "pages/home/search",
       "pages/home/web",
+      "pages/home/share",
       "pages/meet/meet",
       "pages/my/my",
       "pages/my/orders",
