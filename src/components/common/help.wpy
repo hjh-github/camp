@@ -13,15 +13,11 @@
             init: {}
         };
         data = {
-            dot: '/static/images/dot.png',
-            dot_close: '/static/images/dot_close.png',
             help: wepy.$instance.globalData.help,
         };
         methods = {
             close() {
                this.help =  wepy.$instance.globalData.help = false
-                
-                console.log(wepy.$instance.globalData.help)
             }
         }
     }

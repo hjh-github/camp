@@ -1,10 +1,10 @@
 
 <template>
   <view class="h100">
-
     <loading wx:if="{{!isShow}}" />
     <view wx:if="{{isShow}}" class="h100">
       <hel/>
+      <ordering/>
       <cHeader></cHeader>
       <view class="main">
         <cSwiper :model.sync="swipers"></cSwiper>
@@ -29,6 +29,7 @@
   import Navs from "@/components/home/navs"
   import scrollNav from "@/components/home/scrollNav"
   import hel from "@/components/common/help"
+  import ordering from "@/components/common/ordering"
   import cCard from "@/components/home/cCard"
   import config from "@/api/config"
   import auth from "@/api/auth"
@@ -74,7 +75,8 @@
       scrollNav,
       cCard,
       loading,
-      hel
+      hel,
+      ordering
     }
     config = {
       navigationBarTitleText: "华心桥体验营",
@@ -135,6 +137,7 @@
           code: homeData.cityCode
         })
         wepy.$instance.globalData.cityCode = homeData.cityCode
+        this.$invoke('ordering','load',homeData.newOrderList)
       }
     }
     showMore() {

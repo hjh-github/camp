@@ -1,0 +1,73 @@
+<template>
+    <view>
+        <repeat for="{{orderings}}" key="index" index="index" item="item">
+            <view wx:if="{{index == inx}}" class="{{index == inx ? 'column-center':''}}">
+               <text> 恭喜 <text wx:if="{{item.memberName}}">{{item.memberName[0] + '*' + item.memberName[item.memberName.length-1]}}</text> 报名 <text class="text-red">{{item.courseTittle}}</text> 成功</text>
+            </view>
+        </repeat>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class help extends wepy.component {
+        data = {
+            orderings: [],
+            inx: 0,
+            timer: null
+        };
+        slider() {
+            setInterval(() => {
+                if(this.inx < this.orderings.length){
+                    this.inx = this.inx + 1
+                }else{
+                    this.inx = 0
+                }
+                this.$apply()
+            }, 3200);
+        }
+        methods = {
+            load(orderings) {
+                this.orderings = orderings
+                this.slider()
+            }
+        }
+    }
+</script>
+<style lang="less" scoped>
+    @keyframes myfirst {
+        0% {
+            top: 310rpx;
+            opacity: 0;
+        }
+        20% {
+            top: 260rpx;
+            opacity: 1;
+        }
+        80% {
+            top: 260rpx;
+            opacity: 1;
+        }
+        100% {
+            top: 210rpx;
+            opacity: 0;
+        }
+    }
+    .column-center {
+        position: fixed;
+        top: 310rpx;
+        left: 30rpx;
+        min-width: 360rpx;
+        height: 70rpx;
+        z-index: 99999;
+        opacity: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        color:#fff;
+        padding:0 30rpx;
+        font-size: 24rpx;
+        border-radius: 70rpx;
+        line-height: 70rpx;
+        animation: myfirst 3s;
+        white-space: nowrap;
+    }
+</style>
