@@ -43,7 +43,8 @@
       sessionId:'',
       courseInfo:{},
       orderInfo:{},
-      childs:[]
+      childs:[],
+      help:true
     };
     constructor() {
       super();

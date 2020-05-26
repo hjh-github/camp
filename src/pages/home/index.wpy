@@ -1,15 +1,17 @@
 
 <template>
   <view class="h100">
+
     <loading wx:if="{{!isShow}}" />
     <view wx:if="{{isShow}}" class="h100">
+      <hel/>
       <cHeader></cHeader>
       <view class="main">
         <cSwiper :model.sync="swipers"></cSwiper>
         <Navs :model.sync="navs"></Navs>
         <scrollNav :isfixed.sync="isfixed" :model.sync="scrollNav" @ret.user="getScreen"></scrollNav>
         <cCard :model.sync="courses"></cCard>
-        <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+        <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5;margin-top:150rpx;"></view>
       </view>
     </view>
   </view>
@@ -26,6 +28,7 @@
   import loading from "@/components/common/loading"
   import Navs from "@/components/home/navs"
   import scrollNav from "@/components/home/scrollNav"
+  import hel from "@/components/common/help"
   import cCard from "@/components/home/cCard"
   import config from "@/api/config"
   import auth from "@/api/auth"
@@ -70,7 +73,8 @@
       cHeader,
       scrollNav,
       cCard,
-      loading
+      loading,
+      hel
     }
     config = {
       navigationBarTitleText: "华心桥体验营",

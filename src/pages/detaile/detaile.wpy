@@ -35,6 +35,14 @@
                         <button class="cu-btn sm bg-green shadow" @tap="toPintuanfy()">发起拼团</button>
                     </view>
                 </view>
+                <view class="bg-white padding-left padding-right">
+                    <view class="bg-white padding-sm content text-gray">
+                        拼团详情
+                    </view>
+                    <repeat for="{{ActPintuan.actPintuanPrice}}" key="index" index="index" item="item">
+                        <view class="padding-left padding-right padding-bottom-xs _1c412fe">参团人数达到{{item.memberNum}}人，尊享{{item.price}}元低价</view>
+                    </repeat>
+                </view>
                 <!-- 更多信息 -->
                 <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
                 <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
@@ -168,6 +176,7 @@
             companions: [],
             statistics: {},
             CourseComment: {},
+            ActPintuan:{},
             sign_states: {
                 0: '火热招生中',
                 1: '少量名额',
@@ -212,7 +221,8 @@
                 course,
                 companions,
                 statistics,
-                CourseComment
+                CourseComment,
+                actPintuan
             } = await config.getCourseInfo(opt.id)
             this.swipers.list[0].url = course.image
             course.courseChar = course.courseChar.split("|")
@@ -221,7 +231,8 @@
             this.companions = companions
             this.statistics = statistics
             this.CourseComment = CourseComment
-            console.log(this.courseInfo)
+            this.ActPintuan = actPintuan
+            console.log(this.ActPintuan)
             this.$apply();
         }
         methods = {

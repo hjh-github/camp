@@ -1,0 +1,57 @@
+<template>
+    <view class="column-center" wx:if="{{help}}">
+        点击“<text class="cuIcon-triangledownfill text-black" style="font-size:44rpx;"></text>”可切换您想报名的城市
+        <text class="cuIcon-roundclosefill text-black" style="font-size:28rpx;" @tap="close"></text>
+        <view class="star"></view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    export default class help extends wepy.component {
+        props = {
+            init: {}
+        };
+        data = {
+            dot: '/static/images/dot.png',
+            dot_close: '/static/images/dot_close.png',
+            help: wepy.$instance.globalData.help,
+        };
+        methods = {
+            close() {
+               this.help =  wepy.$instance.globalData.help = false
+                
+                console.log(wepy.$instance.globalData.help)
+            }
+        }
+    }
+</script>
+<style lang="less" scoped>
+    .column-center {
+        position: fixed;
+        top: 110rpx;
+        right: 10rpx;
+        width: 360rpx;
+        height: 100rpx;
+        z-index: 99999;
+        background-color: rgba(234, 235, 240, 0.8);
+        font-size: 24rpx;
+        padding: 0 40rpx 10rpx 20rpx;
+        border-radius: 10rpx;
+        line-height: 40rpx;
+        .cuIcon-roundclosefill {
+            position: absolute;
+            top: 30rpx;
+            right: 20rpx;
+        }
+        .star {
+            width: 20rpx;
+            height: 20rpx;
+            position: absolute;
+            right: 60rpx;
+            top: -10rpx;
+            transform: rotate(45deg);
+            background-color: rgba(234, 235, 240, 0.8);
+        }
+    }
+</style>
