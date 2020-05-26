@@ -1,4 +1,33 @@
 export default class Lang {
+  static downImg(url,callback = null) {
+    console.log(url)
+    //图片保存到本地
+    wx.saveImageToPhotosAlbum({
+      filePath: url,
+      success: async function (data) {
+       if(callback) callback(data)
+      },
+      fail: function (err) {
+        console.log(err);
+        if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
+          console.log("当初用户拒绝，再次发起授权")
+          wx.openSetting({
+            success(settingdata) {
+              console.log(settingdata)
+              if (settingdata.authSetting['scope.writePhotosAlbum']) {
+                console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
+              } else {
+                console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+              }
+            }
+          })
+        }
+      },
+      complete(res) {
+        console.log(res);
+      }
+    })
+  }
   // 判断字符串是否为空
   static isEmpty(str) {
     return str == '' || str == null || str == 'null';

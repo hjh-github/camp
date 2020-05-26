@@ -375,5 +375,16 @@ export default class config extends base {
             return res;
         })
     }
+    // 获取分享小程序码
+    static async getUnlimited(opt) {
+        let url = `${this.baseUrl}/qr/getUnlimited`;
+        let params = {
+            ...opt,
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.get(url, params, true, false).then(res => {
+            return res;
+        })
+    }
 }
 

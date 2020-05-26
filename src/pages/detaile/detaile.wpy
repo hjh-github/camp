@@ -137,8 +137,22 @@
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
-            <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
+            <button class="action" @tap="toshare"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
             <view class="bg-orange submit text-lg" @tap="sku('normal')">立即购买</view>
+        </view>
+        <view class="cu-modal {{modalName=='share'?'show':''}}">
+            <view class="cu-dialog" style="width:450rpx">
+                <view class="cu-bar bg-white justify-end">
+                    <view class="content"></view>
+                    <view class="action" bindtap="hideModal">
+                        <text class="cuIcon-close text-red"></text>
+                    </view>
+                </view>
+                <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
+                    <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm" >分享邀请</text></button>
+                    <button class="action" open-type="getUserInfo" bindgetuserinfo="createImg" style="line-height:1"><view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm" >海报邀请</text></button>
+                </view>
+            </view>
         </view>
     </view>
 </template>
@@ -149,7 +163,9 @@
     import ctitle from "@/components/detaile/title";
     import cInfo from "@/components/detaile/info";
     import cRemake from "@/components/detaile/remake";
+    import store from "@/store/utils"
     import config from "@/api/config";
+    import auth from "@/api/auth";
     import WxUtils from "@/utils/WxUtils";
     import Tips from "@/utils/Tips";
     export default class Dialog extends wepy.page {
@@ -176,13 +192,14 @@
             companions: [],
             statistics: {},
             CourseComment: {},
-            ActPintuan:{},
+            ActPintuan: {},
             sign_states: {
                 0: '火热招生中',
                 1: '少量名额',
                 2: '已满员'
             },
-            toPintuan: false
+            toPintuan: false,
+            modalName: ''
         };
         components = {
             cSwiper,
@@ -205,6 +222,7 @@
             }
         }
         async onLoad(opt) {
+            console.log(opt)
             // 获取主内容高度，用于悬浮详情导航
             let view = wx.createSelectorQuery().select("#info-box");
             view
@@ -217,13 +235,14 @@
                     }
                 )
                 .exec();
+            await auth.login()
             let {
                 course,
                 companions,
                 statistics,
                 CourseComment,
                 actPintuan
-            } = await config.getCourseInfo(opt.id)
+            } = await config.getCourseInfo(opt.id || opt.scene)
             this.swipers.list[0].url = course.image
             course.courseChar = course.courseChar.split("|")
             this.courseInfo = course
@@ -236,6 +255,22 @@
             this.$apply();
         }
         methods = {
+            async createImg(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    store.save('shareInfo', {
+                        course: this.courseInfo,
+                        path: 'pages/detaile/detaile',
+                        id: this.courseInfo.id
+                    })
+                    wepy.navigateTo({
+                        url: '/pages/home/share'
+                    });
+                }
+            },
+            toshare() {
+                this.modalName = 'share'
+            },
             toPintuanfy() {
                 this.toPintuan = true
             },
@@ -276,6 +311,7 @@
             hideModal() {
                 this.toPintuan = false
                 this.showSku = false
+                this.modalName = ''
             },
             sku(type = 'normal') {
                 this.showSku = true
@@ -283,7 +319,7 @@
                 this.buyTypt = type
             },
             plus() {
-                if(this.buyTypt == 'bargain'){
+                if (this.buyTypt == 'bargain') {
                     return false
                 }
                 wx.vibrateShort()
@@ -298,7 +334,7 @@
             course(inx) {
                 this.courseInx = inx
             },
-            async buy(aid = 0, ot = 1,) {
+            async buy(aid = 0, ot = 1, ) {
                 if (this.courseInx == -1) {
                     Tips.toast("请选择一个营期", res => {}, 'none')
                     return false

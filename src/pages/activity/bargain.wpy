@@ -35,7 +35,7 @@
                 <view>底价：<text class="text-price">{{ActBargainReg.cutMinPrice}}</text></view>
             </view>
             <view wx:if="{{info.owner == 1}}" class="flex flex-c flex-jc">
-                <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" open-type="share">邀请好友砍价</button>
+                <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" @tap="toshare">邀请好友砍价</button>
                 <button wx:if="{{info.status == 1}}" style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
                 <button wx:if="{{info.status == 4}}" style="width:300rpx;" @tap="topay" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去付款</button>
             </view>
@@ -54,6 +54,20 @@
                 </view>
             </repeat>
         </view>
+        <view class="cu-modal {{modalName=='share'?'show':''}}">
+            <view class="cu-dialog" style="width:450rpx">
+                <view class="cu-bar bg-white justify-end">
+                    <view class="content"></view>
+                    <view class="action" bindtap="hideModal">
+                        <text class="cuIcon-close text-red"></text>
+                    </view>
+                </view>
+                <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
+                    <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm" >分享邀请</text></button>
+                    <button class="action" style="line-height:1" open-type="getUserInfo" bindgetuserinfo="createImg"><view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm" >海报邀请</text></button>
+                </view>
+            </view>
+        </view>
     </view>
 </template>
 
@@ -62,6 +76,7 @@
     import config from "@/api/config"
     import auth from "@/api/auth"
     import Lang from "@/utils/Lang"
+    import store from "@/store/utils"
     export default class Dialog extends wepy.page {
         data = {
             close: "/static/images/close.png",
@@ -76,6 +91,7 @@
             dj: 3000,
             percent: 0,
             info: {},
+            modalName:'',
             status: {
                 0: {
                     a: '砍价中',
@@ -126,13 +142,32 @@
         }
         async onLoad(opt) {
             console.log(opt)
-            this.regId = opt.id
+            this.regId = opt.id || opt.scene
             this.routes = getCurrentPages()
             await auth.login()
             await this.load()
             this.$apply()
         }
         methods = {
+            hideModal(){
+                this.modalName = ''
+            },
+            async createImg(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    store.save('shareInfo', {
+                        course: this.courseInfo,
+                        path: 'pages/detaile/detaile',
+                        id: this.courseInfo.id
+                    })
+                    wepy.navigateTo({
+                        url: '/pages/home/share'
+                    });
+                }
+            },
+            toshare() {
+                this.modalName = 'share'
+            },
             tocut() {
                 wepy.navigateTo({
                     url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
