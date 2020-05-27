@@ -12,7 +12,7 @@
                         </view>
                         <view>
                             <!-- <text class="cuIcon-favor"></text> 4.88分 -->
-                            <text class="quan">{{item.campersNum}}人参加</text>
+                            <text class="quan">{{item.actualSales + item.virtualSales}}人参加</text>
                         </view>
                     </view>
                 </view>
@@ -21,9 +21,10 @@
                     <view class="one-line" style="color:red">{{item.courseChar}}</view>
                     <view class="one-line" style="color:#ccc;font-size:22rpx">{{item.periods}}</view>
                 </view>
-                <view class="weui-flex flex-end price">
-                    <view style="color:{{theme}};font-size:22rpx;margin-right:10rpx;">
-                        ￥<text style="color:{{theme}};font-size:36rpx">{{item.price}}</text>
+                <view class="weui-flex flex-end price" style="width:100%">
+                    <view style="font-size:22rpx;margin-right:10rpx;width:100%" class="flex flex-c flex-sb">
+                        <text>￥<text style="font-size:36rpx">{{item.price}}</text></text>
+                        <text wx:if="{{item.minimumPrice}}" class="text-xs margin-right-xs margin-left-xs">最低可享：<text style="color:{{theme}};" class="text-price text-orange text-xxl">{{item.minimumPrice}}</text></text>
                     </view>
                     <!-- <view style="color:#999;font-size:24rpx;text-decoration: line-through">
                         ￥1680.00

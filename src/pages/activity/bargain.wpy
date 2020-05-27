@@ -157,8 +157,8 @@
                     await auth.getUserinfo(e.detail)
                     store.save('shareInfo', {
                         course: this.courseInfo,
-                        path: 'pages/detaile/detaile',
-                        id: this.courseInfo.id
+                        path: 'pages/activity/bargain',
+                        id: this.ActBargainReg.id
                     })
                     wepy.navigateTo({
                         url: '/pages/home/share'
