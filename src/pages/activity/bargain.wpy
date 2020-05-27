@@ -35,12 +35,12 @@
                 <view>底价：<text class="text-price">{{ActBargainReg.cutMinPrice}}</text></view>
             </view>
             <view wx:if="{{info.owner == 1}}" class="flex flex-c flex-jc">
-                <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-yellow text-white border-2 shadow text-bold" @tap="toshare">邀请好友砍价</button>
+                <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-yellow text-white nowrap border-2 shadow text-bold" @tap="toshare">邀请好友砍价</button>
                 <button wx:if="{{info.status == 1}}" style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
                 <button wx:if="{{info.status == 4}}" style="width:300rpx;" @tap="topay" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去付款</button>
             </view>
             <view wx:if="{{info.owner == 0}}" class="flex flex-c flex-jc">
-                <button style="width:300rpx;" @tap="tocut" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">我也去砍价</button>
+                <button style="width:300rpx;" @tap="tocut" class="cu-btn round bg-yellow text-white nowrap border-2 shadow text-bold">我也去砍价</button>
                 <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
             </view>
         </view>
@@ -123,7 +123,7 @@
                 if (this.ActBargainReg) {
                     let act = this.ActBargainReg
                     let _p = Lang.sum([act.coursePrice, -act.courseNewPrice], 2),
-                        _sp = Lang.sum([act.coursePrice, -2000], 2)
+                        _sp = Lang.sum([act.coursePrice, 0], 2)
                     this.percent = parseInt(_p / _sp * 100)
                     return _p
                 }
@@ -286,5 +286,8 @@
         .content-msg {
             border-top: 2px solid #eee;
         }
+    }
+    .nowrap{
+        white-space: nowrap;
     }
 </style>
