@@ -264,7 +264,7 @@
                 });
             },
             DateChange(e) {
-                this.birthdayStr = e.detail.value
+                this.form.birthdayStr = e.detail.value
             },
             input(e) {
                 let target = e.currentTarget.dataset.target || e.target.dataset.target,

@@ -200,7 +200,7 @@
                 let _code = await config.wxpaytopay({
                     orderPaySn: this.orderInfo.paySn,
                     describe: '描述',
-                    money: parseInt(this.orderInfo.moneyOrder * 100)
+                    money: this.orderInfo.paymentType == 1 ? parseInt(this.orderInfo.moneyOrder * 100) : parseInt(this.orderInfo.earnesMoney * 100)
                 })
                 WxUtils.wxPay(_code.data).then(res => {
                     Tips.toast("支付成功", res => {

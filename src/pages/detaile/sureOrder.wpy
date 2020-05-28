@@ -12,54 +12,54 @@
         </view>
       </view>
       <view class="cu-list menu border margin-top padding-top padding-bottom-sm bg-white">
-        <view @tap="getChilds" class="cu-item arrow ">
-          <view class="content">
-            <view class="padding-bottom-sm">
-              <text>出行人</text>
-              <text class="text-red text-xs">（购买保险并生成旅游合同）</text>
-            </view>
-            <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
-              <view class="padding-bottom-xs">
-                <text class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
-                <text class=" text-df">{{item.name}}</text>
-                <text class="text-sm">（{{item.cardNum}}）</text>
+        <button open-type="getUserInfo" bindgetuserinfo="getChilds" class="cu-item arrow">
+            <view class="content">
+              <view class="padding-bottom-sm">
+                <text>出行人</text>
+                <text class="text-red text-xs">（购买保险并生成旅游合同）</text>
               </view>
-            </repeat>
-          </view>
-          <view class="action">
-            <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
-            <text wx:if="{{!childs.length && mobile}}" class="text-grey">请选择</text>
-          </view>
-        </view>
+              <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
+                <view class="padding-bottom-xs text-left">
+                  <text class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
+                  <text class=" text-df">{{item.name}}</text>
+                  <text class="text-sm">（{{item.cardNum}}）</text>
+                </view>
+              </repeat>
+            </view>
+            <view class="action">
+              <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
+        <view wx:if="{{!childs.length && mobile}}" class="text-grey text-sm">请选择</view>
       </view>
-      <view wx:if="{{orderInfo.paymentType == 2}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
-        <view>付款方式</view>
-        <view class="flex flex-c flex__item flex-jend">
-          <view class="margin-right" @tap="paymentType(1)">
-            <radio checked="{{payParams.paymentType == 1}}" class="radio margin-right-sm yellow"></radio>全额付款</view>
-          <view class="margin-right" @tap="paymentType(2)">
-            <radio checked="{{payParams.paymentType == 2}}" class="radio margin-right-sm yellow"></radio>先付定金</view>
-        </view>
-      </view>
-      <view wx:if="{{payParams.orderType == 1}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
-        <view> 购买数量 </view>
-        <view class="text-lg ">
-          <text @tap="minus" class="bg-{{payParams.courseNum>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
-          <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{payParams.courseNum}}</text>
-          <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
-      </view>
-      <view class="cu-form-group align-start padding-bottom-lg">
-        <view class="title">备注：</view>
-        <textarea maxlength="100" value="{{payParams.remark}}" class="textarea text-sm" placeholder-class="text-sm" bindinput="textareaBInput" placeholder="比如，小孩衣服需要加码"></textarea>
-        <view class="num">{{payParams.remark.length}} / 100</view>
-      </view>
-    </scroll-view>
-    <view class="cu-bar tabbar border shop solid-top bg-gray">
-      <view class="action text-left padding-left " style="width:400rpx;">
-        <text class="text-df">订单金额：</text><text class="text-price text-orange text-lg">{{orderPrice}}</text>
-      </view>
-      <view class="bg-orange submit text-lg" @tap="pay">去支付</view>
+      </button>
+  </view>
+  <view wx:if="{{orderInfo.paymentType == 2}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
+    <view>付款方式</view>
+    <view class="flex flex-c flex__item flex-jend">
+      <view class="margin-right" @tap="paymentType(1)">
+        <radio checked="{{payParams.paymentType == 1}}" class="radio margin-right-sm yellow"></radio>全额付款</view>
+      <view class="margin-right" @tap="paymentType(2)">
+        <radio checked="{{payParams.paymentType == 2}}" class="radio margin-right-sm yellow"></radio>先付定金</view>
     </view>
+  </view>
+  <view wx:if="{{payParams.orderType == 1}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
+    <view> 购买数量 </view>
+    <view class="text-lg ">
+      <text @tap="minus" class="bg-{{payParams.courseNum>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
+      <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{payParams.courseNum}}</text>
+      <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
+  </view>
+  <view class="cu-form-group align-start padding-bottom-lg">
+    <view class="title">备注：</view>
+    <textarea maxlength="100" value="{{payParams.remark}}" class="textarea text-sm" placeholder-class="text-sm" bindinput="textareaBInput" placeholder="比如，小孩衣服需要加码"></textarea>
+    <view class="num">{{payParams.remark.length}} / 100</view>
+  </view>
+  </scroll-view>
+  <view class="cu-bar tabbar border shop solid-top bg-gray">
+    <view class="action text-left padding-left " style="width:400rpx;">
+      <text class="text-df">订单金额：</text><text class="text-price text-orange text-lg">{{orderPrice}}</text>
+    </view>
+    <view class="bg-orange submit text-lg" @tap="pay">去支付</view>
+  </view>
   </view>
 </template>
 
@@ -128,7 +128,7 @@
           periodName: _data.period,
           actId: _data.actId,
           price: _data.totalPrice,
-          actPintuanId: opt.actpid, 
+          actPintuanId: opt.actpid,
         }
       }
       this.$apply()
@@ -170,13 +170,16 @@
           this.childs = []
         }
       },
-      getChilds() {
+     async getChilds(e) {
         if (!this.mobile) {
           return false
         }
-        wepy.navigateTo({
-          url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
-        });
+        if (e.detail.errMsg == "getUserInfo:ok") {
+          await auth.getUserinfo(e.detail)
+          wepy.navigateTo({
+            url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
+          });
+        }
       },
       async pay() {
         if (!this.childs.length || this.childs.length != this.payParams.courseNum) {
@@ -192,9 +195,8 @@
           let _code = await config.wxpaytopay({
             orderPaySn: res.data.paySn,
             describe: '描述',
-            money: parseInt(this.orderPrice * 100) 
+            money: parseInt(res.data.payAmount * 100)
           })
-          console.log(res)
           WxUtils.wxPay(_code.data).then(r => {
             Tips.toast("支付成功", r => {
               WxUtils.backOrRedirect(
