@@ -192,7 +192,7 @@
           let _code = await config.wxpaytopay({
             orderPaySn: res.data.paySn,
             describe: '描述',
-            money: this.orderPrice * 100
+            money: parseInt(this.orderPrice * 100) 
           })
           console.log(res)
           WxUtils.wxPay(_code.data).then(r => {

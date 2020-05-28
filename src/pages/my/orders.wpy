@@ -214,7 +214,7 @@
                 let _code = await config.wxpaytopay({
                     orderPaySn: e.paySn,
                     describe: '描述',
-                    money: e.moneyOrder * 100
+                    money: parseInt(e.moneyOrder * 100)
                 })
                 WxUtils.wxPay(_code.data).then(res => {
                     Tips.toast("支付成功", res => {
