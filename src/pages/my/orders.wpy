@@ -28,7 +28,17 @@
                             </view>
                         </view>
                     </view>
-                    <view class="cu-bar bg-white justify-end margin-top solid-top">
+                    <view class="cu-bar bg-white justify-end solid-top" style="width:100%">
+                        <view></view>
+                        <view class="action text-lg nowrap" style="margin:0">
+                            合计：<text class="text-orange text-price">{{item.moneyOrder}}</text>
+                            <text wx:if="{{item.paymentType == 2}}" class="margin-left-xs text-sm flex flex-c">
+                                <text>（ 定金</text>
+                                <text class="text-price margin-left-sm">{{ item.earnesMoney}} ）</text> 
+                            </text>
+                        </view>
+                    </view>
+                    <view class="cu-bar bg-white justify-end solid-top">
                         <view class="action flex__item margin-right" style="justify-content:flex-start">
                             <tetx class="text-orange text-sm ">{{orderState[item.orderState]}}</tetx>
                         </view>
@@ -133,28 +143,26 @@
                 this.$apply()
             }
         }
-        
         onShareAppMessage(res) {
             let params = {
                 title: '',
-                imageUrl:'',
+                imageUrl: '',
                 path: ''
             }
             if (res.from === 'button') {
                 // 来自页面内转发按钮
                 console.log(res.target)
                 let tar = res.target
-                if(tar.dataset.act == 'pt'){
+                if (tar.dataset.act == 'pt') {
                     params.title = tar.dataset.title
                     params.imageUrl = tar.dataset.images
-                    params.path ='/pages/activity/pintuan?aid=' +  tar.dataset.actid
+                    params.path = '/pages/activity/pintuan?aid=' + tar.dataset.actid
                 }
-
             }
             return {
                 title: params.title,
-                imageUrl:params.imageUrl,
-                path:params.path
+                imageUrl: params.imageUrl,
+                path: params.path
             }
         }
         methods = {
@@ -206,7 +214,7 @@
                 let _code = await config.wxpaytopay({
                     orderPaySn: e.paySn,
                     describe: '描述',
-                    money: e.moneyOrder * 100
+                    money: e.paymentType == 1 ? parseInt(e.moneyOrder * 100) : parseInt(e.earnesMoney * 100)
                 })
                 WxUtils.wxPay(_code.data).then(res => {
                     Tips.toast("支付成功", res => {
@@ -260,5 +268,8 @@
     .cu-item {
         width: 165rpx;
         text-align: center;
+    }
+    .nowrap{
+        white-space: nowrap;
     }
 </style>

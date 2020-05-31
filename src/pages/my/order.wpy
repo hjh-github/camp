@@ -41,7 +41,23 @@
                         <text>总金额</text>
                     </view>
                     <view class="action">
-                        <text class="text-grey">{{orderInfo.moneyOrder}}</text>
+                        <text class="text-grey text-price">{{orderInfo.moneyOrder}}</text>
+                    </view>
+                </view>
+                <view wx:if="{{orderInfo.paymentType == 2}}" class="cu-item">
+                    <view class="content">
+                        <text>定金支付</text>
+                    </view>
+                    <view class="action">
+                        <text class="text-grey text-price">{{orderInfo.earnesMoney}}</text>
+                    </view>
+                </view>
+                <view wx:if="{{orderInfo.orderState == 1}}" class="cu-item">
+                    <view class="content">
+                        <text>需付款</text>
+                    </view>
+                    <view class="action">
+                        <text class="text-orange text-price">{{orderInfo.paymentType == 1 ? orderInfo.moneyOrder : orderInfo.earnesMoney}}</text>
                     </view>
                 </view>
             </view>
@@ -184,7 +200,7 @@
                 let _code = await config.wxpaytopay({
                     orderPaySn: this.orderInfo.paySn,
                     describe: '描述',
-                    money: this.orderInfo.moneyOrder * 100
+                    money: this.orderInfo.paymentType == 1 ? parseInt(this.orderInfo.moneyOrder * 100) : parseInt(this.orderInfo.earnesMoney * 100)
                 })
                 WxUtils.wxPay(_code.data).then(res => {
                     Tips.toast("支付成功", res => {
