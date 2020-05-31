@@ -339,6 +339,14 @@
                     Tips.toast("请选择一个营期", res => {}, 'none')
                     return false
                 }
+                // if(ot == 2){
+                //     // 砍价
+                //     aid = this.courseInfo.bargainId
+                // }
+                // if(ot == 3){
+                //     // 拼团
+                //     aid = this.courseInfo.pintuanId
+                // }
                 wepy.navigateTo({
                     url: `./sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}&actpid=${this.courseInfo.pintuanId}`
                 });

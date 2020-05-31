@@ -348,7 +348,7 @@
                     return false
                 }
                 wepy.navigateTo({
-                    url: `../detaile/sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}&actpid=${this.courseInfo.pintuanId}`
+                    url: `../detaile/sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${this.actPintuanActivity.id}&actpid=${this.courseInfo.pintuanId}`
                 });
             }
         };
