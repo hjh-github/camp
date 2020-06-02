@@ -11,7 +11,7 @@
                         <view class="text-orange"><text class="text-price text-lg margin-right-sm">{{item.courseNewPrice}}</text><text class="text-price text-gray text-old margin-right">{{item.coursePrice}}</text></view>
                         <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.courseNum}}</text>
                         </view>
-                        <l-countdown wx:if="{{item.awardsStatus < 2}}" time="{{item.invalidTime}}"/>
+                        <l-countdown wx:if="{{item.awardsStatus < 1}}" time="{{item.invalidTime}}"/>
                     </view>
                 </view>
                 <view class="cu-bar bg-white justify-end solid-top">
@@ -19,7 +19,8 @@
                         <tetx class="text-orange text-sm ">{{orderState[item.awardsStatus]}}</tetx>
                     </view>
                     <view class="action">
-                        <button wx:if="{{item.awardsStatus < 2}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">继续砍价</button>
+                        <button wx:if="{{item.awardsStatus < 1}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">继续砍价</button>
+                        <button wx:if="{{item.awardsStatus > 0}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">查看进度</button>
                     </view>
                 </view>
             </view>
