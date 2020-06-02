@@ -56,6 +56,7 @@
             })
             this.codeUrl = res.qr
             this.avat = res.profilePhoto
+            this.imageUrl = this.shareInfo.course.image
             this.name = res.name
             this.$apply()
             this.creatQrcodePictures()
@@ -236,10 +237,11 @@
     }
     .cu-btn {
         position: fixed;
-        bottom: 30rpx;
+        bottom: 10rpx;
         left: 50%;
-        margin-left: -112rpx;
+        margin-left: -180rpx;
         line-height: 90rpx;
-        height: 90rpx;;
+        height: 90rpx;
+        width:360rpx;
     }
 </style>
