@@ -18,7 +18,7 @@
                         <tetx class="text-orange text-sm ">{{orderState[item.state]}}</tetx>
                     </view>
                     <view class="action">
-                        <button wx:if="{{item.state == 1}}" open-type="share" data-act="pt" data-title="{{item.courseTittle}}" data-actid="{{item.id}}" data-images="{{item.courseImage}}" class="cu-btn bg-orange margin-left">邀请拼团</button>
+                        <button class="cu-btn bg-orange margin-left" @tap="todetaile({{item.id}})">查看进度</button>
                     </view>
                 </view>
             </view>

@@ -36,7 +36,7 @@
       base_store_id: "",
       appCode: "",
       baseUrl: "https://wechat.hxqxly.com",
-      // baseUrl: "http://10.0.3.150:8809",
+      // baseUrl: "http://dl52887029.6655.la",
       themeColor: "#F4D000",
       cityCode:'',
       code:'',
