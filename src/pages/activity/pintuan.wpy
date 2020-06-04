@@ -171,6 +171,7 @@
                 </view>
             </view>
         </view>
+        <contact />
     </view>
 </template>
 
@@ -180,6 +181,7 @@
     import ctitle from "@/components/detaile/title";
     import cInfo from "@/components/detaile/info";
     import cRemake from "@/components/detaile/remake";
+    import contact from "@/components/common/contact"
     import config from "@/api/config";
     import auth from "@/api/auth";
     import WxUtils from "@/utils/WxUtils";
@@ -235,7 +237,8 @@
             cSwiper,
             ctitle,
             cInfo,
-            cRemake
+            cRemake,
+            contact
         };
         config = {
             navigationBarTitleText: "活动详情"

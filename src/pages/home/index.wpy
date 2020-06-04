@@ -12,6 +12,7 @@
         <scrollNav :isfixed.sync="isfixed" :model.sync="scrollNav" @ret.user="getScreen"></scrollNav>
         <cCard :model.sync="courses"></cCard>
         <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5;margin-top:{{courses.length > 0 ? '' : '150rpx;'}}"></view>
+        <contact />
       </view>
     </view>
   </view>
@@ -26,6 +27,7 @@
   import cHeader from "@/components/home/header"
   import cSwiper from "@/components/common/swiper"
   import loading from "@/components/common/loading"
+  import contact from "@/components/common/contact"
   import Navs from "@/components/home/navs"
   import scrollNav from "@/components/home/scrollNav"
   import hel from "@/components/common/help"
@@ -76,7 +78,8 @@
       cCard,
       loading,
       hel,
-      ordering
+      ordering,
+      contact
     }
     config = {
       navigationBarTitleText: "华心桥体验营",

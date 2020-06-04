@@ -10,7 +10,7 @@
                     <view class="content flex-sub">
                         <view>{{remark.commentName}}</view>
                         <view class="text-gray text-sm flex justify-between">
-                            {{remark.childInfo.name}}宝贝，{{remark.childInfo.age}}岁 独立成长{{remark.childInfo.joinCount}}次
+                            {{remark.childInfo.name[0]}}*{{remark.childInfo.name[1]}}宝贝，{{remark.childInfo.age}}岁 独立成长{{remark.childInfo.joinCount}}次
                         </view>
                     </view>
                 </view>

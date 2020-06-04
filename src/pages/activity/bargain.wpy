@@ -68,6 +68,7 @@
                 </view>
             </view>
         </view>
+        <contact />
     </view>
 </template>
 
@@ -77,6 +78,7 @@
     import auth from "@/api/auth"
     import Lang from "@/utils/Lang"
     import store from "@/store/utils"
+    import contact from "@/components/common/contact"
     export default class Dialog extends wepy.page {
         data = {
             close: "/static/images/close.png",
@@ -118,6 +120,7 @@
                 "l-countdown": "../../components/countdown/index"
             }
         }
+        components={contact}
         computed = {
             cutPrice() {
                 if (this.ActBargainReg) {

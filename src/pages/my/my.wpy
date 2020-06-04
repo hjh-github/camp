@@ -56,6 +56,7 @@
       </view> -->
     </view>
     <view class="cu-tabbar-height"></view>
+    <contact />
   </view>
 </template>
 
@@ -63,10 +64,12 @@
   import wepy from "wepy";
   import Tips from "@/utils/Tips"
   import config from "@/api/config"
+  import contact from "@/components/common/contact"
   export default class My extends wepy.page {
     config = {
       navigationBarTitleText: "我的"
     };
+    components={contact}
     data = {
       orderType: [{
           name: '全部',

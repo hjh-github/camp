@@ -112,6 +112,7 @@
             <view wx:if="{{orderInfo.orderState == 3 && orderInfo.evaluateState == 1}}" bindtap="remark({{orderInfo.id}})" class="bg-orange submit text-lg"> 去评价 </view>
             <button wx:if="{{orderInfo.orderState == 5}}" open-type="share" data-act="pt" data-title="{{orderInfo.courseTittle}}" data-actid="{{orderInfo.activityId}}" data-images="{{orderInfo.courseImage}}" class="bg-orange submit text-lg">邀请拼团</button>
         </view>
+        <contact />
     </view>
 </template>
 
@@ -120,6 +121,7 @@
     import config from "@/api/config"
     import Tips from "@/utils/Tips"
     import WxUtils from "@/utils/WxUtils"
+    import contact from "@/components/common/contact"
     export default class Dialog extends wepy.page {
         config = {
             navigationBarTitleText: "订单详情"
@@ -134,6 +136,7 @@
             },
             id:''
         };
+        components={contact}
         async loadData(id) {
             let res = await config.orderdetail(id)
             this.orderInfo = res.data.detail
