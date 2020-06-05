@@ -40,7 +40,7 @@
             <view class="bg-white " style="padding-top:0">
                 <view class="grid col-3 grid-square">
                     <repeat for="{{CourseComment.imageList}}" key="index" index="index" item="item">
-                        <view class="bg-img" style="background-image:url({{item}});"></view>
+                        <view class="bg-img" style="background-image:url({{item}});" @tap="previewImage({{item}},{{CourseComment.imageList}})"></view>
                     </repeat>
                 </view>
             </view>
@@ -50,6 +50,7 @@
 
 <script>
     import wepy from "wepy";
+    import Lang from "@/utils/Lang"
     export default class Dialog extends wepy.component {
         props = ['statistics','CourseComment','model']
         data = {
@@ -61,6 +62,10 @@
                 wepy.navigateTo({
                     url: '/pages/meet/remarks?tag=' + id + '&courseId=' + this.model.id
                 });
+                
+            },
+            previewImage(url,urls){
+                Lang.previewImage(url,urls)
             }
         };
     }

@@ -246,7 +246,7 @@
                 CourseComment,
                 actPintuan
             } = await config.getCourseInfo(opt.id || opt.scene)
-            this.swipers.list[0].url = course.image
+            this.swipers.list = course.pics
             course.courseChar = course.courseChar.split("|")
             this.courseInfo = course
             wepy.$instance.globalData.courseInfo = course

@@ -1,11 +1,17 @@
 export default class Lang {
-  static downImg(url,callback = null) {
+  static previewImage(current,urls) {
+    wx.previewImage({
+      current, // 当前显示图片的http链接
+      urls // 需要预览的图片http链接列表
+    })
+  }
+  static downImg(url, callback = null) {
     console.log(url)
     //图片保存到本地
     wx.saveImageToPhotosAlbum({
       filePath: url,
       success: async function (data) {
-       if(callback) callback(data)
+        if (callback) callback(data)
       },
       fail: function (err) {
         console.log(err);
@@ -149,7 +155,7 @@ export default class Lang {
   static getBirthdayByIdCard(idCard) {
     // 校验身份证是否合法
     let _r = this.checkIdCard(idCard)
-    if(! _r.status){
+    if (!_r.status) {
       return {
         ..._r
       }
@@ -168,10 +174,10 @@ export default class Lang {
     }
     return birthStr;
   }
-  static getSexByIdCard (idCard) {
-    if(idCard.length == 15) {
+  static getSexByIdCard(idCard) {
+    if (idCard.length == 15) {
       return idCard.substring(14, 15) % 2;
-    } else if(idCard.length == 18) {
+    } else if (idCard.length == 18) {
       return idCard.substring(14, 17) % 2;
     } else {
       //不是15或者18,null

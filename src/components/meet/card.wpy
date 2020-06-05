@@ -22,7 +22,7 @@
             </view>
             <view class="bg-white padding" style="padding-top:0">
                 <view class="grid col-3 grid-square">
-                    <view class="bg-img" wx:for="{{remark.commentImageList}}" wx:key wx:for-item="item" style="background-image:url({{item}});"></view>
+                    <view class="bg-img" wx:for="{{remark.commentImageList}}" wx:key wx:for-item="item" style="background-image:url({{item}});" @tap="previewImage({{item}},{{remark.commentImageList}})"></view>
                 </view>
             </view>
             <view class="cu-list menu-avatar margin" style="margin-top:0">
@@ -55,6 +55,7 @@
 <script>
     import wepy from "wepy";
     import config from '@/api/config'
+    import Lang from "@/utils/Lang"
     import auth from '@/api/auth'
     export default class Dialog extends wepy.component {
         props = ['remark']
@@ -80,6 +81,9 @@
                     this.$apply()
                 }
             },
+            previewImage(url,urls){
+                Lang.previewImage(url,[url])
+            }
         };
     }
 </script>
