@@ -207,8 +207,7 @@
             Tips.toast("支付成功", re => {
               wx.reLaunch({
                   url
-                }
-              );
+                });
             });
           }).catch(err => {
             wx.reLaunch({

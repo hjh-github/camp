@@ -68,7 +68,7 @@
                         <view class="cu-time text-black" style="width:100%;color:#333;font-size:32rpx;">拼团规则</view>
                         <view class="cu-item">
                             <view class="content bg-gray shadow-blur text-black">
-                                【立即参团】原价购买活动
+                                【立即参团】<text class="text-orange">原价/定金</text>购买活动
                             </view>
                         </view>
                         <view class="cu-item">
