@@ -35,7 +35,7 @@
                         <button class="cu-btn sm bg-green shadow" @tap="toPintuanfy()">发起拼团</button>
                     </view>
                 </view>
-                <view class="bg-white padding-left padding-right">
+                <view wx:if="{{courseInfo.pintuanId}}" class="bg-white padding-left padding-right padding-bottom">
                     <view class="bg-white padding-sm content text-gray">
                         拼团详情
                     </view>
@@ -154,6 +154,7 @@
                 </view>
             </view>
         </view>
+        <contact />
     </view>
 </template>
 
@@ -163,6 +164,7 @@
     import ctitle from "@/components/detaile/title";
     import cInfo from "@/components/detaile/info";
     import cRemake from "@/components/detaile/remake";
+    import contact from "@/components/common/contact"
     import store from "@/store/utils"
     import config from "@/api/config";
     import auth from "@/api/auth";
@@ -205,7 +207,8 @@
             cSwiper,
             ctitle,
             cInfo,
-            cRemake
+            cRemake,
+            contact
         };
         config = {
             navigationBarTitleText: "活动详情"

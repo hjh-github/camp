@@ -1,0 +1,33 @@
+
+<template>
+    <view class="contact bg-yellow">
+        <button open-type="contact"><view class="cuIcon-service text-white" style="font-size:54rpx"></view></button>
+    </view>
+</template>
+
+<script>
+import wepy from "wepy";
+export default class Dialog extends wepy.component {
+  data = {
+  };
+  methods = {
+
+  };
+}
+</script>
+
+<style lang="less" scoped>
+.contact{
+    position: fixed;
+    right:20rpx;
+    bottom: 200rpx;
+    width:80rpx;
+    height: 80rpx;
+    line-height: 80rpx;
+    text-align: center;
+    border-radius: 100rpx;
+    button{
+        line-height: 80rpx !important;
+    }
+}
+</style>
