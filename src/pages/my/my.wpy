@@ -36,6 +36,12 @@
           <text class="text-grey">我的拼团</text>
         </view>
       </view>
+      <view wx:if="{{myInfo.isAgent}}" class="cu-item arrow" bindtap="agent">
+        <view class="content" >
+          <text class="cuIcon-expressman  text-red"></text>
+          <text class="text-grey">我的代理</text>
+        </view>
+      </view>
       <view class="cu-item arrow" bindtap="childs">
         <view class="content" >
           <text class="cuIcon-card text-red"></text>
@@ -100,6 +106,11 @@
       bargaining(){
           wepy.navigateTo({
             url: './bargaining'
+          });
+      },
+      agent(){
+         wepy.navigateTo({
+            url: '/agent/pages/index'
           });
       },
       pintuan(){

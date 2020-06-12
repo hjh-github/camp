@@ -164,6 +164,13 @@
       "pages/activity/pintuan",
       
       ],
+    subPackages: [
+      {
+        root: "agent",
+        pages: [
+          "pages/index",
+        ]
+      }],
       window: {
         backgroundTextStyle: "dark",
         navigationBarBackgroundColor: "#F4D000",

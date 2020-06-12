@@ -76,7 +76,7 @@ export default class auth extends base {
     console.log(code)
     wepy.setStorageSync('mobile',_code.data.mobile);
     wepy.setStorageSync('isFans',_code.data.isFans);
-    // wepy.setStorageSync('sessionId',_code.data.sessionId);
+    wepy.setStorageSync('member',_code.data.member);
     wepy.$instance.globalData.sessionId = _code.data.sessionId
   }
 
