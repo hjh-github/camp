@@ -1,0 +1,67 @@
+
+<template>
+  <form>
+    <view class="text-black padding text-xl">代理信息</view>
+    <view class="cu-form-group">
+      <view class="title">联系人</view>
+      <input tplaceholder="联系人" data-name="name" @input="input" />
+    </view>
+    <view class="cu-form-group ">
+      <view class="title">手机号</view>
+      <input tplaceholder="手机号" data-name="phone" @input="input" />
+    </view>
+    <view class="flex flex-y flex-c" style="margin:100rpx auto 0">
+      <button class="cu-btn round bg-orange" @tap="sign" role="button" aria-disabled="false">提交申请</button>
+      <view class="padding-top-sm">提交申请后，我们会尽快与您联系！</view>
+    </view>
+  </form>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import config from "../api"
+  import Tips from "@/utils/Tips"
+  import Validate from "@/utils/Validate"
+  export default class Dialog extends wepy.page {
+    config = {
+      navigationBarTitleText: "申请代理"
+    };
+    data = {
+      form: {}
+    };
+    methods = {
+      input(e) {
+        let name = e.target.dataset.name || e.currentTarget.dataset.name,
+          value = e.detail.value
+        this.form[name] = e.detail.value;
+      },
+      async sign() {
+        if (!this.form.name) {
+          Tips.toast('请先填写联系人姓名', () => {}, 'none')
+          return
+        }
+        if (!Validate.tel(this.form.phone)) {
+          Tips.toast('请先填写正确的手机号', () => {}, 'none')
+          return
+        }
+        let res = await config.sign(this.form)
+        if (res.errcode == 200) {
+          Tips.toast('申请成功，我们会尽快与您联系！', () => {
+            wepy.navigateBack({
+              delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+            });
+          }, 'none')
+        }
+      }
+    };
+  }
+</script>
+<style>
+  page {
+    height: 100%;
+  }
+</style>
+
+<style lang="less" scoped>
+
+</style>

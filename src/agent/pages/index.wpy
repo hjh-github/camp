@@ -9,7 +9,7 @@
                     </view>
                     <view class="text-sm text-white">
                         <view>代理名称：{{agent.name}}</view>
-                        <view>代理编号：{{agent.id}}</view>
+                        <view class="text-orange">{{agent.auditStatusStr}}</view>
                     </view>
                 </view>
                 <button class="cu-btn round bg-orange margin-right" open-type="getUserInfo" bindgetuserinfo="toShare" role="button" aria-disabled="false">生成分享海报</button>
