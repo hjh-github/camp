@@ -42,7 +42,7 @@
           <text class="text-grey">我的代理</text>
         </view>
       </view>
-      <view wx:if="{{!myInfo.isAgent}}" class="cu-item arrow" data-url="/agent/pages/sign" @tap="navi">
+      <view wx:if="{{myInfo.isAgent == 0}}" class="cu-item arrow" data-url="/agent/pages/sign" @tap="navi">
         <view class="content">
           <text class="cuIcon-expressman  text-red"></text>
           <text class="text-grey">申请代理</text>

@@ -82,7 +82,7 @@
       contact
     }
     config = {
-      navigationBarTitleText: "华心桥体验营",
+      navigationBarTitleText: "",
       enablePullDownRefresh: true
     };
     // 转发暂时先不开启
