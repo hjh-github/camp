@@ -19,7 +19,7 @@
                             <view>{{courseInfo.courseTittle}}</view>
                             <view class="flex flex-sb text-yellow">{{status[ActBargainReg.awardsStatus].a}}</view>
                             <view class="flex flex-sb {{success ? 'text-green' : 'text-red'}}">{{status[ActBargainReg.awardsStatus].b}}</view>
-                            <l-countdown wx:if="{{info.status == 1}}" time="{{ActBargainReg.invalidTime}}"/>
+                            <l-countdown wx:if="{{ActBargainReg.awardsStatus == 0}}" time="{{ActBargainReg.invalidTime}}" />
                         </view>
                     </view>
                 </view>
@@ -40,7 +40,7 @@
                 <button wx:if="{{info.status == 4}}" style="width:300rpx;" @tap="topay" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去付款</button>
             </view>
             <view wx:if="{{info.owner == 0}}" class="flex flex-c flex-jc">
-                <button style="width:600rpx;white-space: nowrap;" @tap="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
+                <button style="width:600rpx;white-space: nowrap;" open-type="getUserInfo" bindgetuserinfo="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
                 <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
             </view>
         </view>
@@ -87,13 +87,13 @@
             regId: '',
             courseInfo: {},
             ActBargainReg: {
-                invalidTime:''
+                invalidTime: ''
             },
             bargainRecords: [],
             dj: 3000,
             percent: 0,
             info: {},
-            modalName:'',
+            modalName: '',
             status: {
                 0: {
                     a: '砍价中',
@@ -120,7 +120,9 @@
                 "l-countdown": "../../components/countdown/index"
             }
         }
-        components={contact}
+        components = {
+            contact
+        }
         computed = {
             cutPrice() {
                 if (this.ActBargainReg) {
@@ -139,7 +141,7 @@
             }
             return {
                 title: this.courseInfo.courseTittle,
-                imageUrl:this.courseInfo.image,
+                imageUrl: this.courseInfo.image,
                 path: '/pages/activity/bargain?id=' + this.ActBargainReg.id
             }
         }
@@ -152,7 +154,7 @@
             this.$apply()
         }
         methods = {
-            hideModal(){
+            hideModal() {
                 this.modalName = ''
             },
             async createImg(e) {
@@ -171,10 +173,13 @@
             toshare() {
                 this.modalName = 'share'
             },
-            tocut() {
-                wepy.navigateTo({
-                    url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
-                });
+            async tocut(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    wepy.navigateTo({
+                        url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
+                    });
+                }
             },
             buy() {
                 wepy.navigateTo({
@@ -290,7 +295,7 @@
             border-top: 2px solid #eee;
         }
     }
-    .nowrap{
+    .nowrap {
         white-space: nowrap;
     }
 </style>

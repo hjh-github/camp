@@ -38,7 +38,7 @@
                             </text>
                         </view>
                     </view>
-                    <view class="cu-bar bg-white justify-end solid-top">
+                    <view  class="cu-bar bg-white justify-end solid-top">
                         <view class="action flex__item margin-right" style="justify-content:flex-start">
                             <tetx class="text-orange text-sm ">{{orderState[item.orderState]}}</tetx>
                         </view>

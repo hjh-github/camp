@@ -35,16 +35,17 @@
       scene: null,
       base_store_id: "",
       appCode: "",
-      // baseUrl: "https://wechat.hxqxly.com",
-      baseUrl: "https://test.hxqxly.com",
+      baseUrl: "https://wechat.hxqxly.com",
+      // baseUrl: "https://test.hxqxly.com",
       themeColor: "#F4D000",
-      cityCode:'',
-      code:'',
-      sessionId:'',
-      courseInfo:{},
-      orderInfo:{},
-      childs:[],
-      help:true
+      cityCode: '',
+      code: '',
+      sessionId: '',
+      courseInfo: {},
+      orderInfo: {},
+      childs: [],
+      help: true,
+      query:{}
     };
     constructor() {
       super();
@@ -109,14 +110,19 @@
       // 获取保存场景值
       if (param && param.scene) {
         wepy.$instance.globalData.scene = param.scene;
-        if (param.query.s) wepy.$instance.globalData.base_store_id = param.query.s
-        switch (param.scene) {
-          // 服务通知下
-          case 1014:
-            if (param.query.lid) wepy.setStorageSync("level_id", param.query.lid);
-            break;
+        if(param.query.scene) {
+          wepy.$instance.globalData.query = this.getCodeBy1047(param.query.scene)
         }
       }
+    }
+    getCodeBy1047(str) {
+      var query = {},
+        strs = decodeURIComponent(str).split("&");
+      console.log(strs);
+      for (var i = 0, len = strs.length; i < len; i++) {
+        query[strs[i].split("=")[0]] = strs[i].split("=")[1];
+      }
+      return query;
     }
     syncStoreConfig(key) {
       try {
@@ -141,34 +147,33 @@
     }
     config = {
       pages: [
-      "pages/home/index",
-      "pages/home/search",
-      "pages/home/web",
-      "pages/home/share",
-      "pages/meet/meet",
-      "pages/my/my",
-      "pages/my/orders",
-      "pages/my/order",
-      "pages/my/pintuan",
-      "pages/my/bargaining",
-      "pages/home/address",
-      "pages/detaile/detaile",
-      "pages/detaile/sureOrder",
-      "pages/detaile/partners",
-      "pages/meet/childs",
-      "pages/meet/addChild",
-      "pages/meet/addMan",
-      "pages/meet/remarks",
-      "pages/meet/commiRemarke",
-      "pages/activity/bargain",
-      "pages/activity/pintuan",
-      
+        "pages/home/index",
+        "pages/home/search",
+        "pages/home/web",
+        "pages/home/share",
+        "pages/meet/meet",
+        "pages/my/my",
+        "pages/my/orders",
+        "pages/my/order",
+        "pages/my/pintuan",
+        "pages/my/bargaining",
+        "pages/home/address",
+        "pages/detaile/detaile",
+        "pages/detaile/sureOrder",
+        "pages/detaile/partners",
+        "pages/meet/childs",
+        "pages/meet/addChild",
+        "pages/meet/addMan",
+        "pages/meet/remarks",
+        "pages/meet/commiRemarke",
+        "pages/activity/bargain",
+        "pages/activity/pintuan",
       ],
-    subPackages: [
-      {
+      subPackages: [{
         root: "agent",
         pages: [
           "pages/index",
+          "pages/share",
         ]
       }],
       window: {
@@ -188,8 +193,7 @@
         "color": "#a9b7b7",
         "selectedColor": "#F4D000",
         "borderStyle": "black",
-        "list": [
-          {
+        "list": [{
             "selectedIconPath": "static/images/icon_consult_press.png",
             "iconPath": "static/images/icon_consult.png",
             "pagePath": "pages/home/index",

@@ -1,7 +1,7 @@
 
 <template>
     <view class="h100">
-        <scroll-view scroll-y class="main-view">
+        <scroll-view scroll-y class="{{opt.notic ? 'main-view-long':'main-view'}}">
             <view class="flex bg-white padding">
                 <image class="img" src="{{orderInfo.courseImage}}" mode="aspectFill">
                 </image>
@@ -102,7 +102,8 @@
                 </repeat>
             </view>
         </scroll-view>
-        <view class="cu-bar tabbar border shop solid-top bg-gray">
+        <!-- notic 在代理订单跳转时 -->
+        <view wx:if="{{!opt.notic}}" class="cu-bar tabbar border shop solid-top bg-gray">
             <view wx:if="{{orderInfo.orderState == 1}}" class="action text-left padding-left" @tap="cancle({{orderInfo.id}})" style="width:400rpx;">
                 <text class="text-df">取消订单</text>
             </view>
@@ -134,7 +135,8 @@
                 3: '已使用',
                 4: '已失效'
             },
-            id:''
+            id:'',
+            opt:{}
         };
         components={contact}
         async loadData(id) {
@@ -143,6 +145,7 @@
             this.$apply()
         }
         async onLoad(opt) {
+            this.opt = opt
             this.id = opt.id
             await this.loadData(opt.id)
         }
@@ -228,6 +231,9 @@
     }
     .main-view {
         height: calc(~"100% - 100rpx");
+    }
+    .main-view-long{
+        height:100%;
     }
     .textarea {
         background-color: #fafafa;

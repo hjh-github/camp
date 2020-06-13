@@ -1,35 +1,141 @@
 
 <template>
     <view>
-        <view class="UCenter-bg bg-white flex-sb">
-            <view class="content">
+        <view class="UCenter-bg bg-white flex-sb flex-c">
+            <view class="content flex flex-c flex-sb">
                 <view class="flex flex-c">
                     <view class="avat margin-left margin-right-sm">
                         <open-data class="img" type="userAvatarUrl"></open-data>
                     </view>
-                    <view class="text-xl text-black">
-                        <open-data type="userNickName"></open-data>
+                    <view class="text-sm text-white">
+                        <view>代理名称：{{agent.name}}</view>
+                        <view>代理编号：{{agent.id}}</view>
                     </view>
                 </view>
-                <view class="text-orange margin-right">生成分享海报</view>
+                <button class="cu-btn round bg-orange margin-right" open-type="getUserInfo" bindgetuserinfo="toShare" role="button" aria-disabled="false">生成分享海报</button>
             </view>
             <view class="bg-f">
                 <open-data style="width:100%;height:100%;" type="userAvatarUrl"></open-data>
             </view>
         </view>
+        <scroll-view scroll-x class="bg-white nav solid-bottom">
+            <view class="flex text-center">
+                <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">待参加</view>
+                <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">已完成</view>
+            </view>
+        </scroll-view>
+        <view>
+            <view class="cu-card article">
+                <repeat for="{{orders}}" key="index" index="index" item="item">
+                    <view class="cu-item shadow padding" style="margin-bottom:0" @tap="todetaile({{item.id}})">
+                        <view class="text-lg text-black">订单编号：{{item.orderSn}}</view>
+                        <view>来源：{{item.source}}</view>
+                        <view>课程：{{item.courseTittle}}</view>
+                        <view wx:if="{{item.paymentType ==2 }}" class="text-lg text-black">订单总额：<text class="text-orange text-price">{{item.moneyOrder}}</text>（定金：<text class="text-orange text-price">{{item.earnesMoney}}</text>）</view>
+                        <view wx:if="{{item.paymentType !=2 }}" class="text-lg text-black">订单总额：<text class="text-orange text-price">{{item.moneyOrder}}</text></view>
+                    </view>
+                </repeat>
+            </view>
+            <view hidden="{{!loadmoring}}" class="cu-load {{!toload?'loading':'over'}}" style="background-color:#f5f5f5"></view>
+        </view>
     </view>
 </template>
 
 <script>
-    import wepy from "wepy";
+    import wepy from "wepy"
+    import Tips from "@/utils/Tips"
+    import config from "../api"
+    import auth from "@/api/auth"
+    import store from "@/store/utils"
     export default class Dialog extends wepy.page {
         config = {
-            navigationBarTitleText: "page_name"
+            navigationBarTitleText: "我的代理"
         };
         data = {
-            close: "/static/images/close.png"
+            agent: {},
+            TabCur: 0,
+            orders: [],
+            orderState: [2, 3],
+            pageIndex: 1,
+            toload: true,
+            loadmoring: false,
         };
-        methods = {};
+        async onLoad() {
+            let {
+                agent
+            } = await config.agenter()
+            this.agent = agent
+            await this.loadData()
+            this.$apply()
+        }
+        async loadData(pageIndex) {
+            let params = {
+                orderState: this.orderState[this.TabCur],
+                pageIndex: pageIndex || this.pageIndex,
+                pageSize: 10
+            }
+            let res = await config.orders(params)
+            if (res.errcode == 200) {
+                let ordersList = res.data.ordersList
+                if (!ordersList.length) {
+                    if (pageIndex == 1) {
+                        this.orders = ordersList
+                    }
+                    // this.pageIndex = pageIndex
+                    this.toload = true
+                    this.loadmoring = true
+                    this.$apply()
+                    return false
+                } else {
+                    if (pageIndex > 1) this.pageIndex = pageIndex
+                    if (pageIndex == 1) {
+                        this.orders = ordersList
+                    } else {
+                        this.orders = this.orders.concat(ordersList)
+                    }
+                    this.loadmoring = true
+                }
+                console.log(this.loadmoring)
+                this.$apply()
+            }
+        }
+        onReachBottom() {
+            this.getMore()
+        }
+        async getMore() {
+            this.loadmoring = true
+            this.toload = false
+            await this.loadData(this.pageIndex + 1)
+            this.$apply()
+        }
+        methods = {
+            tabSelect(e) {
+                let cur = e.currentTarget.dataset.id || e.detail.current;
+                if (this.TabCur != cur) {
+                    this.TabCur = cur
+                    this.orders = []
+                    this.pageIndex = 1
+                    this.loadData()
+                }
+            },
+            todetaile(id) {
+                wepy.navigateTo({
+                    url: '/pages/my/order?id=' + id + "&notic=1"
+                });
+            },
+           async toShare(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    store.save('agentInfo', {
+                        path: 'pages/home/index',
+                        id: this.agent.id
+                    })
+                    wepy.navigateTo({
+                        url: './share'
+                    });
+                }
+            }
+        };
     }
 </script>
 <style>

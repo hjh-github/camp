@@ -1,0 +1,209 @@
+
+<template>
+    <view class="h100 flex flex-jc margin-top:50rpx;">
+        <canvas class='canvas' canvas-id="mycanvas" />
+        <cover-view class="cu-btn bg-orange shadow-blur round lg" @tap="saveImg">保存海报</cover-view>
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    import config from "@/api/config"
+    import auth from "@/api/auth"
+    import Lang from "@/utils/Lang"
+    import store from "@/store/utils"
+    import {
+        connect
+    } from "wepy-redux"
+    @connect({
+        shareInfo: store.get("agentInfo")
+    })
+    export default class shareInfo extends wepy.page {
+        config = {
+            navigationBarTitleText: "生成海报"
+        };
+        methods = {
+            //点击保存到相册
+            saveImg() {
+                console.log('dowm')
+                Lang.downImg(this.loadImagePath);
+            }
+        };
+        data = {
+            // canvas 
+            _width: '360', //手机屏宽
+            _heigth: '473', //手机屏高
+            swiperHeight: 300, //主图图片高度
+            canvasType: false, //canvas是否显示
+            loadImagePath: '', //下载的图片
+            imageUrl: 'https://images.hxqxly.com/hxqimage/images/1/course/fx.jpg', //主图网络路径
+            codeUrl: 'https://images.hxqxly.com/hxqimage/images/1/course/90acf8e9-5f2d-46d5-835e-a2891b842621.jpg', //二维码网络路径
+            bgUrl: '../images/bg1.jpg',
+            avat:'',
+            name:'',
+            localImageUrl: '', //绘制的商品图片本地路径
+            localCodeUrl: '', //绘制的二维码图片本地路径
+            localBgUrl: '',
+            localavatUrl: '',
+        }
+        /**
+         * 生命周期函数--监听页面加载
+         */
+        async onLoad(options) {
+            await auth.login()
+            let res = await config.getUnlimited({
+                page: this.shareInfo.path,
+                sceneStr: encodeURI(`agentId=${this.shareInfo.id}`)
+            })
+
+            this.codeUrl = res.qr
+            this.avat = res.profilePhoto
+            this.name = res.name
+            this.$apply()
+            this.creatQrcodePictures()
+        }
+        /*按生成图片按钮时*/
+        creatQrcodePictures() {
+            wx.showLoading({
+                title: '正在绘制图片',
+            })
+            /*获取手机宽高*/
+            let that = this
+            let imgHeigth = this.swiperHeight
+            let imgUrl = this.imageUrl
+            let qrcodeUrl = this.codeUrl
+            that.getImginfo([imgUrl, qrcodeUrl,that.avat, that.bgUrl], 0);
+        }
+        // 获取图片信息
+        getImginfo(urlArr, _type) {
+            let that = this;
+            wx.getImageInfo({
+                src: urlArr[_type],
+                success(res) {
+                    //res.path是网络图片的本地地址
+                    if (_type === 0) { //商品图片
+                        that.localImageUrl = res.path
+                        that.getImginfo(urlArr, 1)
+                    } else if (_type == 1) {
+                        that.localCodeUrl = res.path
+                        that.getImginfo(urlArr, 2)
+                    }else if (_type == 2) {
+                        that.localavatUrl = res.path
+                        that.getImginfo(urlArr, 3)
+                    } else {
+                        that.localBgUrl = res.path
+                        that.createNewImg();
+                    }
+                },
+                fail(res) {
+                    //失败回调
+                    console.log('Fail：', _type, res)
+                }
+            });
+        }
+        //绘制canvas
+        createNewImg() {
+            let that = this;
+            // 图片的x坐标
+            let bg_x = 10
+            // 图片的y坐标
+            let bg_y = 70
+            // 图片宽度
+            let bg_w = this.data.pageWidth - 116
+            // 图片高度
+            let bg_h = this.data.pageHeight * 0.35
+            // 图片圆角
+            let bg_r = 4
+            let ctx = wx.createCanvasContext('mycanvas');
+            // 绘制背景
+            ctx.setFillStyle("#fff");
+            ctx.fillRect(0, 0, 0, 0);
+            //绘制背景图片
+            ctx.drawImage(this.bgUrl, 0, 0, 360, 473);
+            //绘制头像
+            var qrW = 50; //绘制的二维码宽度
+            var qrH = 50; //绘制的二维码高度
+            var qr_x = 40; //绘制的二维码在画布上的位置
+            var qr_y = 50; //绘制的二维码在画布上的位置
+            ctx.save();
+            ctx.beginPath(); //开始绘制
+            //先画个圆  前两个参数确定了圆心 （x,y） 坐标 第三个参数是圆的半径 四参数是绘图方向 默认是false，即顺时针
+            ctx.arc(qrW / 2 + qr_x, qrH / 2 + qr_y, qrW / 2, 0, Math.PI * 2, false);
+            ctx.clip(); //画好了圆 剪切 原始画布中剪切任意形状和尺寸。一旦剪切了某个区域，则所有之后的绘图都会被限制在被剪切的区域内 这也是我们要save上下文的原因
+            ctx.drawImage(this.localavatUrl, qr_x, qr_y, qrW, qrH);
+            // 恢复之前保存的绘图上下文
+            ctx.restore()
+            ctx.setFontSize(16);
+            ctx.setFillStyle('#333');
+            ctx.fillText(this.name, 100, 70, 280);
+            ctx.setFontSize(12);
+            ctx.setFillStyle('#999');
+            ctx.fillText('成长，是我们最值得珍藏的记忆', 100, 90, 280);
+            // 绘制banner
+            ctx.beginPath();
+            ctx.save();
+            let left = 40,
+                top = 120,
+                width = 280,
+                height = 140,
+                fillet = 6,
+                w = 2
+            left = left / 2 * w;
+            top = top / 2 * w;
+            width = width / 2 * w;
+            height = height / 2 * w;
+            fillet = fillet / 2 * w;
+            ctx.setLineWidth(1);
+            ctx.setStrokeStyle('#ffffff');
+            ctx.moveTo(left + fillet, top); // 创建开始点
+            ctx.lineTo(left + width - fillet, top); // 创建水平线
+            ctx.arcTo(left + width, top, left + width, top + fillet, fillet); // 创建弧
+            ctx.lineTo(left + width, top + height - fillet); // 创建垂直线
+            ctx.arcTo(left + width, top + height, left + width - fillet, top + height, fillet); // 创建弧
+            ctx.lineTo(left + fillet, top + height); // 创建水平线
+            ctx.arcTo(left, top + height, left, top + height - fillet, fillet); // 创建弧
+            ctx.lineTo(left, top + fillet); // 创建垂直线
+            ctx.arcTo(left, top, left + fillet, top, fillet); // 创建弧
+            ctx.stroke(); // 这个具体干什么用的？
+            ctx.clip();
+            ctx.drawImage(this.localImageUrl, left, top, width, height);
+            ctx.restore();
+            // // 绘制小程序名称
+            ctx.drawImage(this.localCodeUrl, 40, 330, 100, 100);
+            // 显示绘制
+            ctx.draw();
+            //将生成好的图片保存到本地，需要延迟一会，绘制期间耗时
+            setTimeout(function() {
+                wx.canvasToTempFilePath({
+                    canvasId: 'mycanvas',
+                    success(res) {
+                        var tempFilePath = res.tempFilePath;
+                        that.loadImagePath = tempFilePath
+                        that.$apply()
+                    },
+                    fail(res) {
+                        console.log(res);
+                    }
+                });
+            }, 500);
+            //关闭提示
+            wx.hideLoading();
+        }
+    }
+</script>
+
+<style lang="less" scoped>
+    .canvas {
+        width: 360px;
+        height: 473px;
+        background: #fff;
+    }
+    .cu-btn {
+        position: fixed;
+        bottom: 50rpx;
+        left: 50%;
+        margin-left: -180rpx;
+        line-height: 90rpx;
+        height: 90rpx;
+        width:360rpx;
+    }
+</style>
