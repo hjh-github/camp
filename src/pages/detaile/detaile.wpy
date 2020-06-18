@@ -24,7 +24,7 @@
                         <text class="cu-tag round line-orange margin-right-sm">砍价</text> {{courseInfo.bargainDes}}
                     </view>
                     <view class="action">
-                        <button class="cu-btn sm bg-orange shadow" @tap="sku('bargain')">发起砍价</button>
+                        <button class="cu-btn sm bg-orange shadow" open-type="getUserInfo" bindgetuserinfo="tocut">发起砍价</button>
                     </view>
                 </view>
                 <view wx:if="{{courseInfo.pintuanId}}" class="cu-bar bg-white margin-top">
@@ -257,7 +257,19 @@
             console.log(this.ActPintuan)
             this.$apply();
         }
+        sku(type = 'normal') {
+            this.showSku = true
+            this.toPintuan = false
+            this.buyTypt = type
+        }
         methods = {
+            async tocut(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    this.sku('bargain')
+                    this.$apply()
+                }
+            },
             async createImg(e) {
                 if (e.detail.errMsg == "getUserInfo:ok") {
                     await auth.getUserinfo(e.detail)
@@ -316,10 +328,8 @@
                 this.showSku = false
                 this.modalName = ''
             },
-            sku(type = 'normal') {
-                this.showSku = true
-                this.toPintuan = false
-                this.buyTypt = type
+            sku(type) {
+                this.sku(type)
             },
             plus() {
                 if (this.buyTypt == 'bargain') {

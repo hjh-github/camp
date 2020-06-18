@@ -96,7 +96,7 @@
         path: '/pages/home/index'
       }
     }
-    async onLoad() {
+    async onLoad(opt) {
       wepy.setNavigationBarColor({
         frontColor: '#ffffff', //前景颜色值，包括按钮、标题、状态栏的颜色，仅支持 #ffffff 和 #000000,
         backgroundColor: this.theme, //背景颜色值，有效值为十六进制颜色,
@@ -106,12 +106,12 @@
       await this.load()
       this.isShow = true
       this.$apply()
-      // this.$invoke('cSwiper', 'load', this.model)
-      // this.$invoke('Navs', 'load', this.model)
     }
     async onShow() {
-      if (!this.isShow || !this.city) {
-        return false
+      if (wepy.$instance.globalData.scene != 1007) {
+        if (!this.isShow || !this.city) {
+          return false
+        }
       }
       await this.load(1)
       this.$apply()
@@ -129,6 +129,9 @@
         pageIndex: page || this.pageIndex,
         pageSize: this.pageSize
       })
+      wx.setNavigationBarTitle({
+        title: homeData.head
+      })
       this.swipers.list = homeData.banners
       this.navs.list = homeData.navs
       this.scrollNav = _scrollNav.concat(homeData.types)
@@ -140,9 +143,7 @@
           code: homeData.cityCode
         })
         wepy.$instance.globalData.cityCode = homeData.cityCode
-        wx.setNavigationBarTitle({
-          title: homeData.head || '华心桥体验营'
-        })
+        this.$apply()
         this.$invoke('ordering', 'load', homeData.newOrderList)
       }
     }
