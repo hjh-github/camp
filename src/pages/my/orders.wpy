@@ -40,7 +40,7 @@
                     </view>
                     <view  class="cu-bar bg-white justify-end solid-top">
                         <view class="action flex__item margin-right" style="justify-content:flex-start">
-                            <tetx class="text-orange text-sm ">{{orderState[item.orderState]}}</tetx>
+                            <tetx class="text-orange text-sm ">{{item.orderStateStr}}</tetx>
                         </view>
                         <view class="action">
                             <button wx:if="{{item.orderState == 1}}" class="cu-btn line-orange text-orange" bindtap="cancle({{item.id}})">取消订单</button>

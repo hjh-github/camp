@@ -186,18 +186,13 @@
                 let self = this
                 wx.showModal({
                     content: '取消订单后将无法恢复！是否继续？',
-                    // confirmText:,
                     success: async function(res) {
                         if (res.confirm) {
                             let res = await config.cancalorder(id)
                             if (res.errcode == 200) {
-                                wepy.navigateBack({
-                                    delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
-                                });
+                                wepy.reLaunch({ url: '/pages/home/index' });
                             }
-                            console.log(res)
                         } else if (res.cancel) {
-                            console.log('用户点击取消')
                         }
                     }
                 })

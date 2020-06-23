@@ -68,7 +68,8 @@
       toload: false,
       isLoad: true,
       loadmoring: false,
-      _city: ''
+      _city: '',
+      member:{}
     };
     components = {
       cSwiper,
@@ -93,7 +94,7 @@
       }
       return {
         title: '',
-        path: '/pages/home/index'
+        path: '/pages/home/index?agentId=' + this.member.agentId 
       }
     }
     async onLoad(opt) {
@@ -103,6 +104,7 @@
         success: res => {}
       });
       await auth.login()
+      this.member = wepy.getStorageSync('member');
       await this.load()
       this.isShow = true
       this.$apply()

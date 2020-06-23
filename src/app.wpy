@@ -45,7 +45,7 @@
       orderInfo: {},
       childs: [],
       help: true,
-      query:{}
+      query: {}
     };
     constructor() {
       super();
@@ -110,8 +110,11 @@
       // 获取保存场景值
       if (param && param.scene) {
         wepy.$instance.globalData.scene = param.scene;
-        if(param.query.scene) {
+        console.log()
+        if (param.query.scene) {
           wepy.$instance.globalData.query = this.getCodeBy1047(param.query.scene)
+        } else if (param.query.agentId) {
+          wepy.$instance.globalData.query['agentId'] = param.query.agentId
         }
       }
     }

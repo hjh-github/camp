@@ -15,7 +15,7 @@
                 </view>
                 <view class="cu-bar bg-white justify-end margin-top solid-top">
                     <view class="action flex__item margin-right" style="justify-content:flex-start">
-                        <tetx class="text-orange text-sm ">{{orderState[item.state]}}</tetx>
+                        <tetx class="text-orange text-sm ">{{item.orderStateStr}}</tetx>
                     </view>
                     <view class="action">
                         <button class="cu-btn bg-orange margin-left" @tap="todetaile({{item.id}})">查看进度</button>

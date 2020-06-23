@@ -231,7 +231,8 @@
             }, {
                 name: '拼团成功',
                 name1: '老师主动联系您'
-            }]
+            }],
+            member:{}
         };
         components = {
             cSwiper,
@@ -252,7 +253,7 @@
             return {
                 title: this.courseInfo.courseTittle,
                 imageUrl:this.courseInfo.image,
-                path: '/pages/activity/pintuan?id=' + this.actPintuanActivity.id
+                path: '/pages/activity/pintuan?id=' + this.actPintuanActivity.id + '&agentId=' + this.member.agentId
             }
         }
         async onLoad(opt) {
@@ -270,7 +271,7 @@
                 )
                 .exec();
             await auth.login()
-            
+            this.member = wepy.getStorageSync('member');
             let res = await config.pintuanDetai(opt.id || opt.scene)
             let {
                 course,

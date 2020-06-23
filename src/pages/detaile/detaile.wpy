@@ -136,9 +136,25 @@
             </view>
         </view>
         <view class="cu-bar bg-white tabbar border shop solid-top">
-            <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
+            <button class="action" @tap="cont"><view class="cuIcon-weixin text-orange"></view>咨询</button>
             <button class="action" @tap="toshare"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
             <view class="bg-orange submit text-lg" @tap="sku('normal')">立即购买</view>
+        </view>
+        <view class="cu-modal bottom-modal {{modalName=='bottomModal'?'show':''}}">
+            <view class="cu-dialog">
+                <view class="cu-bar">
+                    <view class="action text-green"></view>
+                    <view class="action text-blue" bindtap="hideModal">关闭</view>
+                </view>
+                <view class="padding-lr bg-white">
+                    <view class="padding text-xl">{{customerService.csName}}</view>
+                    <image src="{{customerService.qrCode}}" mode="widthFix" style="width:500rpx;">
+                    </image>
+                    <view>手机/微信：{{customerService.csPhone}}</view>
+                    <view class="padding-sm text-gray ">请添加微信/拨打电话咨询</view>
+                    <button @tap="call({{customerService.csPhone}})" class="cu-btn bg-red margin-tb-sm lg">拨打电话</button>
+                </view>
+            </view>
         </view>
         <view class="cu-modal {{modalName=='share'?'show':''}}">
             <view class="cu-dialog" style="width:450rpx">
@@ -201,7 +217,9 @@
                 2: '已满员'
             },
             toPintuan: false,
-            modalName: ''
+            modalName: '',
+            customerService: {},
+            member:{}
         };
         components = {
             cSwiper,
@@ -221,7 +239,7 @@
             }
             return {
                 title: this.courseInfo.courseTittle,
-                path: '/pages/detaile/detaile?id=' + this.courseInfo.id
+                path: '/pages/detaile/detaile?id=' + this.courseInfo.id + '&agentId=' + this.member.agentId 
             }
         }
         async onLoad(opt) {
@@ -239,16 +257,19 @@
                 )
                 .exec();
             await auth.login()
+            this.member = wepy.getStorageSync('member');
             let {
                 course,
                 companions,
                 statistics,
                 CourseComment,
-                actPintuan
+                actPintuan,
+                customerService
             } = await config.getCourseInfo(opt.id || opt.scene)
             this.swipers.list = course.pics
             course.courseChar = course.courseChar.split("|")
             this.courseInfo = course
+            this.customerService = customerService
             wepy.$instance.globalData.courseInfo = course
             this.companions = companions
             this.statistics = statistics
@@ -263,6 +284,14 @@
             this.buyTypt = type
         }
         methods = {
+            call(phoneNumber) {
+                wx.makePhoneCall({
+                    phoneNumber //仅为示例，并非真实的电话号码
+                })
+            },
+            cont() {
+                this.modalName = 'bottomModal'
+            },
             async tocut(e) {
                 if (e.detail.errMsg == "getUserInfo:ok") {
                     await auth.getUserinfo(e.detail)

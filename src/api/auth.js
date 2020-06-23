@@ -74,6 +74,7 @@ export default class auth extends base {
     }
     // 是否扫代理码进来
     if(wepy.$instance.globalData.query.agentId) params.agentId = wepy.$instance.globalData.query.agentId
+    console.log(params)
     const url = `${this.baseUrl}/wxlogin`;
     let _code = await this.post(url, params, true, true);
     console.log(code)
