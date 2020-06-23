@@ -16,7 +16,7 @@
                 </view>
                 <view class="cu-bar bg-white justify-end solid-top">
                     <view class="action flex__item margin-right" style="justify-content:flex-start">
-                        <tetx class="text-orange text-sm ">{{orderState[item.awardsStatus]}}</tetx>
+                        <tetx class="text-orange text-sm ">{{item.awardsStatusDesc}}</tetx>
                     </view>
                     <view class="action">
                         <button wx:if="{{item.awardsStatus < 1}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">继续砍价</button>
