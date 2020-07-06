@@ -39,9 +39,12 @@
                 <button wx:if="{{info.status == 1 || info.status == 7}}" style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
                 <button wx:if="{{info.status == 4}}" style="width:300rpx;" @tap="topay" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去付款</button>
             </view>
+            <!--   -->
             <view wx:if="{{info.owner == 0}}" class="flex flex-c flex-jc">
                 <button style="width:600rpx;white-space: nowrap;" open-type="getUserInfo" bindgetuserinfo="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
-                <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
+                <!-- -->
+                <!--  -->
+                <button wx:if="{{info.status == 2 || info.status == 3}}"  class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" @tap="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
             </view>
         </view>
         <view class="log-box radius padding">
@@ -128,7 +131,7 @@
                 if (this.ActBargainReg) {
                     let act = this.ActBargainReg
                     let _p = Lang.sum([act.coursePrice, -act.courseNewPrice], 2),
-                        _sp = Lang.sum([act.coursePrice, 0], 2)
+                        _sp = Lang.sum([act.coursePrice -act.cutMinPrice], 2)
                     this.percent = parseInt(_p / _sp * 100)
                     return _p
                 }
@@ -142,7 +145,7 @@
             return {
                 title: this.courseInfo.courseTittle,
                 imageUrl: this.courseInfo.image,
-                path: '/pages/activity/bargain?id=' + this.ActBargainReg.id + '&agentId=' + this.member.agentId 
+                path: '/pages/activity/bargain?id=' + this.ActBargainReg.id + '&agentId=' + this.member.agentId
             }
         }
         async onLoad(opt) {
@@ -192,8 +195,11 @@
                 });
             },
             async onGotUserInfo(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
+                if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync('isFans') != 1) {
+                    wepy.navigateTo({
+                        url: `/pages/home/auth`
+                    });
+                } else {
                     await this.helpBargain()
                     await this.load()
                     this.$apply()

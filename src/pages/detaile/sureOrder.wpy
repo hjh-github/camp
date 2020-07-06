@@ -83,6 +83,7 @@
     async onLoad(opt) {
       console.log(opt)
       this.mobile = wepy.getStorageSync('mobile');
+      
       // this.payParams = wepy.$instance.globalData.orderInfo
       // this.orderInfo = wepy.$instance.globalData.courseInfo
       await this.getorderInfo(opt)
@@ -130,6 +131,7 @@
           actId: _data.actId,
           price: _data.totalPrice,
           actPintuanId: opt.actpid,
+          paymentType : opt.pt
         }
       }
       this.$apply()

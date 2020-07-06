@@ -109,7 +109,21 @@
         <view class="cu-modal bottom-modal {{showSku?'show':''}}" bindtap="hideModal">
             <view class="cu-dialog" @tap.stop="ret">
                 <view class="cu-bar bg-white padding-left">
-                    <text> 活动费：<text class="text-red text-price text-xxl">{{courseInfo.price}}</text></text>
+                    <view>
+                        <text> 活动费：<text class="text-red text-price text-xxl">{{courseInfo.price}}</text> </text>
+                        <text wx:if="{{courseInfo.paymentType == 2}}" class="margin-left-sm"> 定金：<text class="text-red text-price text-lg">{{courseInfo.earnesMoney}}</text> </text>
+                    </view>
+                </view>
+                <view wx:if="{{courseInfo.paymentType == 2}}" class="cu-bar bg-white padding-left">
+                    <text> 付款方式（可先付定金下单）：</text>
+                </view>
+                <view wx:if="{{courseInfo.paymentType == 2}}" class="flex flex-c padding padding-top-sm text-left bg-white">
+                    <view class="flex flex-c flex__item">
+                        <view class="margin-right" @tap="paymentType(1)">
+                            <radio checked="{{paymentType == 1}}" class="radio margin-right-sm yellow"></radio>全额付款</view>
+                        <view class="margin-right" @tap="paymentType(2)">
+                            <radio checked="{{paymentType == 2}}" class="radio margin-right-sm yellow"></radio>先付定金</view>
+                    </view>
                 </view>
                 <view class="padding-left padding-top-sm text-left ">
                     选择营期
@@ -219,7 +233,8 @@
             toPintuan: false,
             modalName: '',
             customerService: {},
-            member:{}
+            member: {},
+            paymentType: 1
         };
         components = {
             cSwiper,
@@ -239,7 +254,7 @@
             }
             return {
                 title: this.courseInfo.courseTittle,
-                path: '/pages/detaile/detaile?id=' + this.courseInfo.id + '&agentId=' + this.member.agentId 
+                path: '/pages/detaile/detaile?id=' + this.courseInfo.id + '&agentId=' + this.member.agentId
             }
         }
         async onLoad(opt) {
@@ -284,6 +299,9 @@
             this.buyTypt = type
         }
         methods = {
+            paymentType(type) {
+                this.paymentType = type
+            },
             call(phoneNumber) {
                 wx.makePhoneCall({
                     phoneNumber //仅为示例，并非真实的电话号码
@@ -390,7 +408,7 @@
                 //     aid = this.courseInfo.pintuanId
                 // }
                 wepy.navigateTo({
-                    url: `./sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}&actpid=${this.courseInfo.pintuanId}`
+                    url: `./sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${aid}&actpid=${this.courseInfo.pintuanId}&pt=${this.paymentType}`
                 });
             }
         };

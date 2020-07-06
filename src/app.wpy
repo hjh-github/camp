@@ -151,6 +151,7 @@
     config = {
       pages: [
         "pages/home/index",
+        "pages/home/auth",
         "pages/home/search",
         "pages/home/web",
         "pages/home/share",

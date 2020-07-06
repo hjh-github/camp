@@ -1,0 +1,64 @@
+
+<template>
+    <view class="flex flex-y flex-c" style="text-shadow:none">
+        <view class="avat margin">
+            <open-data class="img" type="userAvatarUrl"></open-data>
+        </view>
+        <view class="text-lg text-gray padding-bottom"><text class="cuIcon-footprint padding-right"></text>成长，是我们最值得珍藏的记忆</view>
+        <button wx:if="{{!mobile}}" class="cu-btn bg-orange shadow-blur round lg" open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber">绑定手机号</button>
+        <button wx:if="{{mobile}}" class="cu-btn bg-orange shadow-blur round lg" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo">绑定成功，立即登录</button>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import auth from "@/api/auth"
+    import Tips from "@/utils/Tips"
+    import config from "@/api/config"
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "登录"
+        };
+        data = {
+            mobile: '',
+        };
+        methods = {
+            async onGotUserInfo(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail)
+                    await auth.toLogin()
+                    wepy.navigateBack({
+                        delta: 1 //返回的页面数，如果 delta 大于现有页面数，则返回到首页,
+                    });
+                }
+            },
+            async bindgetphonenumber(e) {
+                if (e.detail.errMsg == "getPhoneNumber:ok") {
+                    let mobile = await auth.getPhone(e.detail)
+                    if (mobile) {
+                        wepy.setStorageSync('mobile', mobile);
+                        this.mobile = mobile
+                    } else {
+                        Tips.toast('未授权成功，请重试', () => {}, 'none')
+                    }
+                    this.$apply()
+                }
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .avat {
+        width: 120rpx;
+        height: 120rpx;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-top: 120rpx;
+    }
+</style>
