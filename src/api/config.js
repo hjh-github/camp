@@ -39,7 +39,15 @@ export default class config extends base {
         })
     }
 
-         
+    static async getCompanions(courseId) {
+        let url = `${this.baseUrl}/course/getCompanions`;
+        let params = {
+            courseId
+        }
+        return this.get(url, params, true).then(res => {
+            return res;
+        })
+    }   
 
     static async getCourseInfo(id) {
         let url = `${this.baseUrl}/course/getInfo`;

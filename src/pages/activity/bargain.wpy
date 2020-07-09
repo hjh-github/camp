@@ -26,7 +26,7 @@
             </view>
         </view>
         <view class="progress margin-top-xl margin-left margin-right">
-            <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent}}%">已砍{{cutPrice}}</view>
+            <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent > 80 ? 80 : percent}}%">已砍{{cutPrice}}</view>
             <view class="cu-progress round striped {{active?'active':''}}">
                 <view class="bg-orange" style="width:{{percent}}%"></view>
             </view>
