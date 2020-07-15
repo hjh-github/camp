@@ -62,7 +62,33 @@
                 <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
                 <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
             </view>
-            <view class="cu-modal bottom-modal {{toPintuan?'show':''}}" bindtap="hideModal">
+            
+            <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
+                <view class="flex text-center">
+                    <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
+                    <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
+                    <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
+                </view>
+            </scroll-view>
+            <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
+                <swiper-item>
+                    <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
+                        <rich-text nodes="{{courseInfo.details}}"></rich-text>
+                    </scroll-view>
+                </swiper-item>
+                <swiper-item>
+                    <scroll-view scroll-y class="bg-white h100 padding">
+                        <rich-text nodes="{{courseInfo.trip}}"></rich-text>
+                    </scroll-view>
+                </swiper-item>
+                <swiper-item>
+                    <scroll-view scroll-y class="bg-white h100 padding">
+                        <rich-text nodes="{{courseInfo.notice}}"></rich-text>
+                    </scroll-view>
+                </swiper-item>
+            </swiper>
+        </scroll-view>
+        <view class="cu-modal bottom-modal {{toPintuan?'show':''}}" bindtap="hideModal">
                 <view class="cu-dialog" @tap.stop="ret">
                     <view class="cu-timeline">
                         <view class="cu-time text-black" style="width:100%;color:#333;font-size:32rpx;">拼团规则</view>
@@ -96,31 +122,6 @@
                     <view @tap="sku('pintuan')" class="bg-orange plus text-white text-lg text-center">立即参团</view>
                 </view>
             </view>
-            <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
-                <view class="flex text-center">
-                    <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
-                    <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
-                    <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
-                </view>
-            </scroll-view>
-            <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
-                <swiper-item>
-                    <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
-                        <rich-text nodes="{{courseInfo.details}}"></rich-text>
-                    </scroll-view>
-                </swiper-item>
-                <swiper-item>
-                    <scroll-view scroll-y class="bg-white h100 padding">
-                        <rich-text nodes="{{courseInfo.trip}}"></rich-text>
-                    </scroll-view>
-                </swiper-item>
-                <swiper-item>
-                    <scroll-view scroll-y class="bg-white h100 padding">
-                        <rich-text nodes="{{courseInfo.notice}}"></rich-text>
-                    </scroll-view>
-                </swiper-item>
-            </swiper>
-        </scroll-view>
         <view class="cu-modal bottom-modal {{showSku?'show':''}}" bindtap="hideModal">
             <view class="cu-dialog" @tap.stop="ret">
                 <view class="cu-bar bg-white padding-left">
@@ -151,7 +152,7 @@
             </view>
         </view>
         <button wx:if="{{isIn}}" class="bg-orange tabbar  shop solid-top text-center padding-xs" style="border-radius:0" @tap="toshare" >邀请拼团</button>
-        <view wx:else class="cu-bar bg-white tabbar border shop solid-top">
+        <view  class="cu-bar bg-white tabbar border shop solid-top">
             <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
             <button class="action" @tap="toshare" style="line-height:1"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
             <view class="line submit text-lg text-sm" @tap="sku('normal')">原价购买<text class="text-price">{{courseInfo.price}}</text></view>

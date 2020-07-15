@@ -24,7 +24,7 @@
                         <text class="cu-tag round line-orange margin-right-sm">砍价</text> {{courseInfo.bargainDes}}
                     </view>
                     <view class="action">
-                        <button class="cu-btn sm bg-orange shadow" open-type="getUserInfo" bindgetuserinfo="tocut">发起砍价</button>
+                        <button class="cu-btn sm bg-orange shadow" @tap="tocut">发起砍价</button>
                     </view>
                 </view>
                 <view wx:if="{{courseInfo.pintuanId}}" class="cu-bar bg-white margin-top">
@@ -311,8 +311,11 @@
                 this.modalName = 'bottomModal'
             },
             async tocut(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
+                if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync('isFans') != 1) {
+                    wepy.navigateTo({
+                        url: `/pages/home/auth`
+                    });
+                } else {
                     this.sku('bargain')
                     this.$apply()
                 }
@@ -334,7 +337,13 @@
                 this.modalName = 'share'
             },
             toPintuanfy() {
-                this.toPintuan = true
+                if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync('isFans') != 1) {
+                    wepy.navigateTo({
+                        url: `/pages/home/auth`
+                    });
+                } else {
+                    this.toPintuan = true
+                }
             },
             async bargain() {
                 if (this.courseInx == -1) {
