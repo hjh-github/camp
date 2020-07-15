@@ -125,13 +125,12 @@
           courseNum: _data.num,
           periodId: _data.periodId,
           remark: '',
-          paymentType: 1,
           orderType: _data.orderType,
           periodName: _data.period,
           actId: _data.actId,
           price: _data.totalPrice,
           actPintuanId: opt.actpid,
-          paymentType : opt.pt
+          paymentType : opt.pt || 1
         }
       }
       this.$apply()
@@ -141,7 +140,8 @@
         if (JSON.stringify(this.payParams) == '{}' || JSON.stringify(this.orderInfo) == '{}') {
           return '0.00'
         }
-        return this.payParams.paymentType == 1 ? (this.orderInfo.price * this.payParams.courseNum).toFixed(2) : (this.orderInfo.earnesMoney * this.payParams.courseNum).toFixed(2)
+        
+        return this.payParams.paymentType == 1 ? (this.payParams.price * this.payParams.courseNum).toFixed(2) : (this.orderInfo.earnesMoney * this.payParams.courseNum).toFixed(2)
       }
     }
     methods = {
