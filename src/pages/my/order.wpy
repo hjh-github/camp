@@ -52,6 +52,14 @@
                         <text class="text-grey text-price">{{orderInfo.earnesMoney}}</text>
                     </view>
                 </view>
+                <view wx:if="{{orderInfo.paymentType == 3}}" class="cu-item">
+                    <view class="content">
+                        <text>尾款</text>
+                    </view>
+                    <view class="action">
+                        <text class="text-grey text-price">{{orderInfo.tailMoney}}</text>
+                    </view>
+                </view>
                 <view wx:if="{{orderInfo.orderState == 1}}" class="cu-item">
                     <view class="content">
                         <text>需付款</text>
@@ -135,10 +143,12 @@
                 3: '已使用',
                 4: '已失效'
             },
-            id:'',
-            opt:{}
+            id: '',
+            opt: {}
         };
-        components={contact}
+        components = {
+            contact
+        }
         async loadData(id) {
             let res = await config.orderdetail(id)
             this.orderInfo = res.data.detail
@@ -156,28 +166,27 @@
         onShareAppMessage(res) {
             let params = {
                 title: '',
-                imageUrl:'',
+                imageUrl: '',
                 path: ''
             }
             if (res.from === 'button') {
                 // 来自页面内转发按钮
                 console.log(res.target)
                 let tar = res.target
-                if(tar.dataset.act == 'pt'){
+                if (tar.dataset.act == 'pt') {
                     params.title = tar.dataset.title
                     params.imageUrl = tar.dataset.images
-                    params.path ='/pages/activity/pintuan?aid=' +  tar.dataset.actid
+                    params.path = '/pages/activity/pintuan?aid=' + tar.dataset.actid
                 }
-
             }
             return {
                 title: params.title,
-                imageUrl:params.imageUrl,
-                path:params.path
+                imageUrl: params.imageUrl,
+                path: params.path
             }
         }
         methods = {
-             remark(id) {
+            remark(id) {
                 wepy.navigateTo({
                     url: '/pages/meet/commiRemarke?id=' + id
                 });
@@ -190,10 +199,11 @@
                         if (res.confirm) {
                             let res = await config.cancalorder(id)
                             if (res.errcode == 200) {
-                                wepy.reLaunch({ url: '/pages/home/index' });
+                                wepy.reLaunch({
+                                    url: '/pages/home/index'
+                                });
                             }
-                        } else if (res.cancel) {
-                        }
+                        } else if (res.cancel) {}
                     }
                 })
             },
@@ -227,8 +237,8 @@
     .main-view {
         height: calc(~"100% - 100rpx");
     }
-    .main-view-long{
-        height:100%;
+    .main-view-long {
+        height: 100%;
     }
     .textarea {
         background-color: #fafafa;

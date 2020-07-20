@@ -36,6 +36,10 @@
                                 <text>（ 定金</text>
                                 <text class="text-price margin-left-sm">{{ item.earnesMoney}} ）</text> 
                             </text>
+                            <text wx:if="{{item.paymentType == 3}}" class="margin-left-xs text-sm flex flex-c">
+                                <text>（ 尾款</text>
+                                <text class="text-price margin-left-sm">{{ item.tailMoney}} ）</text> 
+                            </text>
                         </view>
                     </view>
                     <view  class="cu-bar bg-white justify-end solid-top">
