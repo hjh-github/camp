@@ -1,6 +1,6 @@
 
 <template>
-    <view class="h100 flex flex-jc margin-top:50rpx;">
+    <view class="h100 flex flex-c flex-y margin-top:50rpx;">
         <canvas class='canvas' canvas-id="mycanvas" />
         <cover-view class="cu-btn bg-orange shadow-blur round lg" @tap="saveImg">保存海报</cover-view>
     </view>
@@ -198,12 +198,9 @@
         background: #fff;
     }
     .cu-btn {
-        position: fixed;
-        bottom: 50rpx;
-        left: 50%;
-        margin-left: -180rpx;
-        line-height: 90rpx;
+        margin-top:30rpx;
         height: 90rpx;
+        line-height: 90rpx;
         width:360rpx;
     }
 </style>

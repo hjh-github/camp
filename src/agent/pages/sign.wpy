@@ -3,12 +3,12 @@
   <form>
     <view class="text-black padding text-xl">代理信息</view>
     <view class="cu-form-group">
-      <view class="title">联系人</view>
-      <input tplaceholder="联系人" data-name="name" @input="input" />
+      <view class="title">联系人：</view>
+      <input placeholder="联系人" data-name="name" @input="input" />
     </view>
     <view class="cu-form-group ">
-      <view class="title">手机号</view>
-      <input tplaceholder="手机号" data-name="phone" @input="input" />
+      <view class="title">手机号：</view>
+      <input placeholder="手机号" data-name="phone" @input="input" />
     </view>
     <view class="flex flex-y flex-c" style="margin:100rpx auto 0">
       <button class="cu-btn round bg-orange" @tap="sign" role="button" aria-disabled="false">提交申请</button>

@@ -112,6 +112,7 @@
     import Lang from "@/utils/Lang"
     import Tips from "@/utils/Tips"
     import config from "@/api/config"
+    import Validate from "@/utils/Validate"
     export default class Dialog extends wepy.page {
         config = {
             navigationBarTitleText: "儿童信息编辑"
@@ -292,6 +293,16 @@
                             Tips.toast(rules.message, () => {}, 'none')
                             return false
                         }
+                    }
+                    let sg = Validate.digits(this.form.height),
+                        tz = Validate.digits(this.form.weight)
+                    if (!sg) {
+                        Tips.toast('请填写整数的身高', () => {}, 'none')
+                        return false
+                    }
+                    if (!tz) {
+                        Tips.toast('请填写整数的体重', () => {}, 'none')
+                        return false
                     }
                     let res = await config.updateChild(this.form)
                     if (res.errcode == 200) {

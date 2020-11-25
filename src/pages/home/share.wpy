@@ -1,6 +1,6 @@
 
 <template>
-    <view class="h100 flex flex-jc margin-top:50rpx;">
+    <view class="h100 flex flex-y flex-c margin-top:50rpx;">
         <canvas class='canvas' canvas-id="mycanvas" />
         <cover-view class="cu-btn bg-orange shadow-blur round lg" @tap="saveImg">保存海报</cover-view>
     </view>
@@ -189,7 +189,7 @@
             // 绘制请求助力
             ctx.setFontSize(15);
             ctx.setFillStyle('#999');
-            ctx.fillText('我正在参加“华心桥体验营”的促销活动', 50, 370, 280);
+            ctx.fillText('我正在参加“雄鹰童行”的促销活动', 50, 370, 280);
             ctx.setFontSize(15);
             ctx.setFillStyle('#999');
             ctx.fillText('原价：', 60, 394, 280);
@@ -236,12 +236,9 @@
         background: #fff;
     }
     .cu-btn {
-        position: fixed;
-        bottom: 10rpx;
-        left: 50%;
-        margin-left: -180rpx;
-        line-height: 90rpx;
+        margin-top:30rpx;
         height: 90rpx;
+        line-height: 90rpx;
         width:360rpx;
     }
 </style>
