@@ -1,0 +1,71 @@
+
+<template>
+    <view>
+        <view wx:if="{{loaded}}" class="UCenter-bg bg-white shadow-warp" style="text-shadow:none">
+            <l-countdown instyle="font-size:60rpx;letter-spacing: 2rpx;" bindlinend="linend" wx:if="{{startTime}}" time="{{startTime}}" onlyTime="{{true}}" />
+            <view style="font-size:45rpx;color:#000">{{info.testPaper.title}}{{!tiemend ? '，即将开始':'已开始'}}</view>
+            <view wx:if="{{tiemend}}" @tap="start" class="margin-top-sm bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from "../api/config";
+    import auth from "@/api/auth";
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "答题挑战",
+            usingComponents: {
+                "l-countdown": "../../components/countdown/index"
+            }
+        };
+        data = {
+            info: {},
+            startTime: '',
+            tiemend: false,
+            loaded: false
+        };
+        async load() {
+            this.info = await config.answerInfo()
+            this.startTime = '2020-12-10 16:20:00' || this.info.testPaper.startTime
+            this.loaded = true
+            this.$apply()
+        }
+        async onLoad() {
+            await auth.login();
+            this.load()
+        }
+        methods = {
+            linend() {
+                this.tiemend = true
+                this.$apply()
+                console.log('linend')
+            },
+            start() {
+                wepy.navigateTo({
+                    url: './answer'
+                });
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+        color: #000;
+    }
+</style>
+
+<style lang="less" scoped>
+    .UCenter-bg {
+        height: 350rpx;
+        display: flex;
+        justify-content: center;
+        overflow: hidden;
+        position: relative;
+        flex-direction: column;
+        align-items: center;
+        text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    }
+</style>

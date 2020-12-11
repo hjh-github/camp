@@ -1,0 +1,193 @@
+
+<template>
+    <view>
+        <view class="bg-img" style="margin:30rpx auto 0;width:678rpx;height:141rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201210/20201210180511_17757.png)"></view>
+        <view class="bg-img bg-box" style="width:660rpx;height:1120rpx;background-image:url(https://images.hxqxly.com/dt.png)">
+            <view wx:if="{{step == 0}}" @tap="start" class="open-btn bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></view>
+            <view wx:if="{{step == 0}}" class="text-center">点击“开始答题”开始计时答题</view>
+            <view wx:if="{{step == 1}}">
+                <view class="dowm-life">{{unTime}}</view>
+                <view class="question">1.{{qustions[qustionInx].question}}</view>
+                <view @tap="select('A')" class="answer flex {{qustions[qustionInx].answer == 'A' ? 'is-answer':'not-answer'}} {{'A' == qustions[qustionInx].answerUser ? 'select':''}}">
+                    <view class="padding-right-xs">A. </view>
+                    <view class="flex-1">{{qustions[qustionInx].optionA}}</view>
+                </view>
+                <view @tap="select('B')" class="answer flex {{qustions[qustionInx].answer == 'B' ? 'is-answer':'not-answer'}} {{'B' == qustions[qustionInx].answerUser ? 'select':''}}">
+                    <view class="padding-right-xs">B. </view>
+                    <view class="flex-1">{{qustions[qustionInx].optionB}}</view>
+                </view>
+                <view @tap="select('C')" class="answer flex {{qustions[qustionInx].answer == 'C' ? 'is-answer':'not-answer'}} {{'C' == qustions[qustionInx].answerUser ? 'select':''}}">
+                    <view class="padding-right-xs">C. </view>
+                    <view class="flex-1">{{qustions[qustionInx].optionC}}</view>
+                </view>
+                <view @tap="select('D')" class="answer flex {{qustions[qustionInx].answer == 'D' ? 'is-answer':'not-answer'}} {{'D' == qustions[qustionInx].answerUser ? 'select':''}}">
+                    <view class="padding-right-xs">D. </view>
+                    <view class="flex-1">{{qustions[qustionInx].optionD}}</view>
+                </view>
+            </view>
+            <view wx:if="{{step == 2}}">
+                <view class="text-xl text-green text-center margin-top">恭喜您，完成答题！</view>
+                <view class="text-center margin-top-sm">您的成绩：{{result.answerSheet.score}}分！耗时：{{result.answerSheet.spendTime}}秒</view>
+                <view class="get-btn">回到首页</view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import Tips from "@/utils/Tips";
+    import config from "../api/config";
+    import auth from "@/api/auth";
+    import store from "@/store/utils";
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "答题",
+            navigationStyle: "custom"
+        };
+        data = {
+            step: 0,
+            qustions: [],
+            qustionInx: 0,
+            testPaper: {},
+            answers: {},
+            unTime: 10,
+            result: {}
+        };
+        async onLoad() {
+            await auth.login();
+        }
+        async start() {
+            let {
+                testPaper
+            } = await config.answerStart();
+            if (testPaper.testPaperQuestions.length > 0) {
+                this.testPaper = testPaper;
+                this.qustions = testPaper.testPaperQuestions;
+                this.$apply();
+            } else {
+                Tips.toast('试卷被偷了，请重新点击开始答题', () => {}, 'none')
+            }
+        }
+        dowmTime() {
+            clearInterval(this.setInterval);
+            this.unTime = 10;
+            this.setInterval = setInterval(() => {
+                if (this.unTime > 0) {
+                    this.unTime = this.unTime - 1;
+                    this.$apply();
+                } else {
+                    this.answers[this.qustionInx] = "";
+                    clearInterval(this.setInterval);
+                    this.nextQus()
+                }
+            }, 1000);
+        }
+        nextQus() {
+            setTimeout(() => {
+                if (this.qustionInx < this.qustions.length - 1) {
+                    this.qustionInx = this.qustionInx + 1;
+                    this.dowmTime()
+                } else {
+                    clearInterval(this.setInterval);
+                    this.finish()
+                    this.step = 2;
+                }
+                this.$apply();
+            }, 1000);
+        }
+        async finish() {
+            let _arr = []
+            this.qustions.forEach(e => {
+                _arr.push({
+                    answerUser: e['answerUser'],
+                    spendTime: e['spendTime'],
+                    questionSort: e.sort,
+                    questionId: e.id,
+                    answerSheetId: this.testPaper.answerSheetId
+                })
+            })
+            let params = {
+                answerSheetId: this.testPaper.answerSheetId,
+                answerDetails: JSON.stringify(_arr)
+            }
+            this.result = await config.answerOver(params)
+            this.$apply()
+        }
+        methods = {
+            start() {
+                this.step = 1;
+                this.dowmTime();
+                this.start();
+            },
+            select(key) {
+                // 不可重复答题
+                if (!this.qustions[this.qustionInx]['answerUser']) {
+                    this.qustions[this.qustionInx]['answerUser'] = key;
+                    this.qustions[this.qustionInx]['spendTime'] = 11 - this.unTime;
+                    this.nextQus()
+                }
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        font-family: PingFang SC;
+        font-weight: 400;
+        color: #333;
+    }
+</style>
+
+<style lang="less" scoped>
+    .dowm-life {
+        width: 80rpx;
+        height: 80rpx;
+        border-radius: 80rpx;
+        border: 8rpx solid var(--red);
+        color: var(--red);
+        text-align: center;
+        line-height: 64rpx;
+        box-sizing: border-box;
+        font-weight: 600;
+        font-size: 30rpx;
+        margin-bottom: 20rpx;
+    }
+    .open-btn {
+        margin: 250rpx auto;
+    }
+    .bg-box {
+        margin: 30rpx auto 0;
+        padding: 120rpx 50rpx;
+    }
+    .question {
+        font-weight: 600;
+        font-size: 32rpx;
+        line-height: 40rpx;
+        margin-bottom: 40rpx;
+    }
+    .answer {
+        font-weight: 500;
+        font-size: 30rpx;
+        padding-bottom: 20rpx;
+        padding-top: 20rpx;
+        padding-left: 20rpx;
+        &.is-answer.select {
+            color: var(--green);
+        }
+        &.not-answer.select {
+            color: var(--red);
+        }
+    }
+    .get-btn {
+        width: 350rpx;
+        height: 88rpx;
+        line-height: 88rpx;
+        background: #f4d000;
+        border-radius: 10rpx;
+        font-size: 34rpx;
+        color: rgba(254, 254, 254, 1);
+        text-align: center;
+        margin: 50rpx auto;
+    }
+</style>

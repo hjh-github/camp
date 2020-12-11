@@ -1,6 +1,14 @@
 module.exports = Behavior({
     behaviors: [],
     properties: {
+        onlyTime:{
+            type: Boolean,
+            value: false,
+        },
+        instyle:{
+            type: String,
+            value: '',
+        },
         time: {
             type: Date,
             value: new Date().getTime() + 86400000
