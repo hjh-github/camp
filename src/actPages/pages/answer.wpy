@@ -28,7 +28,7 @@
             <view wx:if="{{step == 2}}">
                 <view class="text-xl text-green text-center margin-top">恭喜您，完成答题！</view>
                 <view class="text-center margin-top-sm">您的成绩：{{result.answerSheet.score}}分！耗时：{{result.answerSheet.spendTime}}秒</view>
-                <view class="get-btn">回到首页</view>
+                <view class="get-btn" @tap="back">回到首页</view>
             </view>
         </view>
     </view>
@@ -115,6 +115,10 @@
             this.$apply()
         }
         methods = {
+            back(){
+                wepy.switchTab({ url: '/pages/home/index' });
+                
+            },
             start() {
                 this.step = 1;
                 this.dowmTime();

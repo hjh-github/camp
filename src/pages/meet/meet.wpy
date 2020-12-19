@@ -6,24 +6,25 @@
       <button wx:if="{{!mobile}}" class="cu-btn bg-green shadow-blur round lg" open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">绑定手机号</button>
       <button wx:if="{{mobile}}" class="cu-btn bg-green shadow-blur round lg" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" style="background-color:{{theme}}">{{!childs.length?'未添加儿童信息，去添加':'查看儿童信息'}}</button>
     </view>
+    <view class="bg-img" @tap="toanswer" style="margin:30rpx auto 0;width:678rpx;height:141rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201210/20201210180511_17757.png)"></view>
     <!-- <view class="padding flex text-center text-grey bg-white shadow-warp">
-                  <view class="flex flex-sub flex-direction solid-right">
-                    <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
-                    <view>亲自护照</view>
-                  </view>
-                  <view class="flex flex-sub flex-direction solid-right">
-                    <view class="text-xxl text-orange"><text class="cuIcon-calendar"></text></view>
-                    <view>活动点评</view>
-                  </view>
-                  <view class="flex flex-sub flex-direction solid-right">
-                    <view class="text-xxl text-orange"><text class="cuIcon-album"></text></view>
-                    <view>活动照片</view>
-                  </view>
-                  <view class="flex flex-sub flex-direction">
-                    <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
-                    <view>每日记录</view>
-                  </view>
-                </view> -->
+                    <view class="flex flex-sub flex-direction solid-right">
+                      <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
+                      <view>亲自护照</view>
+                    </view>
+                    <view class="flex flex-sub flex-direction solid-right">
+                      <view class="text-xxl text-orange"><text class="cuIcon-calendar"></text></view>
+                      <view>活动点评</view>
+                    </view>
+                    <view class="flex flex-sub flex-direction solid-right">
+                      <view class="text-xxl text-orange"><text class="cuIcon-album"></text></view>
+                      <view>活动照片</view>
+                    </view>
+                    <view class="flex flex-sub flex-direction">
+                      <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
+                      <view>每日记录</view>
+                    </view>
+                  </view> -->
     <view class="flex padding text-xxl flex-c flex-jc text-orange margin-top"> ~ <text class="cuIcon-discoverfill padding-left-sm padding-right-sm"></text> <text class="text-lg  padding-right-sm">家长心声</text>~ </view>
     <repeat for="{{remarks}}" key="index" index="index" item="item">
       <cCard :remark.sync="item"></cCard>
@@ -34,19 +35,19 @@
 
 <script>
   import wepy from "wepy";
-  import cCard from "@/components/meet/card"
-  import auth from "@/api/auth"
-  import config from "@/api/config"
+  import cCard from "@/components/meet/card";
+  import auth from "@/api/auth";
+  import config from "@/api/config";
   export default class Meet extends wepy.page {
     data = {
       theme: wepy.$instance.globalData.themeColor,
-      mobile: '',
+      mobile: "",
       childs: [],
       remarks: [],
       pageIndex: 1,
       toload: false,
       isload: true,
-      loadmoring: false,
+      loadmoring: false
     };
     config = {
       navigationBarTitleText: "成长记录",
@@ -54,21 +55,21 @@
     };
     components = {
       cCard
-    }
+    };
     async onPullDownRefresh() {
-      await this.loadData(1)
-      this.pageIndex = 1
-      this.$apply()
-      wx.stopPullDownRefresh()
+      await this.loadData(1);
+      this.pageIndex = 1;
+      this.$apply();
+      wx.stopPullDownRefresh();
     }
     async onLoad() {
-      if (wepy.getStorageSync('mobile')) {
+      if (wepy.getStorageSync("mobile")) {
         let {
           childList
-        } = await config.getChildList()
-        this.childs = childList
+        } = await config.getChildList();
+        this.childs = childList;
       }
-      this.loadData()
+      this.loadData();
       // let {
       //   Comments
       // } = await config.aspirations()
@@ -79,58 +80,63 @@
       let params = {
         pageIndex: pageIndex || this.pageIndex,
         pageSize: 10
-      }
-      let res = await config.aspirations(params)
-      let remarks = res.Comments
+      };
+      let res = await config.aspirations(params);
+      let remarks = res.Comments;
       if (!remarks.length) {
         if (pageIndex == 1) {
-          this.remarks = remarks
+          this.remarks = remarks;
         }
-        this.pageIndex = pageIndex
-        this.toload = true
-        this.loadmoring = true
-        this.$apply()
-        return false
+        this.pageIndex = pageIndex;
+        this.toload = true;
+        this.loadmoring = true;
+        this.$apply();
+        return false;
       } else {
-        if (pageIndex > 1) this.pageIndex = pageIndex
+        if (pageIndex > 1) this.pageIndex = pageIndex;
         if (pageIndex == 1) {
-          this.remarks = remarks
+          this.remarks = remarks;
         } else {
-          this.remarks = this.remarks.concat(remarks)
+          this.remarks = this.remarks.concat(remarks);
         }
-        this.loadmoring = false
+        this.loadmoring = false;
       }
-      this.$apply()
+      this.$apply();
     }
     async onReachBottom() {
       if (this.loadmoring) {
-        return false
+        return false;
       }
-      this.loadmoring = true
-      this.toload = false
-      await this.loadData(this.pageIndex + 1)
-      this.$apply()
+      this.loadmoring = true;
+      this.toload = false;
+      await this.loadData(this.pageIndex + 1);
+      this.$apply();
     }
     onShow() {
-      this.mobile = wepy.getStorageSync('mobile');
+      this.mobile = wepy.getStorageSync("mobile");
     }
     methods = {
+      toanswer() {
+        wepy.navigateTo({
+          url: "/actPages/pages/answerAct"
+        });
+      },
       async onGotUserInfo(e) {
         if (e.detail.errMsg == "getUserInfo:ok") {
-          await auth.getUserinfo(e.detail)
+          await auth.getUserinfo(e.detail);
           wepy.navigateTo({
-            url: './childs'
+            url: "./childs"
           });
         }
       },
       async bindgetphonenumber(e) {
         if (e.detail.errMsg == "getPhoneNumber:ok") {
-          let mobile = await auth.getPhone(e.detail)
+          let mobile = await auth.getPhone(e.detail);
           if (mobile) {
-            wepy.setStorageSync('mobile', mobile);
-            this.mobile = mobile
+            wepy.setStorageSync("mobile", mobile);
+            this.mobile = mobile;
           }
-          this.$apply()
+          this.$apply();
         }
       }
     };

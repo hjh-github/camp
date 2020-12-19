@@ -1,11 +1,15 @@
 
 <template>
-    <view>
+    <view class="h100">
         <view wx:if="{{loaded}}" class="UCenter-bg bg-white shadow-warp" style="text-shadow:none">
             <l-countdown instyle="font-size:60rpx;letter-spacing: 2rpx;" bindlinend="linend" wx:if="{{startTime}}" time="{{startTime}}" onlyTime="{{true}}" />
             <view style="font-size:45rpx;color:#000">{{info.testPaper.title}}{{!tiemend ? '，即将开始':'已开始'}}</view>
-            <view wx:if="{{tiemend}}" @tap="start" class="margin-top-sm bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></view>
+            <button wx:if="{{tiemend}}" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" class="margin-top-sm bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></button>
         </view>
+        <view wx:if="{{courses.length}}" class="text-xl margin-left margin-tb text-yellow">热门课程</view>
+        <scroll-view scroll-y scroll-with-animation style="height:calc(100% - 450rpx)">
+            <cCard :model.sync="courses"></cCard>
+        </scroll-view>
     </view>
 </template>
 
@@ -13,6 +17,7 @@
     import wepy from "wepy";
     import config from "../api/config";
     import auth from "@/api/auth";
+    import cCard from "@/components/home/cCard"
     export default class Dialog extends wepy.page {
         config = {
             navigationBarTitleText: "答题挑战",
@@ -20,15 +25,20 @@
                 "l-countdown": "../../components/countdown/index"
             }
         };
+        components = {
+            cCard
+        }
         data = {
             info: {},
             startTime: '',
             tiemend: false,
-            loaded: false
+            loaded: false,
+            courses: []
         };
         async load() {
             this.info = await config.answerInfo()
-            this.startTime = '2020-12-10 16:20:00' || this.info.testPaper.startTime
+            this.startTime = this.info.testPaper.startTime
+            this.courses = this.info.courses
             this.loaded = true
             this.$apply()
         }
@@ -37,15 +47,19 @@
             this.load()
         }
         methods = {
+            async onGotUserInfo(e) {
+                if (e.detail.errMsg == "getUserInfo:ok") {
+                    await auth.getUserinfo(e.detail);
+                    console.log(1111)
+                    wepy.navigateTo({
+                        url: './answer'
+                    });
+                }
+            },
             linend() {
                 this.tiemend = true
                 this.$apply()
                 console.log('linend')
-            },
-            start() {
-                wepy.navigateTo({
-                    url: './answer'
-                });
             }
         };
     }

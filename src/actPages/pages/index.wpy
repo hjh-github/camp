@@ -1,0 +1,181 @@
+
+<template>
+    <view class="flex flex-y flex-c">
+        <view class="header box-1">
+            <view class="ava">
+                <open-data type="userAvatarUrl"></open-data>
+            </view>
+            <view class="nick_name">
+                <open-data type="userNickName"></open-data>
+            </view>
+            <image class="tag" src="{{info.rankIco}}" mode="scaleToFill" />
+            <view class="exp">4451</view>
+            <view class="padding progress">
+                <view class="cu-progress round sm striped {{active?'active':''}}" style="background-color:rgb(166,124,0)">
+                    <view class="bg-orange" style="width:{{!loading?'60%':''}};"></view>
+                </view>
+            </view>
+        </view>
+        <view class="main box-1">
+            <view class="margin margin-top-xl text-df">小仙女</view>
+            <view class="margin-left text-lg">知识竞答赛</view>
+            <view class="qustion bg-img" ></view>
+        </view>
+        <view class="footer box-1">
+            <view class="left">
+                <view class="tips">本周大奖</view>
+                <view class="give bg-img" style="background-image:url({{info.prizeUrl}})"></view>
+            </view>
+            <view class="right_1">
+                <view class="tips">排行榜</view>
+                <image src="../images/rank.png" mode="scaleToFill" style="width:303rpx;height:283rpx;" />
+            </view>
+            <view class="right_2">
+                <view class="tips">敬请期待</view>
+                <image src="../images/wait.png" mode="scaleToFill" style="width:194rpx;height:175rpx;" />
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from "../api/config";
+    import auth from "@/api/auth";
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "知识竞答赛"
+        };
+        data = {
+            info: {},
+            loaded: false
+        };
+        async load() {
+            this.info 
+            let {answerIndex} = await config.answerInfo()
+            this.info = answerIndex
+            this.loaded = true
+            this.$apply()
+        }
+        async onLoad() {
+            await auth.login();
+            this.load()
+        }
+        methods = {};
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+        background-image: url('https://images.hxqxly.com/bj.png');
+    }
+</style>
+
+<style lang="less" scoped>
+    .box-1 {
+        width: 690rpx;
+        height: 260rpx;
+        position: relative;
+        border-radius: 10rpx;
+        margin-top: 30rpx;
+        color: #fff;
+    }
+    .footer {
+        height: 540rpx;
+        .tips {
+            position: absolute;
+            left: 20rpx;
+            top: 20rpx;
+            font-size: 30rpx;
+        }
+        .left {
+            width: 340rpx;
+            height: 540rpx;
+            position: absolute;
+            left: 0;
+            top: 0;
+            border-radius: 10rpx;
+            background-color: rgb(255, 142, 0);
+            .give {
+                width: 290rpx;
+                height: 450rpx;
+                margin: 75rpx auto 0;
+            }
+        }
+        .right_1 {
+            width: 340rpx;
+            height: 340rpx;
+            position: absolute;
+            right: 0;
+            top: 0;
+            border-radius: 10rpx;
+            background-color: rgb(255, 218, 115);
+            image {
+                margin: 90rpx 0 0 25rpx;
+            }
+        }
+        .right_2 {
+            width: 340rpx;
+            height: 190rpx;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            border-radius: 10rpx;
+            background-color: rgb(227, 206, 11);
+            image {
+                margin-left: 140rpx;
+                margin-top: 15rpx;
+            }
+        }
+    }
+    .main {
+        background-color: #4556b0;
+        .qustion {
+            width: 420rpx;
+            height: 230rpx;
+            background-image: url('https://images.hxqxly.com/dt_1.png');
+            position: absolute;
+            right: 20rpx;
+            top: 15rpx;
+        }
+    }
+    .header {
+        background-color: rgb(255, 191, 0);
+        .ava {
+            width: 170rpx;
+            height: 170rpx;
+            border-radius: 170rpx;
+            overflow: hidden;
+            position: absolute;
+            left: 30rpx;
+            top: 30rpx;
+        }
+        .exp {
+            font-size: 28rpx;
+            color: #fff;
+            position: absolute;
+            right: 60rpx;
+            bottom: 65rpx;
+        }
+        .nick_name {
+            font-size: 28rpx;
+            color: #fff;
+            position: absolute;
+            left: 80rpx;
+            top: 210rpx;
+        }
+        .tag {
+            width: 110rpx;
+            height: 110rpx;
+            position: absolute;
+            left: 260rpx;
+            top: 40rpx;
+        }
+        .progress {
+            width: 450rpx;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+    }
+</style>

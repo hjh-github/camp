@@ -179,7 +179,7 @@ export default class extends wepy.app {
       },
       {
         root: "actPages",
-        pages: ["pages/answer","pages/answerAct"]
+        pages: ["pages/answer","pages/answerAct","pages/index"]
       }
     ],
     window: {
