@@ -1,0 +1,130 @@
+
+<template>
+    <view class="h100">
+        <view class="flex flex-c flex-jc padding-sm">
+            <view @tap="load(1)" class="nav-btn {{type == 1 ? 'on':''}} margin-right-xs">本周排名</view>
+            <view @tap="load(2)" class="nav-btn {{type == 2 ? 'on':''}}">赛季排行</view>
+        </view>
+        <scroll-view class="rank-list padding-bottom" scroll-y scroll-with-animation>
+            <repeat for="{{info.rankings}}" key="index" index="index" item="item">
+                <view class="flex flex-c padding-top padding-right">
+                    <view class="top-box flex flex-c flex-jc">
+                        <image wx:if="{{index < 3}}" src="../images/top{{index + 1}}.png" mode="scaleToFill" style="width:59rpx;height:57rpx;" />
+                        <view wx:if="{{index > 2}}" class="tag-top">{{index + 1}}</view>
+                    </view>
+                    <view class="weui-flex__item">
+                        <view class="cu-list menu-avatar">
+                            <view class="cu-item">
+                                <view class="cu-avatar round lg" style="background-image:url({{item.profilePhoto}});"></view>
+                                <view class="content">
+                                    <view>{{item.name}}</view>
+                                    <view class="text-sm flex margin-top-xs">
+                                        <view class="cu-tag round bg-orange">{{item.rank}}</view>
+                                    </view>
+                                </view>
+                                <view class="action">
+                                    <view class="text-xl">{{type == 2 ? item.totalScore : item.periodScore }}分</view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+        <view class="nav flex flex-c">
+            <view class="weui-flex__item">我的段位：{{info.myrank}}</view>
+            <view class="weui-flex__item">我的排名：{{info.myranking}}</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import config from "../api/config";
+    import auth from "@/api/auth";
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "排行榜"
+        };
+        data = {
+            type:1,
+            info:{}
+        };
+        async load() {
+            let res = await config.ranking(this.type)
+            this.info = res
+            this.$apply()
+        }
+        async onLoad() {
+            await auth.login();
+            this.load()
+        }
+        methods = {
+            load(type){
+                this.type = type
+                this.load()
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+        background-image: url('https://images.hxqxly.com/bj.png');
+    }
+</style>
+
+<style lang="less" scoped>
+    .nav {
+        width: 690rpx;
+        height: 100rpx;
+        line-height: 100rpx;
+        text-align: center;
+        background-color: rgb(255, 191, 0);
+        border-radius: 100rpx;
+        margin: -30rpx auto 0;
+        font-size: 32rpx;
+        color: #fff;
+        z-index: 2;
+    }
+    .nav-btn {
+        width: 200rpx;
+        height: 88rpx;
+        line-height: 88rpx;
+        text-align: center;
+        font-size: 36rpx;
+        color: #fff;
+        border-radius: 10rpx;
+        background-color: rgb(166, 124, 0);
+        &.on {
+        background-color: rgb(255, 142, 0);
+    }
+    }
+    
+    .rank-list {
+        width: 690rpx;
+        border-radius: 10rpx;
+        height: calc(~"100% - 240rpx");
+        background-color: rgb(255, 218, 115);
+        margin: 0 auto;
+        .top-box {
+            width: 100rpx;
+            height: 140rpx;
+            .tag-top {
+                width: 60rpx;
+                height: 60rpx;
+                line-height: 60rpx;
+                border-radius: 60rpx;
+                background-color: rgb(248, 153, 36);
+                font-size: 32rpx;
+                color: #fff;
+                text-align: center;
+            }
+        }
+    }
+    .cu-list.menu-avatar>.cu-item {
+        background-color: transparent;
+        color: #fff;
+        border-bottom: 1px solid #eee;
+    }
+</style>

@@ -3,10 +3,11 @@ import base from '@/api/base'
 
 export default class config extends base {
     // 获取评论列表
-    static async answerStart() {
+    static async answerStart(testPaperId) {
         let url = `${this.baseUrl}/answer/start`;
         let params = {
-            sessionId: wepy.$instance.globalData.sessionId
+            sessionId: wepy.$instance.globalData.sessionId,
+            testPaperId
         }
         return this.post(url, params, true).then(res => {
             return res;
@@ -28,6 +29,27 @@ export default class config extends base {
         let url = `${this.baseUrl}/answer`;
         let params = {
             sessionId: wepy.$instance.globalData.sessionId,
+        }
+        return this.post(url, params, true).then(res => {
+            return res;
+        })
+    }
+    // 本周答题列表
+    static async answerlist() {
+        let url = `${this.baseUrl}/answer/list`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+        }
+        return this.post(url, params, true).then(res => {
+            return res;
+        })
+    }
+    // 排行榜
+    static async ranking(type) {
+        let url = `${this.baseUrl}/answer/ranking`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId,
+            type
         }
         return this.post(url, params, true).then(res => {
             return res;

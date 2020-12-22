@@ -1,31 +1,30 @@
 
 <template>
-    <view>
-        <view class="bg-img" style="margin:30rpx auto 0;width:678rpx;height:141rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201210/20201210180511_17757.png)"></view>
-        <view class="bg-img bg-box" style="width:660rpx;height:1120rpx;background-image:url(https://images.hxqxly.com/dt.png)">
+    <view class="flex flex-c flex-y h100 padding-top">
+        <view class="bg-img flex flex-c flex-jc" style="width:327rpx;height:327rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201221/20201221164710_73504.png)">
+            <image wx:if="{{ unTime < 11 && unTime > 0}}" src="../images/time_{{unTime}}.png" mode="aspectFit" style="height:100rpx;" />
+            <view wx:if="{{unTime < 1}}" class="text-xxl">时间到</view>
+            <view wx:if="{{unTime > 10}}" style="font-size:70rpx">{{unTime}}秒</view>
+        </view>
+        <view class="bg-box">
             <view wx:if="{{step == 0}}" @tap="start" class="open-btn bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></view>
-            <view wx:if="{{step == 0}}" class="text-center">点击“开始答题”开始计时答题</view>
-            <view wx:if="{{step == 1}}">
-                <view class="dowm-life">{{unTime}}</view>
-                <view class="question">1.{{qustions[qustionInx].question}}</view>
-                <view @tap="select('A')" class="answer flex {{qustions[qustionInx].answer == 'A' ? 'is-answer':'not-answer'}} {{'A' == qustions[qustionInx].answerUser ? 'select':''}}">
-                    <view class="padding-right-xs">A. </view>
+            <view wx:if="{{step == 0}}" class="text-center">您准备好了吗，点击“开始答题”开始计时答题</view>
+            <view wx:if="{{step == 1}}" class="flex flex-y flex-c">
+                <view class="question" style="width:100%">1.{{qustions[qustionInx].question}}</view>
+                <view @tap="select('A')" class="answer {{qustions[qustionInx].answer == 'A' ? 'is-answer':'not-answer'}} {{'A' == qustions[qustionInx].answerUser ? 'select':''}}">
                     <view class="flex-1">{{qustions[qustionInx].optionA}}</view>
                 </view>
-                <view @tap="select('B')" class="answer flex {{qustions[qustionInx].answer == 'B' ? 'is-answer':'not-answer'}} {{'B' == qustions[qustionInx].answerUser ? 'select':''}}">
-                    <view class="padding-right-xs">B. </view>
+                <view @tap="select('B')" class="answer {{qustions[qustionInx].answer == 'B' ? 'is-answer':'not-answer'}} {{'B' == qustions[qustionInx].answerUser ? 'select':''}}">
                     <view class="flex-1">{{qustions[qustionInx].optionB}}</view>
                 </view>
-                <view @tap="select('C')" class="answer flex {{qustions[qustionInx].answer == 'C' ? 'is-answer':'not-answer'}} {{'C' == qustions[qustionInx].answerUser ? 'select':''}}">
-                    <view class="padding-right-xs">C. </view>
+                <view @tap="select('C')" class="answer {{qustions[qustionInx].answer == 'C' ? 'is-answer':'not-answer'}} {{'C' == qustions[qustionInx].answerUser ? 'select':''}}">
                     <view class="flex-1">{{qustions[qustionInx].optionC}}</view>
                 </view>
-                <view @tap="select('D')" class="answer flex {{qustions[qustionInx].answer == 'D' ? 'is-answer':'not-answer'}} {{'D' == qustions[qustionInx].answerUser ? 'select':''}}">
-                    <view class="padding-right-xs">D. </view>
+                <view @tap="select('D')" class="answer {{qustions[qustionInx].answer == 'D' ? 'is-answer':'not-answer'}} {{'D' == qustions[qustionInx].answerUser ? 'select':''}}">
                     <view class="flex-1">{{qustions[qustionInx].optionD}}</view>
                 </view>
             </view>
-            <view wx:if="{{step == 2}}">
+            <view wx:if="{{step == 2}}" class="result-bg">
                 <view class="text-xl text-green text-center margin-top">恭喜您，完成答题！</view>
                 <view class="text-center margin-top-sm">您的成绩：{{result.answerSheet.score}}分！耗时：{{result.answerSheet.spendTime}}秒</view>
                 <view class="get-btn" @tap="back">回到首页</view>
@@ -37,13 +36,13 @@
 <script>
     import wepy from "wepy";
     import Tips from "@/utils/Tips";
+    import WxUtils from "@/utils/WxUtils";
     import config from "../api/config";
     import auth from "@/api/auth";
     import store from "@/store/utils";
     export default class Dialog extends wepy.page {
         config = {
-            navigationBarTitleText: "答题",
-            navigationStyle: "custom"
+            navigationBarTitleText: "答题"
         };
         data = {
             step: 0,
@@ -52,16 +51,20 @@
             testPaper: {},
             answers: {},
             unTime: 10,
-            result: {}
+            result: {},
+            opt:{}
         };
-        async onLoad() {
+        async onLoad(opt) {
+            this.opt = opt
             await auth.login();
         }
         async start() {
             let {
                 testPaper
-            } = await config.answerStart();
-            if (testPaper.testPaperQuestions.length > 0) {
+            } = await config.answerStart(this.opt.id);
+            if (testPaper && testPaper.testPaperQuestions) {
+                this.step = 1;
+                this.dowmTime();
                 this.testPaper = testPaper;
                 this.qustions = testPaper.testPaperQuestions;
                 this.$apply();
@@ -112,16 +115,15 @@
                 answerDetails: JSON.stringify(_arr)
             }
             this.result = await config.answerOver(params)
+            this.unTime = this.result.answerSheet.spendTime
             this.$apply()
         }
         methods = {
-            back(){
-                wepy.switchTab({ url: '/pages/home/index' });
-                
+            back() {
+                WxUtils.backOrRedirect('/actPages/pages/index');
             },
             start() {
-                this.step = 1;
-                this.dowmTime();
+               
                 this.start();
             },
             select(key) {
@@ -137,9 +139,11 @@
 </script>
 <style>
     page {
+        height: 100%;
         font-family: PingFang SC;
         font-weight: 400;
-        color: #333;
+        color: #fff;
+        background-image: url('https://images.hxqxly.com/bj.png');
     }
 </style>
 
@@ -161,8 +165,12 @@
         margin: 250rpx auto;
     }
     .bg-box {
-        margin: 30rpx auto 0;
-        padding: 120rpx 50rpx;
+        width: 100%;
+        margin: 60rpx auto 0;
+        padding: 80rpx 50rpx;
+        background-color: #fac635;
+        height: calc(~"100% - 385rpx");
+        min-height: 800rpx;
     }
     .question {
         font-weight: 600;
@@ -171,16 +179,23 @@
         margin-bottom: 40rpx;
     }
     .answer {
-        font-weight: 500;
+        margin-top: 20rpx;
         font-size: 30rpx;
-        padding-bottom: 20rpx;
-        padding-top: 20rpx;
-        padding-left: 20rpx;
+        min-width: 400rpx;
+        height: 80rpx;
+        line-height: 80rpx;
+        background-color: #fff;
+        border-radius: 80rpx;
+        color: #000;
+        text-align: center;
+        padding:0 20rpx;
         &.is-answer.select {
-            color: var(--green);
+            color: #fff;
+            background-color:var(--green);
         }
         &.not-answer.select {
-            color: var(--red);
+            color: #fff;
+            background-color:var(--red);
         }
     }
     .get-btn {
@@ -193,5 +208,11 @@
         color: rgba(254, 254, 254, 1);
         text-align: center;
         margin: 50rpx auto;
+    }
+    .result-bg{
+        background-color: #fff;
+        height: 500rpx;
+        color:#fac635;
+        padding: 60rpx 0;
     }
 </style>

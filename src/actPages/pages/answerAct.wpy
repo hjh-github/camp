@@ -1,15 +1,36 @@
 
 <template>
-    <view class="h100">
-        <view wx:if="{{loaded}}" class="UCenter-bg bg-white shadow-warp" style="text-shadow:none">
-            <l-countdown instyle="font-size:60rpx;letter-spacing: 2rpx;" bindlinend="linend" wx:if="{{startTime}}" time="{{startTime}}" onlyTime="{{true}}" />
-            <view style="font-size:45rpx;color:#000">{{info.testPaper.title}}{{!tiemend ? '，即将开始':'已开始'}}</view>
-            <button wx:if="{{tiemend}}" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" class="margin-top-sm bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></button>
-        </view>
-        <view wx:if="{{courses.length}}" class="text-xl margin-left margin-tb text-yellow">热门课程</view>
-        <scroll-view scroll-y scroll-with-animation style="height:calc(100% - 450rpx)">
-            <cCard :model.sync="courses"></cCard>
-        </scroll-view>
+    <view class="flex flex-y flex-c">
+        <view class="bg-img" style="margin:0 auto;background-image:url(https://images.hxqxly.com/jds.png);width:366rpx;height:390rpx;"></view>
+        <repeat for="{{qustions.testPaperListVo}}" key="index" index="index" item="item">
+            <view class="box-1 padding-top-xl">
+                <image wx:if="{{item.state == 1}}" class="tag-tips" src="../images/answer.png" mode="scaleToFill" />
+                <image wx:if="{{item.state == 3}}" class="tag-tips" src="../images/dea.png" mode="scaleToFill" />
+                <!-- 已答题 -->
+                <view wx:if="{{item.state == 1}}">
+                    <view class="text-center margin-bottom-sm">{{item.title}}</view>
+                    <view class="flex flex-c">
+                        <view class="weui-flex__item text-right padding-right">成绩：{{item.score}}分！</view>
+                        <view class="weui-flex__item text-left padding-left">耗时：{{item.spendTime}}秒</view>
+                    </view>
+                </view>
+                <!-- 未答题，并未到答题时间 -->
+                <view wx:if="{{item.state == 0}}">
+                    <view class="text-center margin-bottom-sm">{{item.title}}</view>
+                    <view class="text-center">还没有到答题时间哦，敬请期待！</view>
+                </view>
+                <!-- 未答题，并已过答题时间 -->
+                <view wx:if="{{item.state == 3}}">
+                    <view class="text-center margin-bottom-sm">{{item.title}}</view>
+                    <view class="text-center">错过啦！下次一定要记得准时来哦。</view>
+                </view>
+                <!-- 未答题，可以答题 -->
+                <view wx:if="{{item.state == 2}}">
+                    <view class="text-center margin-bottom-sm">{{item.title}}</view>
+                    <button class="text-center btn" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" @tap="open({{item.id}})">点击开始答题</button>
+                </view>
+            </view>
+        </repeat>
     </view>
 </template>
 
@@ -17,29 +38,19 @@
     import wepy from "wepy";
     import config from "../api/config";
     import auth from "@/api/auth";
-    import cCard from "@/components/home/cCard"
     export default class Dialog extends wepy.page {
         config = {
-            navigationBarTitleText: "答题挑战",
-            usingComponents: {
-                "l-countdown": "../../components/countdown/index"
-            }
+            navigationBarTitleText: "答题挑战"
         };
-        components = {
-            cCard
-        }
         data = {
-            info: {},
-            startTime: '',
-            tiemend: false,
-            loaded: false,
-            courses: []
+            qustions: {},
+            id: ''
         };
         async load() {
-            this.info = await config.answerInfo()
-            this.startTime = this.info.testPaper.startTime
-            this.courses = this.info.courses
-            this.loaded = true
+            let {
+                answerWeekVo
+            } = await config.answerlist()
+            this.qustions = answerWeekVo
             this.$apply()
         }
         async onLoad() {
@@ -50,11 +61,15 @@
             async onGotUserInfo(e) {
                 if (e.detail.errMsg == "getUserInfo:ok") {
                     await auth.getUserinfo(e.detail);
-                    console.log(1111)
-                    wepy.navigateTo({
-                        url: './answer'
-                    });
+                    if (this.id) {
+                        wepy.navigateTo({
+                            url: './answer?id=' + this.id
+                        });
+                    }
                 }
+            },
+            open(id) {
+                this.id = id
             },
             linend() {
                 this.tiemend = true
@@ -67,19 +82,51 @@
 <style>
     page {
         height: 100%;
-        color: #000;
+        background-image: url('https://images.hxqxly.com/bj.png');
     }
 </style>
 
 <style lang="less" scoped>
-    .UCenter-bg {
-        height: 350rpx;
-        display: flex;
-        justify-content: center;
-        overflow: hidden;
+    .box-1 {
+        width: 690rpx;
+        height: 200rpx;
         position: relative;
-        flex-direction: column;
-        align-items: center;
-        text-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+        border-radius: 10rpx;
+        margin-top: 30rpx;
+        color: #fff;
+        background-color: #fac635;
+        font-size: 30rpx;
+        box-sizing: border-box;
+        &:nth-child(odd) {
+            background-color: rgb(255, 218, 115);
+        }
+        .tag-tips {
+            width: 154rpx;
+            height: 147rpx;
+            position: absolute;
+            left: -14rpx;
+            top: -10rpx;
+        }
+        .btn {
+            color: #fff;
+            background-color: rgb(255, 142, 0);
+            width: 250rpx;
+            height: 55rpx;
+            line-height: 55rpx;
+            border-radius: 6rpx;
+            margin: 0 auto;
+            animation: myfirst 1s linear 1s infinite alternate;
+        }
+    }
+    @keyframes myfirst {
+        0% {
+            transform: scale(1)
+        }
+        50% {
+            transform: scale(1.1)
+        }
+        100% {
+            transform: scale(1)
+        }
     }
 </style>

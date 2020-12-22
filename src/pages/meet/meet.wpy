@@ -118,7 +118,7 @@
     methods = {
       toanswer() {
         wepy.navigateTo({
-          url: "/actPages/pages/answerAct"
+          url: "/actPages/pages/index"
         });
       },
       async onGotUserInfo(e) {

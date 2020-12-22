@@ -9,15 +9,15 @@
                 <open-data type="userNickName"></open-data>
             </view>
             <image class="tag" src="{{info.rankIco}}" mode="scaleToFill" />
-            <view class="exp">4451</view>
+            <view class="exp">{{info.totalScore}}</view>
             <view class="padding progress">
                 <view class="cu-progress round sm striped {{active?'active':''}}" style="background-color:rgb(166,124,0)">
-                    <view class="bg-orange" style="width:{{!loading?'60%':''}};"></view>
+                    <view class="bg-orange" style="width:{{(info.totalScore * 100 / info.nextRankScore) + '%'}};"></view>
                 </view>
             </view>
         </view>
-        <view class="main box-1">
-            <view class="margin margin-top-xl text-df">小仙女</view>
+        <view class="main box-1" @tap="toanswer">
+            <view class="margin margin-top-xl text-df">雄鹰童行</view>
             <view class="margin-left text-lg">知识竞答赛</view>
             <view class="qustion bg-img" ></view>
         </view>
@@ -26,7 +26,7 @@
                 <view class="tips">本周大奖</view>
                 <view class="give bg-img" style="background-image:url({{info.prizeUrl}})"></view>
             </view>
-            <view class="right_1">
+            <view @tap="rank" class="right_1">
                 <view class="tips">排行榜</view>
                 <image src="../images/rank.png" mode="scaleToFill" style="width:303rpx;height:283rpx;" />
             </view>
@@ -51,7 +51,6 @@
             loaded: false
         };
         async load() {
-            this.info 
             let {answerIndex} = await config.answerInfo()
             this.info = answerIndex
             this.loaded = true
@@ -61,7 +60,17 @@
             await auth.login();
             this.load()
         }
-        methods = {};
+        onShow(){
+            this.load()
+        }
+        methods = {
+            toanswer(){
+                wepy.navigateTo({ url: './answerAct' });
+            },
+            rank(){
+                wepy.navigateTo({ url: './rank' });
+            }
+        };
     }
 </script>
 <style>
