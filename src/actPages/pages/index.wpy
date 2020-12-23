@@ -9,7 +9,8 @@
                 <open-data type="userNickName"></open-data>
             </view>
             <image class="tag" src="{{info.rankIco}}" mode="scaleToFill" />
-            <view class="exp">{{info.totalScore}}</view>
+            <view class="levelname">{{info.rank}}</view>
+            <view class="exp">{{info.nextRankScore}}</view>
             <view class="padding progress">
                 <view class="cu-progress round sm striped {{active?'active':''}}" style="background-color:rgb(166,124,0)">
                     <view class="bg-orange" style="width:{{(info.totalScore * 100 / info.nextRankScore) + '%'}};"></view>
@@ -19,7 +20,7 @@
         <view class="main box-1" @tap="toanswer">
             <view class="margin margin-top-xl text-df">雄鹰童行</view>
             <view class="margin-left text-lg">知识竞答赛</view>
-            <view class="qustion bg-img" ></view>
+            <view class="qustion bg-img"></view>
         </view>
         <view class="footer box-1">
             <view class="left">
@@ -51,7 +52,9 @@
             loaded: false
         };
         async load() {
-            let {answerIndex} = await config.answerInfo()
+            let {
+                answerIndex
+            } = await config.answerInfo()
             this.info = answerIndex
             this.loaded = true
             this.$apply()
@@ -60,15 +63,30 @@
             await auth.login();
             this.load()
         }
-        onShow(){
+        onShow() {
             this.load()
         }
+        // 转发暂时先不开启
+        onShareAppMessage(res) {
+            if (res.from === 'button') {
+                // 来自页面内转发按钮
+                console.log(res.target)
+            }
+            return {
+                title: '',
+                path: '/actPages/home/index'
+            }
+        }
         methods = {
-            toanswer(){
-                wepy.navigateTo({ url: './answerAct' });
+            toanswer() {
+                wepy.navigateTo({
+                    url: './answerAct'
+                });
             },
-            rank(){
-                wepy.navigateTo({ url: './rank' });
+            rank() {
+                wepy.navigateTo({
+                    url: './rank'
+                });
             }
         };
     }
@@ -178,6 +196,14 @@
             height: 110rpx;
             position: absolute;
             left: 260rpx;
+            top: 40rpx;
+        }
+        .levelname {
+            width: 110rpx;
+            height: 110rpx;
+            line-height: 110rpx;
+            position: absolute;
+            left: 390rpx;
             top: 40rpx;
         }
         .progress {

@@ -10,7 +10,7 @@
             <view wx:if="{{step == 0}}" @tap="start" class="open-btn bg-img" style="width:350rpx;height:73rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201211/20201211101632_93911.png)"></view>
             <view wx:if="{{step == 0}}" class="text-center">您准备好了吗，点击“开始答题”开始计时答题</view>
             <view wx:if="{{step == 1}}" class="flex flex-y flex-c">
-                <view class="question" style="width:100%">1.{{qustions[qustionInx].question}}</view>
+                <view class="question" style="width:100%">{{qustionInx + 1}}. {{qustions[qustionInx].question}}</view>
                 <view @tap="select('A')" class="answer {{qustions[qustionInx].answer == 'A' ? 'is-answer':'not-answer'}} {{'A' == qustions[qustionInx].answerUser ? 'select':''}}">
                     <view class="flex-1">{{qustions[qustionInx].optionA}}</view>
                 </view>
