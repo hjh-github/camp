@@ -1,0 +1,137 @@
+<template>
+    <view class="h100" style="padding-bottom:140rpx;">
+        <view wx:if="{{!coupons.length}}" class="padding text-black text-center">{{isloading ? '数据加载中...' : '暂无优惠券'}}</view>
+        <repeat wx:if="{{coupons.length}}" for="{{coupons}}" key="index" index="index" item="item">
+            <view class="coups-item margin-top" style="background-image:url({{bg_img['cou_bg_'+ (item.memberReceivedNum > 0 ? 1 : 0)]}})">
+                <view class="price-box"><text class="text-df">￥</text>{{item.couponValue}}</view>
+                <view class="name">{{item.couponName}}</view>
+                <view class="maner">满{{item.minAmount}}可用</view>
+                <view class="btn-c flex flex-c flex-jc">
+                    <button wx:if="{{item.memberReceivedNum > 0}}" @tap="touse" class="cu-btn bg-orange sm radius shadow text-white">立即使用</button>
+                    <button wx:if="{{!item.memberReceivedNum}}" @tap="todetail({{item.id}})" class="cu-btn bg-red sm radius shadow text-white">立即领取</button>
+                </view>
+            </view>
+        </repeat>
+        <view class="flex flex-c flex-sa nav">
+            <view class="btn bg-yellow"  @tap="tomy">我的优惠券</view>
+            <view class="btn bg-orange"  @tap="touse">我要报名</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import Tips from "@/utils/Tips";
+    import WxUtils from "@/utils/WxUtils";
+    import Auth from "@/api/auth";
+    import coupon from "../api/coupon";
+    export default class Cpt2My extends wepy.page {
+        config = {
+            navigationBarTitleText: "优惠券"
+        };
+        data = {
+            coupons: [],
+            isloading: true,
+            bg_img: {
+                cou_bg_1: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141029_82067.png',
+                cou_bg_0: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141101_21176.png',
+            }
+        }
+        components = {}
+        async onLoad() {
+            await Auth.login()
+            await this.load()
+        }
+        async load() {
+            this.isloading = true
+            let {
+                couponList
+            } = await coupon.getcoupons()
+            if (couponList.length > 0) {
+                this.coupons = couponList
+                this.isloading = false
+            }
+            this.$apply()
+        }
+        methods = {
+          async todetail(id) {
+              let res =  await coupon.reveivecoupon(id)
+              if(res.errcode == 200){
+                  Tips.toast("领取成功！", res => {}, 'none')
+              }else{
+                  Tips.toast("请稍后重试", res => {}, 'none')
+              }
+              this.load()
+            },
+            touse(){
+                wepy.switchTab({ url: '/pages/home/index' });
+            },
+            tomy(){
+                WxUtils.backOrNavigate('/coupons/pages/myCoupons')                
+            }
+        }
+    }
+</script>
+<style>
+    page {
+        background-color: #fefefe;
+        font-family: PingFang SC;
+        font-weight: 400;
+    }
+</style>
+
+<style lang="less" scoped>
+    .coups-item {
+        width: 631rpx;
+        height: 218rpx;
+        border-radius: 10rpx;
+        box-sizing: border-box;
+        position: relative;
+        margin: 30rpx auto;
+        background-size: 100% auto;
+        color: #fff;
+        font-size: 30rpx;
+        .price-box {
+            width: 180rpx;
+            height: 218rpx;
+            line-height: 218rpx;
+            text-align: center;
+            font-size: 70rpx;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .name {
+            position: absolute;
+            left: 200rpx;
+            top: 40rpx;
+        }
+        .maner {
+            position: absolute;
+            left: 200rpx;
+            bottom: 40rpx;
+            font-size: 24rpx;
+        }
+        .btn-c {
+            width: 160rpx;
+            height: 218rpx;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+    }
+    .btn{
+        width:300rpx;
+        height: 100rpx;
+        line-height: 100rpx;
+        text-align: center;
+        color:#fff;
+        border-radius: 10rpx;
+    }
+    .nav{
+        width: 100%;
+        position: fixed;
+        bottom: 20rpx;
+        left: 0
+    }
+</style>

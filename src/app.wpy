@@ -37,8 +37,8 @@
       scene: null,
       base_store_id: "",
       appCode: "",
-      baseUrl: "https://wechat.hxqxly.com",
-      // baseUrl: "https://test.hxqxly.com",
+      // baseUrl: "https://wechat.hxqxly.com",
+      baseUrl: "https://test.hxqxly.com",
       themeColor: "#F4D000",
       cityCode: "",
       code: "",
@@ -182,6 +182,10 @@
         {
           root: "actPages",
           pages: ["pages/answer", "pages/answerAct", "pages/index", "pages/rank"]
+        },
+        {
+          root: "coupons",
+          pages: ["pages/cangets","pages/myCoupons"]
         }
       ],
       window: {

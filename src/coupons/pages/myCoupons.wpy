@@ -1,0 +1,163 @@
+<template>
+    <view class="h100">
+        <scroll-view scroll-x class="bg-white nav">
+            <view class="flex text-center">
+                <view class="cu-item flex-sub {{item.id==TabCur?'text-red':''}}" wx:for="{{navs}}" wx:key bindtap="tabSelect" data-id="{{item.id}}">
+                    {{item.name}}
+                </view>
+            </view>
+        </scroll-view>
+        <scroll-view scroll-y class="flex flex-y flex-c padding-bottom" style="height:calc(100% - 90rpx);width:100%;padding-bottom:140rpx;">
+            <view wx:if="{{!coupons.length}}" class="padding text-black text-center">{{isloading ? '数据加载中...' : '暂无优惠券'}}</view>
+            <repeat wx:if="{{coupons.length}}" for="{{coupons}}" key="index" index="index" item="item">
+                <view class="coups-item margin-top" style="background-image:url({{bg_img['cou_bg_'+ item.state]}})">
+                    <view class="price-box"><text class="text-df">￥</text>{{item.couponValue}}</view>
+                    <view class="name">{{item.couponName}}</view>
+                    <view class="maner">满{{item.minAmount}}可用</view>
+                    <view class="btn-c flex flex-c flex-jc">
+                        <button wx:if="{{item.state == 1}}" @tap="touse" class="cu-btn bg-orange sm radius shadow text-white">立即使用</button>
+                        <button wx:if="{{item.state == 3}}" disabled class="cu-btn bg-orange sm radius shadow text-white">已失效</button>
+                        <!-- <button wx:if="{{!item.memberReceivedNum}}" @tap="todetail({{item.id}})" class="cu-btn bg-red sm radius shadow text-white">立即领取</button> -->
+                        <button wx:if="{{item.state == 2}}" disabled class="cu-btn bg-orange sm radius shadow text-white">已使用</button>
+                    </view>
+                </view>
+            </repeat>
+        </scroll-view>
+        <view class="flex flex-c flex-sa nav-bottom">
+            <view class="btn bg-yellow"  @tap="tomy">去领更多好券</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import Tips from "@/utils/Tips";
+    import Auth from "@/api/auth";
+    import WxUtils from "@/utils/WxUtils";
+    import coupon from "../api/coupon";
+    import store from "@/store/utils";
+    export default class Cpt2My extends wepy.page {
+        config = {
+            navigationBarTitleText: "优惠券"
+        };
+        data = {
+            TabCur: '1',
+            navs: [{
+                name: '未使用',
+                id: '1'
+            }, {
+                name: '已使用',
+                id: '2'
+            }, {
+                name: '已过期',
+                id: '3'
+            }],
+            coupons: [],
+            isloading: true,
+            bg_img: {
+                cou_bg_1: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141029_82067.png',
+                cou_bg_2: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141048_58392.png',
+                cou_bg_3: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141113_92973.png',
+            }
+        }
+        components = {}
+        async onLoad() {
+            await Auth.login()
+            await this.load()
+        }
+        async load() {
+            this.isloading = true
+            let res = await coupon.memberCoups(this.TabCur)
+            if (res.errcode == 200) {
+                this.coupons = res.data.couponUsers
+                this.isloading = false
+            }
+            this.$apply()
+        }
+        methods = {
+            tabSelect(e) {
+                this.TabCur = e.currentTarget.dataset.id
+                this.coupons = []
+                this.load()
+            },
+            todetail(e) {
+                wepy.navigateTo({
+                    url: `./cousDetaile?coupon_code=${e.coupon_id}&favor_type=${e.favor_type}`
+                });
+            },
+             touse(){
+                wepy.switchTab({ url: '/pages/home/index' });
+            },
+            tomy(){
+                WxUtils.backOrNavigate('/coupons/pages/cangets')                
+            }
+        }
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+        background-color: #fefefe;
+        font-family: PingFang SC;
+        font-weight: 400;
+    }
+</style>
+
+<style lang="less" scoped>
+    .nav {
+        border-bottom: 1px solid #eee;
+    }
+    .coups-item {
+        width: 631rpx;
+        height: 218rpx;
+        border-radius: 10rpx;
+        box-sizing: border-box;
+        position: relative;
+        margin: 30rpx auto;
+        background-size: 100% auto;
+        color: #fff;
+        font-size: 30rpx;
+        .price-box {
+            width: 180rpx;
+            height: 218rpx;
+            line-height: 218rpx;
+            text-align: center;
+            font-size: 70rpx;
+            position: absolute;
+            left: 0;
+            top: 0;
+        }
+        .name {
+            position: absolute;
+            left: 200rpx;
+            top: 40rpx;
+        }
+        .maner {
+            position: absolute;
+            left: 200rpx;
+            bottom: 40rpx;
+            font-size: 24rpx;
+        }
+        .btn-c {
+            width: 160rpx;
+            height: 218rpx;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+        }
+    }
+    .btn{
+        width:640rpx;
+        height: 100rpx;
+        line-height: 100rpx;
+        text-align: center;
+        color:#fff;
+        border-radius: 100rpx;
+    }
+    .nav-bottom{
+        width: 100%;
+        position: fixed;
+        bottom: 20rpx;
+        left: 0
+    }
+</style>
