@@ -147,20 +147,20 @@
         ]
       },
       carditems: [{
-          name: '购课返现',
+          name: '多倍积分',
           icon: '/static/images/b_m.png',
           style: 'width:39rpx;height:37rpx'
         }, {
-          name: '专属教师',
+          name: '风险把控',
           icon: '/static/images/tc.png',
           style: 'width:40rpx;height:42rpx'
         },
         {
-          name: '学习专区',
+          name: '专属空间',
           icon: '/static/images/st.png',
           style: 'width:40rpx;height:30rpx'
         }, {
-          name: '专属红包',
+          name: '分享礼包',
           icon: '/static/images/hb.png',
           style: 'width:32rpx;height:36rpx'
         }
