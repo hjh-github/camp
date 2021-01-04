@@ -177,7 +177,7 @@
       ],
       subPackages: [{
           root: "agent",
-          pages: ["pages/index", "pages/share", "pages/sign"]
+          pages: ["pages/index", "pages/share", "pages/sign", "pages/buyVip"]
         },
         {
           root: "actPages",

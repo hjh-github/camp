@@ -1,16 +1,40 @@
 
 <template>
   <view class="scrollPage">
-    <view class="UCenter-bg">
-      <view class="avat">
-        <open-data class="img" type="userAvatarUrl"></open-data>
+    <view class="cu-list menu-avatar padding bg-white head-box">
+      <view class="cu-item bg-tran">
+        <view class="cu-avatar round xl flex flex-c flex-jc {{ myInfo.memberTypeId == 2 ?'on':''}}">
+          <open-data class="img" type="userAvatarUrl"></open-data>
+        </view>
+        <image wx:if="{{myInfo.memberTypeId == 2}}" class="crown-icon" src="/static/images/vip_666.png" mode="scaleToFill" style="width:69rpx;height:80rpx;" />
+        <view class="content" style="left:190rpx;">
+          <view class="text-white">
+            <open-data type="userNickName"></open-data>
+          </view>
+          <view class="text-white text-sm padding-top-xs">{{myInfo.memberTypeId == 1 ? '普通会员':'超级会员'}}</view>
+        </view>
+        <view class="action"></view>
       </view>
-      <view class="text-xl">
-        <open-data type="userNickName"></open-data>
+      <view class="vip_card shadow bg-white radius">
+        <view class="flex flex-c flex-sb text-xs  padding-lr-sm vip-title">
+          <view class="text-yellow text-df flex flex-c padding-tb-xs">
+            <image src="/static/images/vip-crown.png" style="width:30rpx;height:25rpx;margin-right:10rpx;" mode="scaleToFill" />会员专区</view>
+          <view wx:if="{{myInfo.memberTypeId == 1}}"  data-url="/agent/pages/buyVip" @tap="navi" class="fx-btn">开通超级会员，查看权益 ></view>
+          <view wx:if="{{myInfo.memberTypeId == 2}}" class="fx-btn">查看超级会员权益 ></view>
+        </view>
+        <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx;">
+          <repeat for="{{carditems}}" key="index" index="index" item="item">
+            <view class="flex flex-sub flex-direction">
+              <view class="text-xxl text-orange order-nav">
+                <image src="{{item.icon}}" style="{{item.style}}" mode="widthFix" />
+              </view>
+              <view class="text-sm text-black">{{item.name}}</view>
+            </view>
+          </repeat>
+        </view>
       </view>
-      <!-- <image src="https://raw.githubusercontent.com/weilanwl/ColorUI/master/demo/images/wave.gif" mode="scaleToFill" class="gif-wave"></image> -->
     </view>
-    <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx">
+    <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx;">
       <repeat for="{{orderType}}" key="index" index="index" item="item">
         <view class="flex flex-sub flex-direction" @tap="toOrder({{item.orderState}})">
           <view class="text-xxl text-orange order-nav"><text class="{{item.icon}}"></text>
@@ -18,54 +42,73 @@
               <block>{{myInfo.orderStats[item.orderState]>99?"99+":myInfo.orderStats[item.orderState]}}</block>
             </view>
           </view>
-          <view>
+          <view class="text-black">
             {{item.name}}</view>
         </view>
       </repeat>
     </view>
-    <view class="cu-list menu card-menu margin-top-xl margin-bottom-xl shadow-lg radius">
+    <view class="my-assets shadow bg-white">
+      <view class="flex flex-c flex-sb text-xs solid-bottom padding-lr">
+        <view class="text-black text-df flex flex-c padding-tb-sm">我的资产</view>
+        <view wx:if="{{myInfo.memberTypeId == 1}}" data-url="/agent/pages/buyVip" @tap="navi" class="text-yellow">成为超级会员 ></view>
+        <view wx:if="{{myInfo.memberTypeId == 2}}" class="text-yellow">欢迎您，尊贵的超级会员</view>
+      </view>
+      <view wx:if="{{assets.total}}" class="flex text-center padding-tb-xl text-grey solid-bottom bg-white" >
+          <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}">
+            <view class="text-xxl text-orange order-nav">
+              500.00
+            </view>
+            <view class="text-xs text-black">总资产</view>
+          </view>
+      </view>
+      <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx;">
+        <repeat for="{{assets.mains}}" key="index" index="index" item="item">
+          <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}">
+            <view class="text-lg text-black order-nav">
+              {{item.count}}{{item.unit}}
+            </view>
+            <view class="text-xs text-gray">{{item.name}}</view>
+          </view>
+        </repeat>
+      </view>
+    </view>
+    <view class="cu-list menu card-menu margin-top margin-bottom-xl shadow-lg radius">
       <view class="cu-item arrow" bindtap="bargaining">
         <view class="content">
           <text class="cuIcon-recharge text-red"></text>
-          <text class="text-grey">我的砍价</text>
+          <text class="text-black">我的砍价</text>
         </view>
       </view>
       <view class="cu-item arrow" bindtap="pintuan">
         <view class="content">
           <text class="cuIcon-friendfill  text-red"></text>
-          <text class="text-grey">我的拼团</text>
+          <text class="text-black">我的拼团</text>
         </view>
       </view>
       <view wx:if="{{myInfo.isAgent}}" class="cu-item arrow" bindtap="agent">
         <view class="content">
           <text class="cuIcon-expressman  text-red"></text>
-          <text class="text-grey">我的代理</text>
+          <text class="text-black">我的代理</text>
         </view>
       </view>
       <view wx:if="{{myInfo.isAgent == 0}}" class="cu-item arrow" data-url="/agent/pages/sign" @tap="navi">
         <view class="content">
           <text class="cuIcon-expressman  text-red"></text>
-          <text class="text-grey">申请代理</text>
+          <text class="text-black">申请代理</text>
         </view>
       </view>
       <view class="cu-item arrow" bindtap="childs">
         <view class="content">
           <text class="cuIcon-card text-red"></text>
-          <text class="text-grey">身份信息管理</text>
+          <text class="text-black">身份信息管理</text>
         </view>
       </view>
       <view class="cu-item arrow" bindtap="showQrcode">
         <view class="content">
           <text class="cuIcon-group text-red"></text>
-          <text class="text-grey">关于我们</text>
+          <text class="text-black">关于我们</text>
         </view>
       </view>
-      <!-- <view class="cu-item arrow">
-          <view class="content" bindtap="showQrcode">
-            <text class="cuIcon-settingsfill text-red"></text>
-            <text class="text-grey">设置</text>
-          </view>
-        </view> -->
     </view>
     <view class="cu-tabbar-height"></view>
     <contact />
@@ -85,6 +128,43 @@
       contact
     }
     data = {
+      assets: {
+        total: null,
+        mains: [{
+            name: '优惠券',
+            unit: '张',
+            count: '0'
+          }, {
+            name: '代言人',
+            unit: '元',
+            count: '0'
+          },
+          {
+            name: '积分',
+            unit: '分',
+            count: '0'
+          }
+        ]
+      },
+      carditems: [{
+          name: '购课返现',
+          icon: '/static/images/b_m.png',
+          style: 'width:39rpx;height:37rpx'
+        }, {
+          name: '专属教师',
+          icon: '/static/images/tc.png',
+          style: 'width:40rpx;height:42rpx'
+        },
+        {
+          name: '学习专区',
+          icon: '/static/images/st.png',
+          style: 'width:40rpx;height:30rpx'
+        }, {
+          name: '专属红包',
+          icon: '/static/images/hb.png',
+          style: 'width:32rpx;height:36rpx'
+        }
+      ],
       orderType: [{
           name: '全部',
           orderState: '0',
@@ -109,6 +189,16 @@
     async onShow() {
       let res = await config.center()
       this.myInfo = res
+      // this.myInfo.memberTypeId = 2
+      // 刷新我的资产
+      this.myAssets()
+      this.$apply()
+    }
+    myAssets(){
+      this.assets.mains[0].count = this.myInfo.myAssets.countCoupon
+      this.assets.mains[1].count = this.myInfo.myAssets.totalAmount
+      this.assets.mains[2].count = this.myInfo.myAssets.integral
+      this.assets.total = this.myInfo.myAssets.totalAssets
     }
     methods = {
       navi(e) {
@@ -163,6 +253,58 @@
 </style>
 
 <style lang="less" scoped>
+.crown-icon{
+  position: absolute;
+  left: 55rpx;
+  top:85rpx;
+}
+  .my-assets {
+    width: 690rpx;
+    margin: 30rpx auto 0;
+    border-radius: 10rpx;
+    overflow: hidden;
+  }
+  .vip-title {
+    background-color: var(--yellow);
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-image: url(https://images.hxqxly.com/center/hy_bj.png);
+    .fx-btn {
+      text-decoration: underline;
+      background-color: var(--yellow);
+      color: #fff;
+      padding: 6rpx 10rpx;
+      border-radius: 6rpx;
+    }
+  }
+  .vip_card {
+    width: 590rpx;
+    height: 220rpx;
+    position: absolute;
+    left: 80rpx;
+    top: 220rpx;
+  }
+  .cu-avatar {
+    border:3px solid var(--yellow);
+    overflow: hidden;
+    &.on{
+      border:3px solid var(--orange);
+    }
+    .img {
+      width: 100%;
+      height: 100%;
+    }
+  }
+  .bg-tran {
+    background-color: transparent !important;
+  }
+  .head-box {
+    position: relative;
+    height: 470rpx;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-image: url(https://images.hxqxly.com/center/hybj_1.png)
+  }
   .avat {
     width: 160rpx;
     height: 160rpx;

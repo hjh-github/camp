@@ -1,0 +1,65 @@
+
+<template>
+    <view class="main">
+        <view class="flex flex-c flex-sa nav-bottom ">
+            <view class="btn" @tap="tobuy">立即开通会员</view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy"
+    import Tips from "@/utils/Tips"
+    import WxUtils from "@/utils/WxUtils"
+    import config from "../api"
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "成为超级会员"
+        };
+        data = {};
+        methods = {
+            async tobuy() {
+                let _code = await config.plusUp()
+                WxUtils.wxPay(_code.data).then(r => {
+                    Tips.toast('支付成功', () => {
+                        WxUtils.backOrRedirect('/pages/my/my')
+                    }, 'none')
+                })
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        background-color: #fff;
+    }
+</style>
+
+
+<style lang="less" scoped>
+    .main {
+        width: 750rpx;
+        height: 1334rpx;
+        background-size: 100% auto;
+        background-image: url(https://images.hxqxly.com/center/hyqy.png);
+        background-repeat: no-repeat;
+        position: relative;
+    }
+    .btn {
+        width: 640rpx;
+        height: 100rpx;
+        line-height: 100rpx;
+        text-align: center;
+        color: #edd1a4;
+        background-color: #332e28;
+        border-radius: 100rpx;
+        font-size: 32rpx;
+    }
+    .nav-bottom {
+        width: 100%;
+        height: 130rpx;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+</style>

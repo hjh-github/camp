@@ -96,7 +96,6 @@
                     }
                     this.loadmoring = true
                 }
-                console.log(this.loadmoring)
                 this.$apply()
             }
         }
