@@ -1,0 +1,187 @@
+
+<template>
+    <view class="flex flex-c flex-y w100">
+        <view class="head-box flex flex-jc w100">
+            <view class="margin-top-sm">
+                <view class="cu-avatar round xl flex flex-c flex-jc">
+                    <open-data class="img" type="userAvatarUrl"></open-data>
+                </view>
+                <view class="text-white text-center">
+                    <open-data type="userNickName"></open-data>
+                </view>
+            </view>
+            <view @tap="toInagent" class="cu-tag bg-orange round light tag">{{ agentIndex.state ? agentIndex.gradeName :"成为宝妈代理"}}</view>
+        </view>
+        <view class="flex text-center text-grey bg-white w100" style="padding:16rpx 30rpx 30rpx;">
+            <view class="flex flex-sub flex-direction" data-url="./fans" @tap="navi">
+                <view class="text-lg text-orange order-nav">
+                    {{agentIndex.fansCount}}
+                </view>
+                <view class="text-black">我的粉丝</view>
+            </view>
+            <view class="flex flex-sub flex-direction solid-left" data-url="./orders" @tap="navi">
+                <view class="text-lg text-orange order-nav">
+                    {{agentIndex.totalAmount}}
+                </view>
+                <view class="text-black">累积收益</view>
+            </view>
+        </view>
+        <view class="flex text-center text-grey bg-white margin-top-sm w100" style="padding:30rpx;">
+            <view class="flex flex-sub flex-direction">
+                <view class="text-lg text-black order-nav">
+                    待入账
+                </view>
+                <view class="text-lg text-black">{{agentIndex.freezingAmount}}</view>
+            </view>
+            <view class="flex flex-sub flex-direction solid-left">
+                <view class="text-lg text-black order-nav">
+                    可提现
+                </view>
+                <view class="text-lg text-black">{{agentIndex.canWithdrawAmount}}</view>
+            </view>
+            <view class="flex flex-sub flex-direction solid-left">
+                <view class="text-lg text-black order-nav">
+                    已提现
+                </view>
+                <view class="text-lg text-black">{{agentIndex.alreadyWithdrawAmount}}</view>
+            </view>
+        </view>
+        <image data-url="./share" @tap="navi" src="https://images.hxqxly.com/agent/fxhy.png" class="radius" mode="widthFix" style="width:690rpx;margin:20rpx auto 0;" />
+        <view class="cu-list menu w100">
+            <view class="cu-item">
+                <view class="content" data-url="./index" @tap="navi">
+                    <text class="cuIcon-sort text-orange"></text>
+                    <text class="text-black text-df">好友订单</text>
+                </view>
+                <view class="action">
+                    <text class="text-orange" wx:if="{{agentIndex.orderCount}}">{{agentIndex.orderCount + ' 单'}} </text>
+                    <text class="cuIcon-right text-gray"></text>
+                </view>
+            </view>
+            <view class="cu-item">
+                <view class="content" data-url="./orders" @tap="navi">
+                    <text class="cuIcon-calendar text-yellow"></text>
+                    <text class="text-black text-df">提现明细</text>
+                </view>
+                <view class="action">
+                    <text class="cuIcon-right text-gray"></text>
+                </view>
+            </view>
+        </view>
+        <image src="{{agentIndex.imageUrl}}" @tap="navigator({{agentIndex.imageLink}},{{agentIndex.linkType}})" class="radius" mode="widthFix" style="width:690rpx;margin:20rpx auto;" />
+        <!-- 弹窗 -->
+        <view class="cu-modal {{modalName=='image'?'show':''}}" bindtap="hideModal">
+            <view class="cu-dialog" @tap.stop="ret">
+                <view class="bg-img" style="background-image: url('https://images.kuan1.cn/kuan1/upload/image/20210128/20210128155006_35131.png');width:690rpx;height:800rpx;">
+                    <view class="flex flex-c flex-sa" style="padding-top:650rpx;">
+                        <view class="cu-btn lg bg-green light round" bindtap="hideModal"> 稍后激活</view>
+                        <view class="cu-btn lg bg-green round" bindtap="inAgent"> 立即激活</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from "wepy";
+    import auth from "@/api/auth"
+    import config from "../api"
+    import navigator from '@/mixins/navigator'
+    export default class Dialog extends wepy.page {
+        config = {
+            navigationBarTitleText: "宝妈代理"
+        };
+        data = {
+            agentIndex: {},
+            modalName: ''
+        };
+        mixins = [navigator]
+        async onLoad() {
+            await auth.login()
+            this.load()
+        }
+        async load() {
+            this.agentIndex = await config.agentIndex()
+            this.$apply()
+        }
+        ckeckIn(callback) {
+            if (!this.agentIndex.state) {
+                this.modalName = 'image'
+                this.$apply()
+            } else {
+                callback && callback()
+            }
+        }
+        async inAgent() {
+            await config.applyV2()
+            this.load()
+            this.modalName = ''
+            this.$apply()
+        }
+        methods = {
+            inAgent(){
+                this.inAgent()
+            },
+            toInagent(){
+                this.ckeckIn()
+            },
+            hideModal() {
+                this.modalName = ''
+            },
+            navi(e) {
+                this.ckeckIn(() => {
+                    let url = e.currentTarget.dataset.url || e.target.dataset.url
+                    wepy.navigateTo({
+                        url
+                    });
+                })
+            },
+            ret() {
+                return
+            }
+        };
+    }
+</script>
+<style>
+    page {
+        height: 100%;
+    }
+</style>
+
+<style lang="less" scoped>
+    .w100 {
+        width: 100%
+    }
+    .cu-avatar {
+        border: 3px solid var(--yellow);
+        overflow: hidden;
+        &.on {
+            border: 3px solid var(--orange);
+        }
+        .img {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .bg-tran {
+        background-color: transparent !important;
+    }
+    .head-box {
+        position: relative;
+        height: 325rpx;
+        background-size: 100% auto;
+        background-repeat: no-repeat;
+        background-image: url(https://images.kuan1.cn/kuan1/upload/image/20210126/20210126194506_37795.png);
+        .tag {
+            position: absolute;
+            top: 208rpx;
+        }
+    }
+    .avat {
+        width: 160rpx;
+        height: 160rpx;
+        border-radius: 50%;
+        overflow: hidden;
+    }
+</style>

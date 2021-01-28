@@ -1,7 +1,7 @@
 
 <template>
     <view class="main">
-        <view class="flex flex-c flex-sa nav-bottom ">
+        <view wx:if="{{!id}}" class="flex flex-c flex-sa nav-bottom ">
             <view class="btn" @tap="tobuy">立即开通会员</view>
         </view>
     </view>
@@ -16,7 +16,12 @@
         config = {
             navigationBarTitleText: "成为超级会员"
         };
-        data = {};
+        data = {
+            id:''
+        };
+        onLoad(opt){
+            this.id = opt.id
+        }
         methods = {
             async tobuy() {
                 let _code = await config.plusUp()

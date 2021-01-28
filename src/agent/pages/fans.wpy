@@ -1,0 +1,94 @@
+<template>
+    <view class="weui-flex flex-y flex-c">
+        <view class="head weui-flex flex-y flex-c">
+            <view style="padding-top:30rpx;">粉丝总数（人）</view>
+            <view class="weui-flex__item weui-flex flex-c flex-jc text-orange" style="font-size:68rpx;">{{fans.total}}</view>
+        </view>
+        <view wx:if="{{fans.fansList.length == 0}}" class="weui-flex flex-c flex-jc list-item">
+            暂无记录
+        </view>
+        <view class="cu-bar  text-black margin-top w100">
+            <view class="action">
+                我的粉丝
+            </view>
+        </view>
+        <view style="margin-bottom:20px">
+            <repeat for="{{fans.fansList}}" key="index" index="index" item="item">
+                <view class="weui-flex flex-c list-item">
+                    <view class="cu-avatar lg round margin-right" style="background-image:url({{item.profilePhoto}});"></view>
+                    <view class="weui-flex weui-flex__item flex-y flex-sb msg">
+                        <view class="tips">{{item.name}}</view>
+                        <view class="tips">{{item.createTime}}</view>
+                    </view>
+                </view>
+            </repeat>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import config from "../api"
+    export default class cardLog extends wepy.page {
+        config = {
+            navigationBarTitleText: "我的粉丝"
+        };
+        data = {
+            fans: {}
+        }
+        async onLoad(opt) {
+            this.load()
+        }
+        async load() {
+            this.fans = await config.fanslist()
+            this.$apply()
+        }
+        methods = {}
+    }
+</script>
+<style>
+    page {
+        background-color: #f7f7f7;
+        color: #333;
+    }
+</style>
+
+<style lang="less" scoped>
+    .head {
+        width: 680rpx;
+        height: 240rpx;
+        box-sizing: border-box;
+        padding: 0 20rpx;
+        margin: 60rpx auto 20rpx;
+        background-color: #fff;
+        border-radius: 8rpx;
+        box-shadow: 5rpx 5rpx 20rpx #ddd;
+        .ctrl-bar {
+            width: 100%;
+            height: 80rpx;
+            border-top: 1px solid #ddd;
+            >view {
+                text-align: center;
+                &:first-child {
+                    border-right: 1px solid #ddd;
+                }
+            }
+        }
+    }
+    .list-item {
+        width: 680rpx;
+        height: 140rpx;
+        box-sizing: border-box;
+        padding: 30rpx;
+        background-color: #fff;
+        border-radius: 8rpx;
+        margin-top: 20rpx;
+        box-shadow: 3rpx 3rpx 20rpx #f1f1f1;
+        .tips {
+            font-size: 24rpx;
+        }
+        .msg {
+            height: 80rpx;
+        }
+    }
+</style>

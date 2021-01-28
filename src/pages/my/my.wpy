@@ -20,7 +20,7 @@
           <view class="text-yellow text-df flex flex-c padding-tb-xs">
             <image src="/static/images/vip-crown.png" style="width:30rpx;height:25rpx;margin-right:10rpx;" mode="scaleToFill" />会员专区</view>
           <view wx:if="{{myInfo.memberTypeId == 1}}"  data-url="/agent/pages/buyVip" @tap="navi" class="fx-btn">开通超级会员，查看权益 ></view>
-          <view wx:if="{{myInfo.memberTypeId == 2}}" class="fx-btn">查看超级会员权益 ></view>
+          <view wx:if="{{myInfo.memberTypeId == 2}}" data-url="/agent/pages/buyVip?id=1" @tap="navi" class="fx-btn">查看超级会员权益 ></view>
         </view>
         <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx;">
           <repeat for="{{carditems}}" key="index" index="index" item="item">
@@ -85,18 +85,18 @@
           <text class="text-black">我的拼团</text>
         </view>
       </view>
-      <view wx:if="{{myInfo.isAgent}}" class="cu-item arrow" bindtap="agent">
+      <view class="cu-item arrow" data-url="/agent/pages/my" @tap="navi">
         <view class="content">
           <text class="cuIcon-expressman  text-red"></text>
-          <text class="text-black">我的代理</text>
+          <text class="text-black">宝妈代理</text>
         </view>
       </view>
-      <view wx:if="{{myInfo.isAgent == 0}}" class="cu-item arrow" data-url="/agent/pages/sign" @tap="navi">
+      <!-- <view wx:if="{{myInfo.isAgent == 0}}" class="cu-item arrow" data-url="/agent/pages/sign" @tap="navi">
         <view class="content">
           <text class="cuIcon-expressman  text-red"></text>
           <text class="text-black">申请代理</text>
         </view>
-      </view>
+      </view> -->
       <view class="cu-item arrow" bindtap="childs">
         <view class="content">
           <text class="cuIcon-card text-red"></text>
@@ -135,7 +135,7 @@
             unit: '张',
             count: '0'
           }, {
-            name: '代言人',
+            name: '宝妈代理',
             unit: '元',
             count: '0'
           },

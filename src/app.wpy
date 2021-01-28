@@ -7,6 +7,9 @@
     background-color: #f5f5f5;
     color: #000;
   }
+  .w100{
+    width: 100%;
+  }
   button::after {
     border: none;
   }
@@ -177,7 +180,7 @@
       ],
       subPackages: [{
           root: "agent",
-          pages: ["pages/index", "pages/share", "pages/sign", "pages/buyVip"]
+          pages: ["pages/index", "pages/share", "pages/sign", "pages/buyVip", "pages/my", "pages/orders", "pages/fans"]
         },
         {
           root: "actPages",

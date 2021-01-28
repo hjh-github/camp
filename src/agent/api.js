@@ -40,4 +40,40 @@ export default class agent extends base {
             return res;
         })
     }
+    static async agentIndex() {
+        let url = `${this.baseUrl}/member/agent/index`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true).then(res => {
+            return res;
+        })
+    }
+    static async applyV2() {
+        let url = `${this.baseUrl}/member/agent/applyV2`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true).then(res => {
+            return res;
+        })
+    }
+    static async withdrawLog() {
+        let url = `${this.baseUrl}/member/agent/withdrawLog`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true).then(res => {
+            return res;
+        })
+    }
+    static async fanslist() {
+        let url = `${this.baseUrl}/member/agent/fans`;
+        let params = {
+            sessionId: wepy.$instance.globalData.sessionId
+        }
+        return this.post(url, params, true).then(res => {
+            return res;
+        })
+    }
 }

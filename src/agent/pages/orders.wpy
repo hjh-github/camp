@@ -1,0 +1,101 @@
+<template>
+    <view class="weui-flex flex-y flex-c">
+        <view class="head weui-flex flex-y flex-c">
+            <view style="padding-top:30rpx;">总收益</view>
+            <view class="weui-flex__item weui-flex flex-c flex-jc" style="font-size:68rpx;">{{orders.totalAmount}}</view>
+            <view class="padding-bottom-sm text-orange">去提现 ></view>
+            <view class="ctrl-bar weui-flex flex-c">
+                <view class="weui-flex__item" style="color:{{type==0?theme:''}}" @tap="recgarLog(0)">待入账：{{orders.freezingAmount}}</view>
+                <view class="weui-flex__item" style="color:{{type==1?theme:''}}" @tap="recgarLog(1)">可提现：{{orders.canWithdrawAmount}}</view>
+            </view>
+        </view>
+        <view class="cu-bar  text-black margin-top w100">
+            <view class="action">
+                提现记录
+            </view>
+        </view>
+        <view wx:if="{{orders.withdrawaLogs.length == 0}}" class="weui-flex flex-c flex-jc list-item">
+            暂无记录
+        </view>
+        <view style="margin-bottom:20px">
+            <repeat for="{{orders.withdrawaLogs}}" key="index" index="index" item="item">
+                <view class="weui-flex flex-c flex-sb list-item">
+                    <view class="weui-flex flex-y flex-sb msg">
+                        <view class="tips">提现时间：{{item.withdrawApplyTime}}</view>
+                        <view class="tips">提现状态：{{item.status}}</view>
+                    </view>
+                    <view class="font-30">
+                        ￥{{item.withdrawApplyTotal}}
+                    </view>
+                </view>
+            </repeat>
+        </view>
+    </view>
+</template>
+
+<script>
+    import wepy from 'wepy';
+    import config from "../api"
+    export default class cardLog extends wepy.page {
+        config = {
+            navigationBarTitleText: "提现明细"
+        };
+        data = {
+            orders:{}
+        }
+        async onLoad(opt) {
+            this.load()
+        }
+       async load(){
+          this.orders =  await config.withdrawLog()
+          this.$apply()
+        }
+        methods = {}
+    }
+</script>
+<style>
+    page {
+        background-color: #f7f7f7;
+        color: #333;
+    }
+</style>
+
+<style lang="less" scoped>
+    .head {
+        width: 680rpx;
+        height: 320rpx;
+        box-sizing: border-box;
+        padding: 0 20rpx;
+        margin: 60rpx auto 20rpx;
+        background-color: #fff;
+        border-radius: 8rpx;
+        box-shadow: 5rpx 5rpx 20rpx #ddd;
+        .ctrl-bar {
+            width: 100%;
+            height: 80rpx;
+            border-top: 1px solid #ddd;
+            >view {
+                text-align: center;
+                &:first-child {
+                    border-right: 1px solid #ddd;
+                }
+            }
+        }
+    }
+    .list-item {
+        width: 680rpx;
+        height: 140rpx;
+        box-sizing: border-box;
+        padding: 30rpx;
+        background-color: #fff;
+        border-radius: 8rpx;
+        margin-top: 20rpx;
+        box-shadow: 3rpx 3rpx 20rpx #f1f1f1;
+        .tips {
+            font-size: 24rpx;
+        }
+        .msg {
+            height: 80rpx;
+        }
+    }
+</style>
