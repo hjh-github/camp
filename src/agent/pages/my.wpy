@@ -46,7 +46,7 @@
                 <view class="text-lg text-black">{{agentIndex.alreadyWithdrawAmount}}</view>
             </view>
         </view>
-        <image data-url="./share" @tap="navi" src="https://images.hxqxly.com/agent/fxhy.png" class="radius" mode="widthFix" style="width:690rpx;margin:20rpx auto 0;" />
+        <image data-url="./share?agentId={{agentIndex.agentId}}" @tap="navi" src="https://images.hxqxly.com/agent/fxhy.png" class="radius" mode="widthFix" style="width:690rpx;margin:20rpx auto 0;" />
         <view class="cu-list menu w100">
             <view class="cu-item">
                 <view class="content" data-url="./index" @tap="navi">

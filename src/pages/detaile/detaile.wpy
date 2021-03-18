@@ -110,7 +110,7 @@
             <view class="cu-dialog" @tap.stop="ret">
                 <view class="cu-bar bg-white padding-left">
                     <view>
-                        <text> 活动费：<text class="text-red text-price text-xxl">{{courseInfo.price}}</text> </text>
+                        <text> 活动费：<text class="text-red text-price text-xxl">{{courseInx == -1 ? courseInfo.price : courseInfo.periodList[courseInx].price}}</text> </text>
                         <text wx:if="{{courseInfo.paymentType == 2}}" class="margin-left-sm"> 定金：<text class="text-red text-price text-lg">{{courseInfo.earnesMoney}}</text> </text>
                     </view>
                 </view>
@@ -122,7 +122,7 @@
                         <view class="margin-right" @tap="paymentType(1)">
                             <radio checked="{{paymentType == 1}}" class="radio margin-right-sm yellow"></radio>全额付款</view>
                         <view class="margin-right" @tap="paymentType(2)">
-                            <radio checked="{{paymentType == 2}}" class="radio margin-right-sm yellow"></radio>先付定金</view>
+                            <radio checked="{{paymentType == 2}}" class="radio margin-right-sm yellow"></radio>先付定金（定金随时可退）</view>
                     </view>
                 </view>
                 <view class="padding-left padding-top-sm text-left ">

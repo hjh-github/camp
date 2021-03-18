@@ -51,8 +51,8 @@
         async onLoad(options) {
             await auth.login()
             let res = await config.getUnlimited({
-                page: this.shareInfo.path,
-                sceneStr: encodeURI(`agentId=${this.shareInfo.id}`)
+                page: 'pages/home/index',
+                sceneStr: encodeURI(`agentId=${options.agentId}`)
             })
 
             this.codeUrl = res.qr

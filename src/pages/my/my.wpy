@@ -19,7 +19,7 @@
         <view class="flex flex-c flex-sb text-xs  padding-lr-sm vip-title">
           <view class="text-yellow text-df flex flex-c padding-tb-xs">
             <image src="/static/images/vip-crown.png" style="width:30rpx;height:25rpx;margin-right:10rpx;" mode="scaleToFill" />会员专区</view>
-          <view wx:if="{{myInfo.memberTypeId == 1}}"  data-url="/agent/pages/buyVip" @tap="navi" class="fx-btn">开通超级会员，查看权益 ></view>
+          <view wx:if="{{myInfo.memberTypeId == 1}}" data-url="/agent/pages/buyVip" @tap="navi" class="fx-btn">开通超级会员，查看权益 ></view>
           <view wx:if="{{myInfo.memberTypeId == 2}}" data-url="/agent/pages/buyVip?id=1" @tap="navi" class="fx-btn">查看超级会员权益 ></view>
         </view>
         <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx;">
@@ -53,17 +53,17 @@
         <view wx:if="{{myInfo.memberTypeId == 1}}" data-url="/agent/pages/buyVip" @tap="navi" class="text-yellow">成为超级会员 ></view>
         <view wx:if="{{myInfo.memberTypeId == 2}}" class="text-yellow">欢迎您，尊贵的超级会员</view>
       </view>
-      <view wx:if="{{assets.total}}" class="flex text-center padding-tb-xl text-grey solid-bottom bg-white" >
-          <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}">
-            <view class="text-xxl text-orange order-nav">
-              500.00
-            </view>
-            <view class="text-xs text-black">总资产</view>
+      <view wx:if="{{assets.total}}" class="flex text-center padding-tb-xl text-grey solid-bottom bg-white">
+        <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}">
+          <view class="text-xxl text-orange order-nav">
+            500.00
           </view>
+          <view class="text-xs text-black">总资产</view>
+        </view>
       </view>
       <view class="flex text-center text-grey bg-white" style="padding:16rpx 30rpx;">
         <repeat for="{{assets.mains}}" key="index" index="index" item="item">
-          <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}">
+          <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}" data-url="{{item.path}}" @tap="navi">
             <view class="text-lg text-black order-nav">
               {{item.count}}{{item.unit}}
             </view>
@@ -92,11 +92,11 @@
         </view>
       </view>
       <!-- <view wx:if="{{myInfo.isAgent == 0}}" class="cu-item arrow" data-url="/agent/pages/sign" @tap="navi">
-        <view class="content">
-          <text class="cuIcon-expressman  text-red"></text>
-          <text class="text-black">申请代理</text>
-        </view>
-      </view> -->
+          <view class="content">
+            <text class="cuIcon-expressman  text-red"></text>
+            <text class="text-black">申请代理</text>
+          </view>
+        </view> -->
       <view class="cu-item arrow" bindtap="childs">
         <view class="content">
           <text class="cuIcon-card text-red"></text>
@@ -133,16 +133,19 @@
         mains: [{
             name: '优惠券',
             unit: '张',
-            count: '0'
+            count: '0',
+            path: '/coupons/pages/myCoupons'
           }, {
             name: '宝妈代理',
             unit: '元',
-            count: '0'
+            count: '0',
+            path: '/agent/pages/my'
           },
           {
             name: '积分',
             unit: '分',
-            count: '0'
+            count: '0',
+            path: ''
           }
         ]
       },
@@ -194,7 +197,7 @@
       this.myAssets()
       this.$apply()
     }
-    myAssets(){
+    myAssets() {
       this.assets.mains[0].count = this.myInfo.myAssets.countCoupon
       this.assets.mains[1].count = this.myInfo.myAssets.totalAmount
       this.assets.mains[2].count = this.myInfo.myAssets.integral
@@ -203,9 +206,11 @@
     methods = {
       navi(e) {
         let url = e.currentTarget.dataset.url || e.target.dataset.url
-        wepy.navigateTo({
-          url
-        });
+        if (url) {
+          wepy.navigateTo({
+            url
+          });
+        }
       },
       bargaining() {
         wepy.navigateTo({
@@ -253,11 +258,11 @@
 </style>
 
 <style lang="less" scoped>
-.crown-icon{
-  position: absolute;
-  left: 55rpx;
-  top:85rpx;
-}
+  .crown-icon {
+    position: absolute;
+    left: 55rpx;
+    top: 85rpx;
+  }
   .my-assets {
     width: 690rpx;
     margin: 30rpx auto 0;
@@ -285,10 +290,10 @@
     top: 220rpx;
   }
   .cu-avatar {
-    border:3px solid var(--yellow);
+    border: 3px solid var(--yellow);
     overflow: hidden;
-    &.on{
-      border:3px solid var(--orange);
+    &.on {
+      border: 3px solid var(--orange);
     }
     .img {
       width: 100%;
