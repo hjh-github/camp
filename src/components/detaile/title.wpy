@@ -2,10 +2,16 @@
 <template>
     <view class="bg-white">
         <view wx:if="{{!hasDeadline}}" class="weui-flex flex-c solid-bottom padding-bottom-sm padding">
-            <view class="cu-tag line-orange margin-right-sm text-xs radius">活动费</view>
-            <view class="text-red text-price text-xxl">{{model.price}} </view>
-            <text wx:if="{{model.minimumPrice}}" class="text-xs margin-right-xs margin-left-xs">最低可享：<text class="text-price text-orange text-xxl">{{model.minimumPrice}}</text></text>
-            <view class="text-gray text-xs">（不含大交通）</view>
+            <!-- <view class="cu-tag line-orange margin-right-sm text-xs radius">活动费</view> -->
+            <view style="font-size:22rpx;margin-right:10rpx;width:100%" class="flex flex-y">
+                <view><text wx:if="{{model.earnesMoney}}" class="text-price text-red" style="font-size:40rpx">{{model.earnesMoney}}</text>
+                    <view class="cu-tag sm bg-green light radius margin-left-xs margin-right-sm">定金</view>
+                </view>
+                <text class="text-gray">全款：<text class="text-price" style="font-size:24rpx">{{model.price}}</text></text>
+            </view>
+            <view>
+                <text wx:if="{{model.minimumPrice}}" class="text-xs nowrap margin-right-xs margin-left-xs">最低可享：<text class="text-price text-orange text-xxl">{{model.minimumPrice}}</text></text>
+            </view>
         </view>
         <view wx:else class="weui-flex bg-gradual-orange flex-c padding-bottom-sm padding">
             <view class="weui-flex__item flex flex-y">
@@ -37,10 +43,10 @@
 <script>
     import wepy from "wepy";
     export default class Dialog extends wepy.component {
-        props=['model']
+        props = ['model']
         data = {
             close: "/static/images/close.png",
-            hasDeadline:0
+            hasDeadline: 0
         };
         methods = {};
     }

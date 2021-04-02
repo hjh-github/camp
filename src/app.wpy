@@ -40,8 +40,8 @@
       scene: null,
       base_store_id: "",
       appCode: "",
-      baseUrl: "https://wechat.hxqxly.com",
-      // baseUrl: "https://test.hxqxly.com",
+      // baseUrl: "https://wechat.hxqxly.com",
+      baseUrl: "https://test.hxqxly.com",
       themeColor: "#F4D000",
       cityCode: "",
       code: "",
@@ -126,7 +126,7 @@
     getCodeBy1047(str) {
       var query = {},
         strs = decodeURIComponent(str).split("&");
-      console.log(strs);
+
       for (var i = 0, len = strs.length; i < len; i++) {
         query[strs[i].split("=")[0]] = strs[i].split("=")[1];
       }
@@ -189,7 +189,16 @@
         {
           root: "coupons",
           pages: ["pages/cangets","pages/myCoupons"]
+        },
+        {
+          root: "video",
+          pages: ["pages/page"]
+        },
+        {
+          root: "crowdfund",
+          pages: ["pages/page","pages/sureOrder"]
         }
+
       ],
       window: {
         backgroundTextStyle: "dark",

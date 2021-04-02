@@ -54,7 +54,7 @@
         position: fixed;
         left: 0;
         top: 0;
-        z-index: 88888;
+        z-index: 8888;
         width: 100%;
     }
     .search {

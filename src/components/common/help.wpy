@@ -29,7 +29,7 @@
         right: 10rpx;
         width: 360rpx;
         height: 100rpx;
-        z-index: 99999;
+        z-index: 9999;
         background-color: rgba(234, 235, 240, 0.8);
         font-size: 24rpx;
         padding: 0 40rpx 10rpx 20rpx;

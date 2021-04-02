@@ -1,0 +1,85 @@
+
+<template>
+  <view wx:if="{{show}}" class="loading weui-flex flex-c flex-y flex-jc" @tap="close">
+    <view class="w100 text-right" style="padding-right:50rpx;">
+        <text class="cuIcon-roundclose text-white" style="font-size: 60rpx;"></text>
+    </view>
+
+    <repeat for="{{pops}}" key="index" index="index" item="item">
+      <image hidden="{{index!=step}}" @tap.stop="navigator({{item.link}},{{item.linkType}})" src="{{item.url}}" mode="widthFix" style="width:650rpx;" />
+    </repeat>
+
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  export default class Dialog extends wepy.component {
+    data = {
+      close: "/static/images/close.png",
+      pops: [],
+      step: 0,
+      show: false
+    };
+    navigator(url, type) {
+      if (type == 'none' || !type) {
+        return false
+      }
+      if (type == 'navigateTo') {
+        wepy.navigateTo({
+          url
+        });
+      } else if (type == 'redirectTo') {
+        wepy.redirectTo({
+          url
+        });
+      } else if (type == 'switchTab') {
+        wepy.switchTab({
+          url
+        });
+      } else if (type == 'reLaunch') {
+        wepy.reLaunch({
+          url
+        });
+      } else if (type == 'web') {
+        wepy.navigateTo({
+          url: '/pages/home/web?src=' + encodeURIComponent(url)
+        });
+      }
+    }
+    methods = {
+      load(pops) {
+        this.step = 0
+        this.pops = pops
+        this.show = true
+        this.$apply()
+      },
+      close() {
+        if (this.step < this.pops.length - 1) {
+          this.step = this.step + 1
+        } else {
+          this.show = false
+        }
+      },
+      navigator(url, type) {
+        this.step = this.step + 1
+        if (this.step > this.pops.length - 1) {
+          this.show = false
+        }
+        this.navigator(url, type)
+      }
+    };
+  }
+</script>
+
+<style lang="less" scoped>
+  .loading {
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99999;
+  }
+</style>

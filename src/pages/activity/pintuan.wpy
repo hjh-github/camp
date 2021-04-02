@@ -304,7 +304,9 @@
                     store.save('shareInfo', {
                         course: this.courseInfo,
                         path: 'pages/activity/pintuan',
-                        id: this.actPintuanActivity.id
+                        id: this.actPintuanActivity.id,
+                        type:3,
+                        courseId:this.courseInfo.id
                     })
                     wepy.navigateTo({
                         url: '/pages/home/share'

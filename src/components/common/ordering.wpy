@@ -28,6 +28,7 @@
         }
         methods = {
             load(orderings) {
+                if(!orderings) return
                 this.orderings = orderings
                 this.slider()
             }
@@ -59,7 +60,7 @@
         left: 30rpx;
         min-width: 360rpx;
         height: 70rpx;
-        z-index: 99999;
+        z-index: 9999;
         opacity: 0;
         background-color: rgba(0, 0, 0, 0.5);
         color:#fff;

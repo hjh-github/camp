@@ -22,13 +22,13 @@
                     <view class="one-line" style="color:#ccc;font-size:22rpx">{{item.periods}}</view>
                 </view>
                 <view class="weui-flex flex-end price" style="width:100%">
-                    <view style="font-size:22rpx;margin-right:10rpx;width:100%" class="flex flex-c flex-sb">
-                        <text>￥<text style="font-size:36rpx">{{item.price}}</text></text>
-                        <text wx:if="{{item.minimumPrice}}" class="text-xs margin-right-xs margin-left-xs">最低可享：<text style="color:{{theme}};" class="text-price text-orange text-xxl">{{item.minimumPrice}}</text></text>
+                    <view style="font-size:22rpx;margin-right:10rpx;width:100%" class="flex flex-c">
+                        <text wx:if="{{item.earnesMoney}}" class="text-price text-red" style="font-size:40rpx">{{item.earnesMoney}}</text>
+                        <view class="cu-tag sm bg-green light radius margin-left-xs margin-right-sm">定金</view>
+                        <text class="text-gray">全款：<text class="text-price" style="font-size:24rpx">{{item.price}}</text></text>
+                        
                     </view>
-                    <!-- <view style="color:#999;font-size:24rpx;text-decoration: line-through">
-                        ￥1680.00
-                    </view> -->
+                    <text wx:if="{{item.minimumPrice}}" class="text-xs margin-right-xs nowrap margin-left-xs">最低可享：<text style="color:{{theme}};" class="text-price text-orange text-xxl">{{item.minimumPrice}}</text></text>
                 </view>
             </view>
         </repeat>

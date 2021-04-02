@@ -1,0 +1,335 @@
+<template>
+  <view class="h100">
+    <scroll-view scroll-y class="main-view">
+      <view class="flex bg-white padding">
+        <image class="img" src="{{orderInfo.image}}" mode="aspectFill">
+        </image>
+        <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
+          <view>{{orderInfo.courseTittle}}</view>
+          <view class="flex flex-sb"><text>{{payParams.periodName}}</text> <text><text
+                class="cuIcon-close lg text-gray"></text>{{payParams.courseNum}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="cu-list menu border margin-top padding-top padding-bottom-sm bg-white">
+        <button open-type="getUserInfo" bindgetuserinfo="getChilds" class="cu-item arrow">
+          <view class="content">
+            <view class="padding-bottom-sm">
+              <text class="text-orange text-lg">出行人</text>
+            </view>
+            <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
+              <view class="padding-bottom-xs text-left">
+                <text
+                  class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
+                <text class=" text-df">{{item.name}}</text>
+                <text class="text-df">（{{item.cardNum}}）</text>
+              </view>
+            </repeat>
+          </view>
+          <view class="action">
+            <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber"
+              bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
+            <view wx:if="{{!childs.length && mobile}}" class="text-grey text-df">请选择</view>
+          </view>
+        </button>
+      </view>
+      <view wx:if="{{payParams.orderType == 1}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
+        <view class="text-black text-df"> 购买数量 </view>
+        <view class="text-lg "><text
+            class="text-black padding-sm padding-top-xs padding-bottom-xs">{{payParams.courseNum}}</text></view>
+      </view>
+      <view class="cu-form-group align-start padding-bottom-lg">
+        <view class="title text-orange text-df">众筹语：</view>
+      </view>
+      <view class="cu-form-group align-start padding-bottom-lg">
+        <textarea maxlength="100" value="{{payParams.remark}}" class="textarea text-df" placeholder-class="text-df"
+          bindinput="textareaBInput" placeholder="写一段众筹语可以让大家更懂你的需要~"></textarea>
+        <view class="num">{{payParams.remark.length}} / 100</view>
+      </view>
+    </scroll-view>
+    <view class="cu-bar tabbar border shop solid-top bg-gray">
+      <view class="bg-orange submit text-lg {{canpay?'':'disable'}}" @tap="pay">发起众筹</view>
+    </view>
+
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import config from "@/api/config"
+  import api from "../api.js"
+  import Tips from "@/utils/Tips"
+  import WxUtils from "@/utils/WxUtils"
+  import auth from "@/api/auth"
+  export default class Dialog extends wepy.page {
+    config = {
+      navigationBarTitleText: "选择出行人"
+    };
+    data = {
+      modalName: '',
+      orderInfo: {},
+      payParams: {},
+      childs: [],
+      mobile: '',
+      canpay: true,
+      paymentType: 1,
+      coupons: [],
+      couponUser: {
+        id: ''
+      },
+      opt: {},
+      bg_img: {
+        cou_bg_1: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141029_82067.png',
+        cou_bg_0: 'https://images.kuan1.cn/kuan1/upload/image/20201227/20201227141101_21176.png',
+      }
+    };
+    async onLoad(opt) {
+      this.opt = opt
+      this.paymentType = this.opt.pt
+      this.mobile = wepy.getStorageSync('mobile');
+      // this.payParams = wepy.$instance.globalData.orderInfo
+      // this.orderInfo = wepy.$instance.globalData.courseInfo
+      await this.getorderInfo()
+    }
+    onShow() {
+      this.childs = wepy.$instance.globalData.childs
+    }
+    onUnload() {
+      this.childs = wepy.$instance.globalData.childs = []
+    }
+    // 根据课程详情参数，生成支付订单信息
+    async getorderInfo() {
+      /*
+        params ={
+          orderType: ${opt.type}, // 订单类型
+          courseId: ${opt.cid}, // 课程id
+          periodId: ${opt.pid}, // 营期id
+          num: ${opt.num}, // 数量
+          actId: ${opt.aId}, // 活动id
+        }
+      */
+      let params = {
+        orderType: this.opt.type,
+        courseId: this.opt.cid,
+        periodId: this.opt.pid,
+        num: this.opt.num,
+        actId: this.opt.aid,
+        couponUserId: this.couponUser.id,
+        paymentType: this.paymentType
+      }
+      let {
+        errcode,
+        data
+      } = await config.orderInfo(params)
+      if (errcode == 200) {
+        this.orderInfo = data.course
+        let _data = data
+        // 有可用券 并选中
+        if (data.couponUser) {
+          this.couponUser = data.couponUser
+        } else {
+          this.couponUser = {
+            id: ''
+          }
+        }
+        // 有可用券
+        if (data.couponUserList) {
+          this.coupons = data.couponUserList
+        } else {
+          this.coupons = []
+        }
+
+        this.payParams = {
+          childIds: '',
+          courseId: _data.courseId,
+          courseNum: _data.num,
+          periodId: _data.periodId,
+          remark: '',
+          orderType: _data.orderType,
+          periodName: _data.period,
+          actId: _data.actId,
+          price: _data.totalPrice,
+          actPintuanId: this.opt.actpid,
+          paymentType: this.paymentType,
+          couponUserId: this.couponUser.id
+        }
+      }
+      this.$apply()
+    }
+    methods = {
+      touse(coupon) {
+        this.couponUser = coupon
+        this.modalName = ''
+        this.getorderInfo()
+      },
+      hideModal() {
+        this.modalName = ''
+      },
+      openCoupons() {
+        this.modalName = 'coupons'
+      },
+      async bindgetphonenumber(e) {
+        if (e.detail.errMsg == "getPhoneNumber:ok") {
+          let mobile = await auth.getPhone(e.detail)
+          if (mobile) {
+            wepy.setStorageSync('mobile', mobile);
+            this.mobile = mobile
+          }
+          this.$apply()
+        }
+      },
+      textareaBInput(e) {
+        this.payParams.remark = e.detail.value
+      },
+      paymentType(type) {
+        this.paymentType = type
+        this.getorderInfo()
+      },
+      plus() {
+        wx.vibrateShort()
+        // this.payParams.courseNum = this.payParams.courseNum + 1
+        this.opt.num = parseInt(this.opt.num) + 1
+        this.childs = []
+        this.getorderInfo()
+      },
+      minus() {
+        if (this.opt.num > 1) {
+          wx.vibrateShort()
+          this.opt.num = parseInt(this.opt.num) - 1
+          this.childs = []
+          this.getorderInfo()
+        }
+      },
+      async getChilds(e) {
+        if (!this.mobile) {
+          return false
+        }
+        if (e.detail.errMsg == "getUserInfo:ok") {
+          await auth.getUserinfo(e.detail)
+          wepy.navigateTo({
+            url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
+          });
+        }
+      },
+      async pay() {
+        if (!this.childs.length) {
+          Tips.toast("请先选择出行人", res => {}, 'none');
+          return false
+        }
+        let ids = this.childs.map(e => {
+          return e.id
+        })
+        let params = {
+          crowdfundingId: 2,
+          courseId: this.payParams.courseId,
+          periodId: this.payParams.periodId,
+          copywriting: this.payParams.remark,
+          childId: ids.join(',')
+        }
+        this.canpay = false
+        api.toCrowdfunding(params).then(res => {
+          if (res.errcode == 200) {
+            Tips.toast( "发起成功！正在跳转…", r => {
+             
+            }, 'none');
+          }else{
+            Tips.toast( res.errmsg, r => {
+              
+            }, 'none');
+          }
+          wx.redirectTo({
+            url: './page?id=' + res.data.regId
+          });
+        }).catch(err => {
+          this.canpay = true
+          this.$apply()
+        })
+      }
+    };
+  }
+</script>
+<style>
+  page {
+    height: 100%;
+    background-color: #fafafa;
+  }
+</style>
+
+<style lang="less" scoped>
+  .disable {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .img {
+    width: 200rpx;
+    height: 200rpx;
+  }
+
+  .main-view {
+    height: calc(~"100% - 100rpx");
+  }
+
+  .textarea {
+    background-color: #fafafa;
+    padding: 10rpx 20rpx;
+  }
+
+  .num {
+    position: absolute;
+    right: 30rpx;
+    bottom: 16rpx
+  }
+
+  .align-start {
+    position: relative;
+  }
+
+  .radius {
+    border-radius: 50%
+  }
+
+  .coups-item {
+    width: 631rpx;
+    height: 218rpx;
+    border-radius: 10rpx;
+    box-sizing: border-box;
+    position: relative;
+    margin: 30rpx auto;
+    background-size: 100% auto;
+    color: #fff;
+    font-size: 30rpx;
+
+    .price-box {
+      width: 180rpx;
+      height: 218rpx;
+      line-height: 218rpx;
+      text-align: center;
+      font-size: 70rpx;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .name {
+      position: absolute;
+      left: 200rpx;
+      top: 40rpx;
+    }
+
+    .maner {
+      position: absolute;
+      left: 200rpx;
+      bottom: 40rpx;
+      font-size: 24rpx;
+    }
+
+    .btn-c {
+      width: 160rpx;
+      height: 218rpx;
+      position: absolute;
+      right: 0;
+      bottom: 0;
+    }
+  }
+</style>

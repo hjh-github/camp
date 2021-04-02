@@ -3,7 +3,8 @@
   <view class="h100">
     <loading wx:if="{{!isShow}}" />
     <view wx:if="{{isShow}}" class="h100">
-      <hel/>
+      <shadow />
+      <!-- <hel/> -->
       <ordering/>
       <cHeader></cHeader>
       <view class="main">
@@ -27,6 +28,7 @@
   import cHeader from "@/components/home/header"
   import cSwiper from "@/components/common/swiper"
   import loading from "@/components/common/loading"
+  import shadow from "@/components/common/shadow"
   import contact from "@/components/common/contact"
   import Navs from "@/components/home/navs"
   import scrollNav from "@/components/home/scrollNav"
@@ -69,7 +71,8 @@
       isLoad: true,
       loadmoring: false,
       _city: '',
-      member:{}
+      member:{},
+      homeData:{}
     };
     components = {
       cSwiper,
@@ -80,7 +83,8 @@
       loading,
       hel,
       ordering,
-      contact
+      contact,
+      shadow
     }
     config = {
       navigationBarTitleText: "",
@@ -106,6 +110,9 @@
       await auth.login()
       this.member = wepy.getStorageSync('member');
       await this.load()
+      if(this.homeData.popwindow.length){
+        this.$invoke('shadow','load',this.homeData.popwindow)
+      }
       this.isShow = true
       this.$apply()
     }
@@ -134,6 +141,7 @@
       wx.setNavigationBarTitle({
         title: homeData.head
       })
+      this.homeData = homeData
       this.swipers.list = homeData.banners
       this.navs.list = homeData.navs
       this.scrollNav = _scrollNav.concat(homeData.types)

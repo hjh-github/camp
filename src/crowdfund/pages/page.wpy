@@ -4,13 +4,14 @@
         <view style="width:690rpx;" class="flex flex-c flex-sb padding-left padding-right">
             <view wx:if="{{routes.length < 1}}"></view>
             <navigator wx:else class="line-white radius cu-tag" url="/pages/home/index" open-type="switchTab">返回首页</navigator>
-            <view>活动规则</view>
+            <!-- <view>活动规则</view> -->
+            <view></view>
         </view>
         <view class="content-bar">
             <view class="cu-avatar xl round margin-left" style="background-image:url({{info.reg.profilePhoto}});"></view>
             <view class="bg-white radius content ">
                 <view class="margin-top-sm tetx-gray text-center">{{info.reg.name}}</view>
-                <view class="margin-top-sm tetx-black text-center">我发现了一件好货，来一起砍价优惠购！</view>
+                <!-- <view class="margin-top-sm tetx-black text-center">我发现了一件好货，来一起砍价优惠购！</view> -->
                 <view class="content-msg margin-top-sm">
                     <view class="flex bg-white padding">
                         <image class="img radius" src="{{courseInfo.image}}" mode="aspectFill">
@@ -26,13 +27,13 @@
             </view>
         </view>
         <view class="progress margin-top-xl margin-left margin-right">
-            <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent > 80 ? 80 : percent}}%">已砍{{cutPrice}}</view>
+            <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
             <view class="cu-progress round striped {{active?'active':''}}">
                 <view class="bg-orange" style="width:{{percent}}%"></view>
             </view>
             <view class="flex flex-c flex-sb margin-left margin-right margin-top-sm text-df">
-                <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
-                <view>底价：<text class="text-price">{{ActBargainReg.cutMinPrice}}</text></view>
+               <!-- <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
+                <view>底价：<text class="text-price">{{ActBargainReg.cutMinPrice}}</text></view> -->
             </view>
             <view wx:if="{{info.owner == 1}}" class="flex flex-c flex-jc">
                 <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-orange text-white nowrap border-2 shadow text-bold" @tap="toshare">邀请好友砍价</button>
@@ -78,6 +79,7 @@
 <script>
     import wepy from "wepy"
     import config from "@/api/config"
+    import api from "../api"
     import auth from "@/api/auth"
     import Lang from "@/utils/Lang"
     import store from "@/store/utils"
@@ -130,8 +132,8 @@
             cutPrice() {
                 if (this.ActBargainReg) {
                     let act = this.ActBargainReg
-                    let _p = Lang.sum([act.coursePrice, -act.courseNewPrice], 2),
-                        _sp = Lang.sum([act.coursePrice -act.cutMinPrice], 2)
+                    let _p =  act.supportedAmounts * 1 ,
+                        _sp = act.coursePrice * 1
                     this.percent = parseInt(_p / _sp * 100)
                     return _p
                 }
@@ -142,6 +144,7 @@
                 // 来自页面内转发按钮
                 // console.log(res.target)
             }
+
             return {
                 title: this.courseInfo.courseTittle,
                 imageUrl: this.courseInfo.image,
@@ -215,7 +218,7 @@
             let {
                 errcode,
                 data
-            } = await config.toCutDetai(this.regId)
+            } = await api.getSupportDetai(this.regId)
             if (errcode == 200) {
                 this.info = data
                 this.courseInfo = data.courseInfo

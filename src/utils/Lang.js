@@ -1,36 +1,43 @@
 export default class Lang {
-  static previewImage(current,urls) {
+  static previewImage(current, urls) {
     wx.previewImage({
       current, // 当前显示图片的http链接
       urls // 需要预览的图片http链接列表
     })
   }
   static downImg(url, callback = null) {
-    console.log(url)
-    //图片保存到本地
-    wx.saveImageToPhotosAlbum({
-      filePath: url,
-      success: async function (data) {
-        if (callback) callback(data)
-      },
-      fail: function (err) {
-        console.log(err);
-        if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
-          console.log("当初用户拒绝，再次发起授权")
-          wx.openSetting({
-            success(settingdata) {
-              console.log(settingdata)
-              if (settingdata.authSetting['scope.writePhotosAlbum']) {
-                console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
-              } else {
-                console.log('获取权限失败，给出不给权限就无法正常使用的提示')
-              }
-            }
-          })
-        }
-      },
-      complete(res) {
+    wx.downloadFile({
+      url,
+      success: function(res) {
         console.log(res);
+        //图片保存到本地
+        wx.saveImageToPhotosAlbum({
+          filePath: res.tempFilePath,
+          success: async function(data) {
+            if (callback) callback({code:0})
+          },
+          fail: function(err) {
+            console.log(err);
+            if (err.errMsg === "saveImageToPhotosAlbum:fail auth deny") {
+              console.log("当前用户拒绝，再次发起授权")
+              if (callback) callback({code:-1})
+            }
+          },
+          complete(res) {
+            console.log(res);
+          }
+        })
+      }
+    })
+  }
+  static openSetting(){
+    wx.openSetting({
+      success(settingdata) {
+        if (settingdata.authSetting['scope.writePhotosAlbum']) {
+          console.log('获取权限成功，给出再次点击图片保存到相册的提示。')
+        } else {
+          console.log('获取权限失败，给出不给权限就无法正常使用的提示')
+        }
       }
     })
   }
@@ -90,14 +97,15 @@ export default class Lang {
     };
     if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
     for (let k in o) {
-      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (('00' + o[k]).substr(('' + o[k]).length)));
+      if (new RegExp('(' + k + ')').test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : ((
+        '00' + o[k]).substr(('' + o[k]).length)));
     }
     return fmt;
   }
   /**
-    * 获取距离当前日期第n天的日期
-    * @param {n} day 
-    */
+   * 获取距离当前日期第n天的日期
+   * @param {n} day
+   */
   static getDay(day) {
     var today = new Date();
     var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
@@ -170,7 +178,8 @@ export default class Lang {
       }
       birthStr = birthStr + '-' + idCard.charAt(8) + idCard.charAt(9) + '-' + idCard.charAt(10) + idCard.charAt(11);
     } else if (18 == idCard.length) {
-      birthStr = idCard.charAt(6) + idCard.charAt(7) + idCard.charAt(8) + idCard.charAt(9) + '-' + idCard.charAt(10) + idCard.charAt(11) + '-' + idCard.charAt(12) + idCard.charAt(13);
+      birthStr = idCard.charAt(6) + idCard.charAt(7) + idCard.charAt(8) + idCard.charAt(9) + '-' + idCard.charAt(10) +
+        idCard.charAt(11) + '-' + idCard.charAt(12) + idCard.charAt(13);
     }
     return birthStr;
   }
@@ -185,4 +194,3 @@ export default class Lang {
     }
   }
 }
-

@@ -1,0 +1,203 @@
+<template>
+  <view>
+    <view class="padding-sm flex flex-wrap">
+      <repeat for="{{homeData.videoType}}" key="index" index="index" item="item">
+        <view class="padding-xs" @tap="TypeFn({{item.id}})">
+          <view class="cu-tag radius bg-{{ColorList[index]}}">{{item.name}}</view>
+        </view>
+      </repeat>
+    </view>
+    <view class="cu-card case">
+      <repeat for="{{videoData}}" key="_index" index="index" item="item">
+        <view class="cu-item">
+          <view class="image">
+            <image wx:if='{{index!=videoIndex}}' class="video" mode='aspectFill'
+              src='{{item.img}}'></image>
+            <view wx:if='{{index!=videoIndex}}' @tap="startVideo({{index}})" class="playIcon flex flex-c flex-jc">
+              <text class="cuIcon-playfill lg text-white" style="font-size: 70rpx;"></text>
+            </view>
+            <video wx:if='{{index==videoIndex}}' id="{{'video' + index }}" class="video" src="{{item.url}}"></video>
+          </view>
+          <view class="cu-list">
+            <view class="cu-item main two-line">
+              <text>{{item.title}}</text>
+            </view>
+            <view class="cu-item ad">
+              <text class="padding-right-sm">{{item.author}}</text><text>观看 {{item.browseCount}}</text>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5;margin-top:{{videoData.length > 0 ? '' : '150rpx;'}}"></view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import api from "../api.js"
+  import auth from "@/api/auth"
+
+  export default class Dialog extends wepy.page {
+    config = {
+      navigationBarTitleText: "视频中心"
+    };
+    data = {
+      close: "/static/images/close.png",
+      ColorList: ['red',
+        'orange',
+        'yellow',
+        'olive',
+        'green',
+        'cyan',
+        'blue',
+        'purple',
+        'mauve',
+        'pink',
+        'brown'
+      ],
+      homeData: [],
+      videoData: [],
+      videoIndex: '-1',
+      isLoad:false,
+      typeId:'',
+      pageIndex:1
+
+    };
+    async onLoad() {
+      await auth.login()
+      this.load()
+    }
+    // 转发暂时先不开启
+    onShareAppMessage(res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: '',
+        path: '/vidio/pages/page'
+      }
+    }
+    async load() {
+      this.homeData = await api.videoIndex()
+      this.videoData = this.homeData.video
+      this.startVideo()
+      this.$apply()
+    }
+    showMore() {
+      this.isLoad = false
+    }
+    noMore() {
+      this.isLoad = true
+    }
+    async loadmore(pageIndex) {
+      let params = {
+        typeId: this.typeId,
+        pageIndex: pageIndex
+      }
+      let video = await api.videoList(params)
+      if (!video.video.length) {
+        if (pageIndex == 1) {
+          this.videoData = video.video
+        }
+        this.pageIndex = pageIndex - 1
+        this.noMore()
+        this.$apply()
+        return false
+      } else {
+        if (pageIndex > 1) this.pageIndex = pageIndex
+        if (pageIndex == 1) {
+          this.videoData = video.video
+        } else {
+          this.videoData = this.video.concat(video.video)
+        }
+      }
+      this.$apply()
+    }
+    startVideo(index) {
+      if (this.videoIndex != '-1') {
+        var videoContextPrev = wx.createVideoContext('video' + this.videoIndex)
+        videoContextPrev.stop()
+      }
+      this.videoIndex = index
+      setTimeout(() => {
+        var videoContextCurrent = wx.createVideoContext('video' + index)
+        videoContextCurrent.play()
+        this.$apply()
+      }, 100)
+    }
+    async onPullDownRefresh() {
+      await this.loadmore(1)
+      this.pageIndex = 1
+      this.$apply()
+      wx.stopPullDownRefresh()
+    }
+    onReachBottom() {
+      this.getMore()
+    }
+    async getMore() {
+      if (this.loadmoring) {
+        return false
+      }
+      this.loadmoring = true
+      this.showMore()
+      await this.loadmore(this.pageIndex + 1)
+      this.loadmoring = false
+      this.$apply()
+    }
+    methods = {
+      startVideo(index) {
+        this.startVideo(index)
+      },
+      TypeFn(id){
+        this.typeId = id
+        this.loadmore(1)
+      }
+    };
+  }
+</script>
+<style>
+  page {
+    height: 100%;
+  }
+</style>
+
+<style lang="less" scoped>
+  .cu-card .cu-item {
+    border-radius: 0;
+    margin-top: 0
+  }
+
+  .image {
+    position: relative;
+  }
+
+  .playIcon {
+    width: 690rpx;
+    height: 390rpx;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .video {
+    width: 690rpx;
+    height: 390rpx;
+  }
+
+  .main {
+    max-height: 100rpx;
+    padding: 0 30rpx;
+    color: #333;
+    font-size: 30rpx;
+    line-height: 50rpx;
+  }
+
+  .ad {
+    color: #666;
+    padding: 0 30rpx 10rpx;
+    font-size: 22rpx;
+  }
+</style>

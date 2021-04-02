@@ -78,7 +78,7 @@
     .container {
         border-bottom: 1px solid #eee;
         height: 90rpx;
-        z-index: 9999;
+        z-index: 7777;
     }
     .nav {
         width: 630rpx;
