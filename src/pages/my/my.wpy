@@ -17,7 +17,7 @@
       </view>
       <view class="vip_card shadow bg-white radius">
         <view class="flex flex-c flex-sb text-xs  padding-lr-sm vip-title">
-          <view class="text-yellow text-df flex flex-c padding-tb-xs">
+          <view class="text-yellow1 text-df flex flex-c padding-tb-xs">
             <image src="/static/images/vip-crown.png" style="width:30rpx;height:25rpx;margin-right:10rpx;" mode="scaleToFill" />会员专区</view>
           <view wx:if="{{myInfo.memberTypeId == 1}}" data-url="/agent/pages/buyVip" @tap="navi" class="fx-btn">开通超级会员，查看权益 ></view>
           <view wx:if="{{myInfo.memberTypeId == 2}}" data-url="/agent/pages/buyVip?id=1" @tap="navi" class="fx-btn">查看超级会员权益 ></view>
@@ -50,8 +50,8 @@
     <view class="my-assets shadow bg-white">
       <view class="flex flex-c flex-sb text-xs solid-bottom padding-lr">
         <view class="text-black text-df flex flex-c padding-tb-sm">我的资产</view>
-        <view wx:if="{{myInfo.memberTypeId == 1}}" data-url="/agent/pages/buyVip" @tap="navi" class="text-yellow">成为超级会员 ></view>
-        <view wx:if="{{myInfo.memberTypeId == 2}}" class="text-yellow">欢迎您，尊贵的超级会员</view>
+        <view wx:if="{{myInfo.memberTypeId == 1}}" data-url="/agent/pages/buyVip" @tap="navi" class="text-yellow1">成为超级会员 ></view>
+        <view wx:if="{{myInfo.memberTypeId == 2}}" class="text-yellow1">欢迎您，尊贵的超级会员</view>
       </view>
       <view wx:if="{{assets.total}}" class="flex text-center padding-tb-xl text-grey solid-bottom bg-white">
         <view class="flex flex-sub flex-direction {{index>0?'solid-left':''}}">

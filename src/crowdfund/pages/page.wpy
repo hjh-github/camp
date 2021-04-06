@@ -1,312 +1,390 @@
-
 <template>
-    <view class="container bg-gradual-orange_vertical padding-top flex flex-y flex-c">
-        <view style="width:690rpx;" class="flex flex-c flex-sb padding-left padding-right">
-            <view wx:if="{{routes.length < 1}}"></view>
-            <navigator wx:else class="line-white radius cu-tag" url="/pages/home/index" open-type="switchTab">返回首页</navigator>
-            <!-- <view>活动规则</view> -->
-            <view></view>
-        </view>
-        <view class="content-bar">
-            <view class="cu-avatar xl round margin-left" style="background-image:url({{info.reg.profilePhoto}});"></view>
-            <view class="bg-white radius content ">
-                <view class="margin-top-sm tetx-gray text-center">{{info.reg.name}}</view>
-                <!-- <view class="margin-top-sm tetx-black text-center">我发现了一件好货，来一起砍价优惠购！</view> -->
-                <view class="content-msg margin-top-sm">
-                    <view class="flex bg-white padding">
-                        <image class="img radius" src="{{courseInfo.image}}" mode="aspectFill">
-                        </image>
-                        <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
-                            <view>{{courseInfo.courseTittle}}</view>
-                            <view class="flex flex-sb text-yellow">{{ActBargainReg.awardsStatusDesc}}</view>
-                            <view class="flex flex-sb {{success ? 'text-green' : 'text-red'}}">{{status[ActBargainReg.awardsStatus].b}}</view>
-                            <l-countdown wx:if="{{ActBargainReg.awardsStatus == 0}}" time="{{ActBargainReg.invalidTime}}" />
-                        </view>
-                    </view>
+  <view class="h100">
+    <scroll-view scroll-y class="container bg-gradual-orange_vertical padding-top  ">
+      <view class="content-bar">
+        <view class="cu-avatar xl round margin-left" style="background-image:url({{info.reg.profilePhoto}});"></view>
+        <view class="bg-white radius content ">
+          <view class="margin-top-sm tetx-black text-lg text-center">{{info.reg.name}}的众筹</view>
+          <view class="margin-top-sm tetx-gray text-xs text-center">2021年4月6日 20:00:21 发起</view>
+          <view class="radius padding">
+            <text> {{info.reg.copywriting}}</text>
+          </view>
+          <view class="cu-card case">
+            <view class="cu-item">
+              <view class="image">
+                <image class="video" mode='widthFix' src='{{courseInfo.image}}'></image>
+              </view>
+              <view class="cu-list">
+                <view class="cu-item main two-line">
+                  <text class="text-xl">{{courseInfo.courseTittle}}</text>
                 </view>
+                <view class="cu-item ad">
+                  <l-countdown wx:if="{{ActBargainReg.awardsStatus == 0}}" time="{{ActBargainReg.invalidTime}}" />
+                </view>
+              </view>
+              <view class="text-df flex flex-c" >
+                <view class="cu-tag radius bg-red ">目标金额：<text class="text-xl">{{ActBargainReg.coursePrice}}元</text></view>
+                <view class="text-red text-xs margin-left">已得到：<text class="text-xl">{{info.reg.supportNum}}人</text>支持</view>
+              </view>
             </view>
+
+          </view>
+
         </view>
-        <view class="progress margin-top-xl margin-left margin-right">
-            <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
-            <view class="cu-progress round striped {{active?'active':''}}">
-                <view class="bg-orange" style="width:{{percent}}%"></view>
-            </view>
-            <view class="flex flex-c flex-sb margin-left margin-right margin-top-sm text-df">
-               <!-- <view>原价：<text class="text-price">{{ActBargainReg.coursePrice}}</text></view>
-                <view>底价：<text class="text-price">{{ActBargainReg.cutMinPrice}}</text></view> -->
-            </view>
-            <view wx:if="{{info.owner == 1}}" class="flex flex-c flex-jc">
-                <button wx:if="{{info.status == 1}}" style="width:400rpx;" class="cu-btn round bg-orange text-white nowrap border-2 shadow text-bold" @tap="toshare">邀请好友砍价</button>
-                <button wx:if="{{info.status == 1 || info.status == 7}}" style="width:300rpx;" @tap="buy" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去下单</button>
-                <button wx:if="{{info.status == 4}}" style="width:300rpx;" @tap="topay" class="cu-btn round bg-yellow text-white border-2 shadow text-bold">去付款</button>
-            </view>
-            <!--   -->
-            <view wx:if="{{info.owner == 0}}" class="flex flex-c flex-jc">
-                <button style="width:600rpx;white-space: nowrap;" open-type="getUserInfo" bindgetuserinfo="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
-                <!-- -->
-                <!--  -->
-                <button wx:if="{{info.status == 2 || info.status == 3}}"  class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" @tap="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
-            </view>
+      </view>
+      <view class="progress  margin-left margin-right">
+        <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted"
+          style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
+        <view class="cu-progress round striped {{active?'active':''}}">
+          <view class="bg-orange" style="width:{{percent}}%"></view>
         </view>
-        <view class="log-box radius padding">
-            <view class="text-center text-lg solid-bottom padding-bottom">砍价记录</view>
-            <repeat for="{{bargainRecords}}" key="index" index="index" item="item">
+      </view>
+      <view class="log-box radius padding margin-left margin-top">
+          <view class="text-left text-lg solid-bottom padding-bottom">支持者（{{info.reg.supportNum}}人）</view>
+          <scroll-view scroll-y style="max-height:600rpx;">
+            <repeat for="{{info.supports}}" key="index" index="index" item="item">
                 <view class="flex flex-c margin-top text-df">
                     <view class="cu-avatar lg round" style="background-image:url({{item.profilePhoto}});"></view>
-                    <view class="weui-flex__item text-center">{{item.name}}</view>
-                    <view>砍掉 {{item.cutPrice}}元</view>
+                    <view class="weui-flex__item text-left padding-left">{{item.name}}</view>
+                    <view class="text-red">支持了 {{item.moneyOrder}}元</view>
                 </view>
-            </repeat>
-        </view>
-        <view class="cu-modal {{modalName=='share'?'show':''}}">
-            <view class="cu-dialog" style="width:450rpx">
-                <view class="cu-bar bg-white justify-end">
-                    <view class="content"></view>
-                    <view class="action" bindtap="hideModal">
-                        <text class="cuIcon-close text-red"></text>
+                <view class="flex flex-c margin-top text-df">
+                    <view class="lg round"></view>
+                    <view class="cu-list">
+                      <view class="cu-item main padding-left-sm">
+                        <text class="text-df">{{item.copywriting}}</text>
+                      </view>
+                      <view class="cu-item main padding-left-sm text-gray margin-tb-xs">
+                        <text class="text-df">{{item.createTime}}</text>
+                      </view>
                     </view>
                 </view>
-                <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
-                    <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm" >分享邀请</text></button>
-                    <button class="action" style="line-height:1" open-type="getUserInfo" bindgetuserinfo="createImg"><view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm" >海报邀请</text></button>
-                </view>
-            </view>
-        </view>
-        <contact />
+                <view class="bg-gray w100" style="height:1px" ></view>
+            </repeat>
+          </scroll-view>
+      </view>
+      <!-- <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo> -->
+      <scroll-view scroll-x class="bg-white nav margin-top solid-bottom">
+          <view class="flex text-center">
+            <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
+            <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
+            <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
+          </view>
+        </scroll-view>
+        <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
+          <swiper-item>
+            <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
+              <rich-text nodes="{{courseInfo.details}}"></rich-text>
+            </scroll-view>
+          </swiper-item>
+          <swiper-item>
+            <scroll-view scroll-y class="bg-white h100 padding">
+              <rich-text nodes="{{courseInfo.trip}}"></rich-text>
+            </scroll-view>
+          </swiper-item>
+          <swiper-item>
+            <scroll-view scroll-y class="bg-white h100 padding">
+              <rich-text nodes="{{courseInfo.notice}}"></rich-text>
+            </scroll-view>
+          </swiper-item>
+        </swiper>
+      </scroll-view>
+    </scroll-view>
+    <view wx:if="{{info.owner == 1}}"  class="cu-bar tabbar border shop solid-top bg-white">
+      <view class="action text-left padding-left "  @tap="topay" style="width:375rpx;">
+        <text class="text-lg">自己付</text>
+      </view>
+      <view class="bg-orange submit text-lg" @tap="toshare">找人帮我筹</view>
     </view>
+     <view wx:if="{{info.owner == 0}}" class="cu-bar tabbar border shop solid-top bg-white">
+       <view class="action text-left padding-left "  @tap="topay" style="width:375rpx;">
+         <text class="text-lg">支持他</text>
+       </view>
+       <view class="bg-orange submit text-lg" @tap="toshare">我也报名</view>
+     </view>
+
+
+
+    <view class="cu-modal {{modalName=='share'?'show':''}}">
+      <view class="cu-dialog" style="width:450rpx">
+        <view class="cu-bar bg-white justify-end">
+          <view class="content"></view>
+          <view class="action" bindtap="hideModal">
+            <text class="cuIcon-close text-red"></text>
+          </view>
+        </view>
+        <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
+          <button class="action" open-type="share" style="line-height:1">
+            <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
+          </button>
+          <button class="action" style="line-height:1" open-type="getUserInfo" bindgetuserinfo="createImg">
+            <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
+          </button>
+        </view>
+      </view>
+    </view>
+    <!-- <contact /> -->
+
+  </view>
 </template>
 
 <script>
-    import wepy from "wepy"
-    import config from "@/api/config"
-    import api from "../api"
-    import auth from "@/api/auth"
-    import Lang from "@/utils/Lang"
-    import store from "@/store/utils"
-    import contact from "@/components/common/contact"
-    export default class Dialog extends wepy.page {
-        data = {
-            close: "/static/images/close.png",
-            active: true,
-            routes: 0,
-            regId: '',
-            courseInfo: {},
-            ActBargainReg: {
-                invalidTime: ''
-            },
-            bargainRecords: [],
-            dj: 3000,
-            percent: 0,
-            info: {},
-            modalName: '',
-            status: {
-                0: {
-                    a: '砍价中',
-                    b: ''
-                },
-                1: {
-                    a: '砍价完成',
-                    b: '待支付'
-                },
-                2: {
-                    a: '砍价完成',
-                    b: '已支付'
-                },
-                3: {
-                    a: '已过期',
-                    b: '砍价结束'
-                }
-            }
-        };
-        config = {
-            navigationBarBackgroundColor: '#ed1c24',
-            navigationBarTitleText: '砍价',
-            "usingComponents": {
-                "l-countdown": "../../components/countdown/index"
-            }
-        }
-        components = {
-            contact
-        }
-        computed = {
-            cutPrice() {
-                if (this.ActBargainReg) {
-                    let act = this.ActBargainReg
-                    let _p =  act.supportedAmounts * 1 ,
-                        _sp = act.coursePrice * 1
-                    this.percent = parseInt(_p / _sp * 100)
-                    return _p
-                }
-            }
-        }
-        onShareAppMessage(res) {
-            if (res.from === 'button') {
-                // 来自页面内转发按钮
-                // console.log(res.target)
-            }
+  import wepy from "wepy"
+  import config from "@/api/config"
+  import api from "../api"
+  import auth from "@/api/auth"
+  import Lang from "@/utils/Lang"
+  import store from "@/store/utils"
+  import contact from "@/components/common/contact"
+  import cInfo from "@/components/detaile/info";
 
-            return {
-                title: this.courseInfo.courseTittle,
-                imageUrl: this.courseInfo.image,
-                path: '/pages/activity/bargain?id=' + this.ActBargainReg.id + '&agentId=' + this.member.agentId
-            }
+  export default class Dialog extends wepy.page {
+    data = {
+      close: "/static/images/close.png",
+      TabCur:0,
+      active: true,
+      routes: 0,
+      regId: '',
+      courseInfo: {},
+      ActBargainReg: {
+        invalidTime: ''
+      },
+      bargainRecords: [],
+      dj: 3000,
+      percent: 0,
+      info: {},
+      modalName: '',
+      status: {
+        0: {
+          a: '砍价中',
+          b: ''
+        },
+        1: {
+          a: '砍价完成',
+          b: '待支付'
+        },
+        2: {
+          a: '砍价完成',
+          b: '已支付'
+        },
+        3: {
+          a: '已过期',
+          b: '砍价结束'
         }
-        async onLoad(opt) {
-            this.regId = opt.id || opt.scene
-            this.routes = getCurrentPages()
-            await auth.login()
-            this.member = wepy.getStorageSync('member');
-            await this.load()
-            this.$apply()
-        }
-        methods = {
-            hideModal() {
-                this.modalName = ''
-            },
-            async createImg(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    store.save('shareInfo', {
-                        course: this.courseInfo,
-                        path: 'pages/activity/bargain',
-                        id: this.ActBargainReg.id,
-                        type:3,
-                        courseId:this.courseInfo.id
-                    })
-                    wepy.navigateTo({
-                        url: '/pages/home/share'
-                    });
-                }
-            },
-            toshare() {
-                this.modalName = 'share'
-            },
-            async tocut(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    wepy.navigateTo({
-                        url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
-                    });
-                }
-            },
-            buy() {
-                wepy.navigateTo({
-                    url: `/pages/detaile/sureOrder?type=2&pid=${this.info.reg.periodId}&cid=${this.info.reg.courseId}&num=1&aid=${this.info.regId}&actpid=0`
-                });
-            },
-            topay() {
-                wepy.navigateTo({
-                    url: `/pages/my/order?id=${this.info.orderId}`
-                });
-            },
-            async onGotUserInfo(e) {
-                if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync('isFans') != 1) {
-                    wepy.navigateTo({
-                        url: `/pages/home/auth`
-                    });
-                } else {
-                    await this.helpBargain()
-                    await this.load()
-                    this.$apply()
-                }
-            },
-        };
-        async helpBargain() {
-            let res = await config.helpBargain(this.regId)
-        }
-        async load() {
-            let {
-                errcode,
-                data
-            } = await api.getSupportDetai(this.regId)
-            if (errcode == 200) {
-                this.info = data
-                this.courseInfo = data.courseInfo
-                this.ActBargainReg = data.reg
-                console.log(this.ActBargainReg.invalidTime)
-                this.bargainRecords = data.bargainRecords
-            }
-        }
+      }
+    };
+    config = {
+      navigationBarBackgroundColor: '#215E21',
+      navigationBarTitleText: '众筹',
+      "usingComponents": {
+        "l-countdown": "../../components/countdown/index"
+      }
     }
+    components = {
+      contact,
+      cInfo
+    }
+    computed = {
+      cutPrice() {
+        if (this.ActBargainReg) {
+          let act = this.ActBargainReg
+          let _p = act.supportedAmounts * 1,
+            _sp = act.coursePrice * 1
+          this.percent = parseInt(_p / _sp * 100)
+          return _p
+        }
+      }
+    }
+    onShareAppMessage(res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        // console.log(res.target)
+      }
+
+      return {
+        title: this.courseInfo.courseTittle,
+        imageUrl: this.courseInfo.image,
+        path: '/pages/activity/bargain?id=' + this.ActBargainReg.id + '&agentId=' + this.member.agentId
+      }
+    }
+    async onLoad(opt) {
+      this.regId = opt.id || opt.scene
+      this.routes = getCurrentPages()
+      await auth.login()
+      this.member = wepy.getStorageSync('member');
+      await this.load()
+      this.$apply()
+    }
+    methods = {
+      hideModal() {
+        this.modalName = ''
+      },
+      async createImg(e) {
+        if (e.detail.errMsg == "getUserInfo:ok") {
+          await auth.getUserinfo(e.detail)
+          store.save('shareInfo', {
+            course: this.courseInfo,
+            path: 'pages/activity/bargain',
+            id: this.ActBargainReg.id,
+            type: 3,
+            courseId: this.courseInfo.id
+          })
+          wepy.navigateTo({
+            url: '/pages/home/share'
+          });
+        }
+      },
+      toshare() {
+        this.modalName = 'share'
+      },
+      async tocut(e) {
+        if (e.detail.errMsg == "getUserInfo:ok") {
+          await auth.getUserinfo(e.detail)
+          wepy.navigateTo({
+            url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
+          });
+        }
+      },
+      tabSelect(e) {
+        this.TabCur = e.currentTarget.dataset.id || e.detail.current;
+      },
+      buy() {
+        wepy.navigateTo({
+          url: `/pages/detaile/sureOrder?type=2&pid=${this.info.reg.periodId}&cid=${this.info.reg.courseId}&num=1&aid=${this.info.regId}&actpid=0`
+        });
+      },
+      topay() {
+        wepy.navigateTo({
+          url: `/pages/my/order?id=${this.info.orderId}`
+        });
+      },
+      async onGotUserInfo(e) {
+        if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync(
+            'isFans') != 1) {
+          wepy.navigateTo({
+            url: `/pages/home/auth`
+          });
+        } else {
+          await this.helpBargain()
+          await this.load()
+          this.$apply()
+        }
+      },
+    };
+    async helpBargain() {
+      let res = await config.helpBargain(this.regId)
+    }
+    async load() {
+      let {
+        errcode,
+        data
+      } = await api.getSupportDetai(this.regId)
+      if (errcode == 200) {
+        this.info = data
+        this.courseInfo = data.courseInfo
+        this.ActBargainReg = data.reg
+        console.log(this.ActBargainReg.invalidTime)
+        this.bargainRecords = data.bargainRecords
+      }
+    }
+  }
 </script>
 <style>
-    page {
-        height: 100%;
-    }
+  page {
+    height: 100%;
+  }
 </style>
 
 
 <style lang="less" scoped>
-    .log-box {
+  .scroll-view {
+    height: calc(~"100% - 90rpx") !important;
+  }
+  .log-box {
+    background-color: rgba(255, 255, 255, 1);
+    color:#333;
+    width: 690rpx;
+  }
+
+  .solid-bottom {
+    border-color: #eee !important;
+  }
+
+  .opacity {
+    opacity: 0;
+  }
+
+  .border-2 {
+    border: 2px solid #fff;
+  }
+
+  .container {
+    height: calc(~"100% - 100rpx");
+    box-sizing: border-box;
+
+    .progress {
+      width: 690rpx;
+      position: relative;
+
+      .cu-progress {
+        border: 2px solid #fff;
         margin-top: 70rpx;
-        background-color: rgba(255, 255, 255, 0.4);
-        width: 690rpx;
-    }
-    .solid-bottom {
-        border-color: #eee !important;
-    }
-    .opacity {
-        opacity: 0;
-    }
-    .border-2 {
-        border: 2px solid #fff;
-    }
-    .container {
-        min-height: 100%;
-        box-sizing: border-box;
-        padding-bottom: 60rpx;
-        .progress {
-            width: 690rpx;
-            position: relative;
-            .cu-progress {
-                border: 2px solid #fff;
-                margin-top: 70rpx;
-            }
-            .cuted {
-                position: absolute;
-                top: 10rpx;
-                min-width: 20rpx;
-                margin-left: -46rpx;
-                white-space: nowrap;
-            }
-            .cu-btn {
-                box-sizing: border-box;
-                width: 550rpx;
-                height: 90rpx;
-                margin: 70rpx 70rpx 0;
-                &.bg-gray {
-                    pointer-events: none
-                }
-            }
-        }
-    }
-    .cu-avatar {
-        border: 2px solid #fff;
-    }
-    .content-bar {
-        width: 690rpx;
-        box-sizing: border-box;
-        padding-top: 64rpx;
-        position: relative;
-        .cu-avatar {
-            position: absolute;
-            left: 50%;
-            top: 0;
-            margin-left: -64rpx;
-        }
-        .content {
-            padding-top: 64rpx;
-            overflow: hidden;
-        }
-        .img {
-            width: 180rpx;
-            height: 180rpx;
-        }
-        .content-msg {
-            border-top: 2px solid #eee;
-        }
-    }
-    .nowrap {
+      }
+
+      .cuted {
+        position: absolute;
+        top: 10rpx;
+        min-width: 20rpx;
+        margin-left: -46rpx;
         white-space: nowrap;
+      }
+
+      .cu-btn {
+        box-sizing: border-box;
+        width: 550rpx;
+        height: 90rpx;
+        margin: 70rpx 70rpx 0;
+
+        &.bg-gray {
+          pointer-events: none
+        }
+      }
     }
+  }
+
+  .cu-avatar {
+    border: 2px solid #fff;
+  }
+
+  .content-bar {
+    width: 690rpx;
+    box-sizing: border-box;
+    padding-top: 64rpx;
+    position: relative;
+    margin-left:30rpx;
+    .cu-avatar {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      margin-left: -64rpx;
+    }
+
+    .content {
+      padding-top: 64rpx;
+      overflow: hidden;
+    }
+
+    .img {
+      width: 180rpx;
+      height: 180rpx;
+    }
+
+    .content-msg {
+      border-top: 2px solid #eee;
+    }
+  }
+
+  .nowrap {
+    white-space: nowrap;
+  }
 </style>

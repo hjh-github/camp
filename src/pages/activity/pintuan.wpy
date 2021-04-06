@@ -1,396 +1,421 @@
-
 <template>
-    <view class="h100">
-        <scroll-view scroll-y class="main-view">
-            <view id="info-box">
-                <!-- 轮播图 -->
-                <cSwiper :model.sync="swipers"></cSwiper>
-                <!-- 标题部分 -->
-                <ctitle :model.sync="courseInfo"></ctitle>
-                <!-- 选择规格 -->
-                <scroll-view wx:if="{{courseInfo.periodList.length}}" scroll-x class="sku-box bg-white margin-top-sm ">
-                    <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
-                        <view class="padding-sm sku-item" @tap="sku('normal')">
-                            <view class="bg-orange padding light radius text-center shadow-blur">
-                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
-                                <view class="text-xs text-Abc">{{sign_states[item.signState]}}</view>
-                            </view>
-                        </view>
-                    </repeat>
-                </scroll-view>
-                <!-- 这个部分是活动tag -->
-                <view class="cu-bar bg-white solid-bottom margin-top">
-                    <view class="action">
-                        {{actPintuanActivity.currentNum}}人正在拼团，可直接参团
-                    </view>
-                </view>
-                <view class="cu-bar bg-white padding-bottom-xl">
-                    <view class="action text-df padding-top-sm">
-                        <view class="cu-avatar-group" style="padding:0">
-                            <repeat for="1" key="index" index="index" item="item">
-                                <view class="cu-avatar round lg" style="background-image:url({{actPintuanActivity.profilePhoto}});"></view>
-                            </repeat>
-                        </view>
-                        <view class="text-orange text-sm margin-left-sm">拼团最多可尊享{{ActPintuan.price}}元低价</view>
-                    </view>
-                    <view class="action">
-                        <button wx:if="{{isIn}}" @tap="toshare" class="cu-btn bg-orange margin-top shadow" >邀请拼团</button>
-                        <button wx:else class="cu-btn bg-orange margin-top shadow" @tap="toPintuanfy()">参团购买</button>
-                    </view>
-                </view>
-                <view class="bg-white padding-left padding-right">
-                    <view class="bg-white padding-sm content text-gray">
-                        拼团详情
-                    </view>
-                    <repeat for="{{ActPintuan.actPintuanPrice}}" key="index" index="index" item="item">
-                        <view class="padding-left padding-right padding-bottom-xs _1c412fe">参团人数达到{{item.memberNum}}人，尊享{{item.price}}元低价</view>
-                    </repeat>
-                </view>
-                <view class="bg-white padding-left padding-right padding-bottom ">
-                    <view class="bg-white padding-sm content text-gray">
-                        报名流程
-                    </view>
-                    <view class="cu-steps">
-                        <view class="cu-item text-orange" wx:for="{{numList}}" wx:key>
-                            <text class="num" data-index="{{index + 1}}"/>
-                            <view> {{item.name}}</view>
-                            <view class="text-xs"> {{item.name1}}</view>
-                        </view>
-                    </view>
-                </view>
-                <!-- 更多信息 -->
-                <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
-                <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
+  <view class="h100">
+    <scroll-view scroll-y class="main-view">
+      <view id="info-box">
+        <!-- 轮播图 -->
+        <cSwiper :model.sync="swipers"></cSwiper>
+        <!-- 标题部分 -->
+        <ctitle :model.sync="courseInfo"></ctitle>
+        <!-- 选择规格 -->
+        <scroll-view wx:if="{{courseInfo.periodList.length}}" scroll-x class="sku-box bg-white margin-top-sm ">
+          <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
+            <view class="padding-sm sku-item" @tap="sku('normal')">
+              <view class="bg-orange padding light radius text-center shadow-blur">
+                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
+                <view class="text-xs text-Abc">{{sign_states[item.signState]}}</view>
+              </view>
             </view>
-            
-            <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
-                <view class="flex text-center">
-                    <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
-                    <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
-                    <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
-                </view>
-            </scroll-view>
-            <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
-                <swiper-item>
-                    <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
-                        <rich-text nodes="{{courseInfo.details}}"></rich-text>
-                    </scroll-view>
-                </swiper-item>
-                <swiper-item>
-                    <scroll-view scroll-y class="bg-white h100 padding">
-                        <rich-text nodes="{{courseInfo.trip}}"></rich-text>
-                    </scroll-view>
-                </swiper-item>
-                <swiper-item>
-                    <scroll-view scroll-y class="bg-white h100 padding">
-                        <rich-text nodes="{{courseInfo.notice}}"></rich-text>
-                    </scroll-view>
-                </swiper-item>
-            </swiper>
+          </repeat>
         </scroll-view>
-        <view class="cu-modal bottom-modal {{toPintuan?'show':''}}" bindtap="hideModal">
-                <view class="cu-dialog" @tap.stop="ret">
-                    <view class="cu-timeline">
-                        <view class="cu-time text-black" style="width:100%;color:#333;font-size:32rpx;">拼团规则</view>
-                        <view class="cu-item">
-                            <view class="content bg-gray shadow-blur text-black">
-                                【立即参团】<text class="text-orange">原价/定金</text>购买活动
-                            </view>
-                        </view>
-                        <view class="cu-item">
-                            <view class="content bg-gray shadow-blur text-black">
-                                购买成功后，邀请好友拼团
-                            </view>
-                        </view>
-                        <view class="cu-item">
-                            <view class="content bg-gray shadow-blur text-black">
-                                订单详情，查看拼团结果
-                            </view>
-                        </view>
-                        <view class="cu-item">
-                            <view class="bg-gray content text-orange">
-                                拼团成功，结束后现金返还
-                            </view>
-                            <view class="bg-gray content text-black">
-                                拼团失败，原价参加活动
-                            </view>
-                        </view>
-                    </view>
-                    <view class="bg-white padding-sm content text-gray">
-                        注：根据实际拼团人数，活动结束后现金原路返还。
-                    </view>
-                    <view @tap="sku('pintuan')" class="bg-orange plus text-white text-lg text-center">立即参团</view>
-                </view>
-            </view>
-        <view class="cu-modal bottom-modal {{showSku?'show':''}}" bindtap="hideModal">
-            <view class="cu-dialog" @tap.stop="ret">
-                <view class="cu-bar bg-white padding-left">
-                    <text> 活动费：<text class="text-red text-price text-xxl">{{courseInfo.price}}</text></text>
-                </view>
-                <view class="padding-left padding-top-sm text-left ">
-                    选择营期
-                </view>
-                <view class="grid col-3 padding-sm">
-                    <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
-                        <view class="sku-item padding-xs">
-                            <view @tap="course({{index}})" class="bg-{{item.signState != 2? 'orange':'gray dont-click'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
-                                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
-                            </view>
-                        </view>
-                    </repeat>
-                </view>
-                <view class="flex flex-sb padding padding-top-sm text-left ">
-                    <view> 购买数量 </view>
-                    <view class="text-lg ">
-                        <text @tap="minus" class="bg-{{num>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
-                        <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
-                        <text @tap="plus" class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text></view>
-                </view>
-                <view wx:if="{{buyTypt == 'normal'}}" @tap="buy('',1)" class="bg-orange plus text-white text-lg text-center">立即购买</view>
-                <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
-                <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">立即参团</view>
-            </view>
+        <!-- 这个部分是活动tag -->
+        <view class="cu-bar bg-white solid-bottom margin-top">
+          <view class="action">
+            {{actPintuanActivity.currentNum}}人正在拼团，可直接参团
+          </view>
         </view>
-        <button wx:if="{{isIn}}" class="bg-orange tabbar  shop solid-top text-center padding-xs" style="border-radius:0" @tap="toshare" >邀请拼团</button>
-        <view  class="cu-bar bg-white tabbar border shop solid-top">
-            <button class="action" open-type="contact"><view class="cuIcon-weixin text-orange"></view>聊活动</button>
-            <button class="action" @tap="toshare" style="line-height:1"><view class="cuIcon-friend text-orange "></view><text class="text-sm" >邀请同伴</text></button>
-            <view class="line submit text-lg text-sm" @tap="sku('normal')">原价购买<text class="text-price">{{courseInfo.price}}</text></view>
-            <view class="bg-orange submit text-lg" @tap="toPintuanfy()">参团购买</view>
-        </view>
-        <view class="cu-modal {{modalName=='share'?'show':''}}">
-            <view class="cu-dialog" style="width:450rpx">
-                <view class="cu-bar bg-white justify-end">
-                    <view class="content"></view>
-                    <view class="action" bindtap="hideModal">
-                        <text class="cuIcon-close text-red"></text>
-                    </view>
+        <view class="cu-bar bg-white padding-bottom-xl">
+          <view class="action text-df padding-top-sm">
+            <view class="cu-avatar-group" style="padding:0">
+              <repeat for="1" key="index" index="index" item="item">
+                <view class="cu-avatar round lg" style="background-image:url({{actPintuanActivity.profilePhoto}});">
                 </view>
-                <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
-                    <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm" >分享邀请</text></button>
-                    <button class="action" open-type="getUserInfo" bindgetuserinfo="createImg" style="line-height:1" ><view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm" >海报邀请</text></button>
-                </view>
+              </repeat>
             </view>
+            <view class="text-orange text-sm margin-left-sm">拼团最多可尊享{{ActPintuan.price}}元低价</view>
+          </view>
+          <view class="action">
+            <button wx:if="{{isIn}}" @tap="toshare" class="cu-btn bg-orange margin-top shadow">邀请拼团</button>
+            <button wx:else class="cu-btn bg-orange margin-top shadow" @tap="toPintuanfy()">参团购买</button>
+          </view>
         </view>
-        <contact />
+        <view class="bg-white padding-left padding-right">
+          <view class="bg-white padding-sm content text-gray">
+            拼团详情
+          </view>
+          <repeat for="{{ActPintuan.actPintuanPrice}}" key="index" index="index" item="item">
+            <view class="padding-left padding-right padding-bottom-xs _1c412fe">
+              参团人数达到{{item.memberNum}}人，尊享{{item.price}}元低价</view>
+          </repeat>
+        </view>
+        <view class="bg-white padding-left padding-right padding-bottom ">
+          <view class="bg-white padding-sm content text-gray">
+            报名流程
+          </view>
+          <view class="cu-steps">
+            <view class="cu-item text-orange" wx:for="{{numList}}" wx:key>
+              <text class="num" data-index="{{index + 1}}" />
+              <view> {{item.name}}</view>
+              <view class="text-xs"> {{item.name1}}</view>
+            </view>
+          </view>
+        </view>
+        <!-- 更多信息 -->
+        <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
+        <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics"
+          :CourseComment.sync="CourseComment"></cRemake>
+      </view>
+
+      <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
+        <view class="flex text-center">
+          <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
+          <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
+          <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
+        </view>
+      </scroll-view>
+      <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
+        <swiper-item>
+          <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
+            <rich-text nodes="{{courseInfo.details}}"></rich-text>
+          </scroll-view>
+        </swiper-item>
+        <swiper-item>
+          <scroll-view scroll-y class="bg-white h100 padding">
+            <rich-text nodes="{{courseInfo.trip}}"></rich-text>
+          </scroll-view>
+        </swiper-item>
+        <swiper-item>
+          <scroll-view scroll-y class="bg-white h100 padding">
+            <rich-text nodes="{{courseInfo.notice}}"></rich-text>
+          </scroll-view>
+        </swiper-item>
+      </swiper>
+    </scroll-view>
+    <view class="cu-modal bottom-modal {{toPintuan?'show':''}}" bindtap="hideModal">
+      <view class="cu-dialog" @tap.stop="ret">
+        <view class="cu-timeline">
+          <view class="cu-time text-black" style="width:100%;color:#333;font-size:32rpx;">拼团规则</view>
+          <view class="cu-item">
+            <view class="content bg-gray shadow-blur text-black">
+              【立即参团】<text class="text-orange">原价/定金</text>购买活动
+            </view>
+          </view>
+          <view class="cu-item">
+            <view class="content bg-gray shadow-blur text-black">
+              购买成功后，邀请好友拼团
+            </view>
+          </view>
+          <view class="cu-item">
+            <view class="content bg-gray shadow-blur text-black">
+              订单详情，查看拼团结果
+            </view>
+          </view>
+          <view class="cu-item">
+            <view class="bg-gray content text-orange">
+              拼团成功，结束后现金返还
+            </view>
+            <view class="bg-gray content text-black">
+              拼团失败，原价参加活动
+            </view>
+          </view>
+        </view>
+        <view class="bg-white padding-sm content text-gray">
+          注：根据实际拼团人数，活动结束后现金原路返还。
+        </view>
+        <view @tap="sku('pintuan')" class="bg-orange plus text-white text-lg text-center">立即参团</view>
+      </view>
     </view>
+    <view class="cu-modal bottom-modal {{showSku?'show':''}}" bindtap="hideModal">
+      <view class="cu-dialog" @tap.stop="ret">
+        <view class="cu-bar bg-white padding-left">
+          <text> 活动费：<text class="text-red text-price text-xxl">{{courseInfo.price}}</text></text>
+        </view>
+        <view class="padding-left padding-top-sm text-left ">
+          选择营期
+        </view>
+        <view class="grid col-3 padding-sm">
+          <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
+            <view class="sku-item padding-xs">
+              <view @tap="course({{index}})"
+                class="bg-{{item.signState != 2? 'orange':'gray dont-click'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
+                <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
+              </view>
+            </view>
+          </repeat>
+        </view>
+        <view class="flex flex-sb padding padding-top-sm text-left ">
+          <view> 购买数量 </view>
+          <view class="text-lg ">
+            <text @tap="minus"
+              class="bg-{{num>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
+            <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
+            <text @tap="plus"
+              class="cuIcon-add lg text-white bg-orange padding-sm padding-top-xs padding-bottom-xs"></text>
+          </view>
+        </view>
+        <view wx:if="{{buyTypt == 'normal'}}" @tap="buy('',1)" class="bg-orange plus text-white text-lg text-center">
+          立即购买</view>
+        <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)"
+          class="bg-orange plus text-white text-lg text-center">发起砍价</view>
+        <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">
+          立即参团</view>
+      </view>
+    </view>
+    <button wx:if="{{isIn}}" class="bg-orange tabbar  shop solid-top text-center padding-xs" style="border-radius:0"
+      @tap="toshare">邀请拼团</button>
+    <view class="cu-bar bg-white tabbar border shop solid-top">
+      <button class="action" open-type="contact">
+        <view class="cuIcon-weixin text-orange"></view>聊活动
+      </button>
+      <button class="action" @tap="toshare" style="line-height:1">
+        <view class="cuIcon-friend text-orange "></view><text class="text-sm">邀请同伴</text>
+      </button>
+      <view class="line submit text-lg text-sm" @tap="sku('normal')">原价购买<text
+          class="text-price">{{courseInfo.price}}</text></view>
+      <view class="bg-orange submit text-lg" @tap="toPintuanfy()">参团购买</view>
+    </view>
+    <view class="cu-modal {{modalName=='share'?'show':''}}">
+      <view class="cu-dialog" style="width:450rpx">
+        <view class="cu-bar bg-white justify-end">
+          <view class="content"></view>
+          <view class="action" bindtap="hideModal">
+            <text class="cuIcon-close text-red"></text>
+          </view>
+        </view>
+        <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
+          <button class="action" open-type="share" style="line-height:1">
+            <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
+          </button>
+          <button class="action" open-type="getUserInfo" bindgetuserinfo="createImg" style="line-height:1">
+            <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
+          </button>
+        </view>
+      </view>
+    </view>
+    <contact />
+  </view>
 </template>
 
 <script>
-    import wepy from "wepy";
-    import cSwiper from "@/components/common/swiper";
-    import ctitle from "@/components/detaile/title";
-    import cInfo from "@/components/detaile/info";
-    import cRemake from "@/components/detaile/remake";
-    import contact from "@/components/common/contact"
-    import config from "@/api/config";
-    import auth from "@/api/auth";
-    import WxUtils from "@/utils/WxUtils";
-    import Tips from "@/utils/Tips";
-    import store from "@/store/utils"
-    export default class Dialog extends wepy.page {
-        data = {
-            TabCur: 0,
-            close: "/static/images/close.png",
-            swipers: {
-                type: 1,
-                list: [{
-                    id: 0,
-                    type: "image",
-                    url: "",
-                    link: "/pages/meet/meet",
-                    linkType: "switchTab"
-                }]
-            },
-            actPintuanActivity:{},
-            ActPintuanMember:{},
-            ActPintuan:{},
-            mainHeight: 0,
-            courseInfo: {},
-            modalName:'',
-            nodes: ["name", "attrs", "attrs"],
-            num: 1,
-            isIn:'',
-            showSku: false,
-            buyTypt: 'normal',
-            courseInx: -1,
-            companions: [],
-            statistics: {},
-            CourseComment: {},
-            sign_states: {
-                0: '火热招生中',
-                1: '少量名额',
-                2: '已满员'
-            },
-            toPintuan: false,
-            numList: [{
-                name: '参团',
-                name1: '支付完成'
-            }, {
-                name: '获得更多优惠',
-                name1: '分享活动'
-            }, {
-                name: '拼团成功',
-                name1: '老师主动联系您'
-            }],
-            member:{}
-        };
-        components = {
-            cSwiper,
-            ctitle,
-            cInfo,
-            cRemake,
-            contact
-        };
-        config = {
-            navigationBarTitleText: "活动详情"
-        };
-        // 转发暂时先不开启
-        onShareAppMessage(res) {
-            if (res.from === 'button') {
-                // 来自页面内转发按钮
-                console.log(res.target)
-            }
-            return {
-                title: this.courseInfo.courseTittle,
-                imageUrl:this.courseInfo.image,
-                path: '/pages/activity/pintuan?id=' + this.actPintuanActivity.id + '&agentId=' + this.member.agentId
-            }
-        }
-        async onLoad(opt) {
-            console.log(opt)
-            // 获取主内容高度，用于悬浮详情导航
-            let view = wx.createSelectorQuery().select("#info-box");
-            view
-                .fields({
-                        size: true
-                    },
-                    data => {
-                        console.log(data.height);
-                        this.mainHeight = data.height;
-                    }
-                )
-                .exec();
-            await auth.login()
-            this.member = wepy.getStorageSync('member');
-            let res = await config.pintuanDetai(opt.id || opt.scene)
-            let {
-                course,
-                companions,
-                statistics,
-                CourseComment,
-                actPintuanActivity,
-                ActPintuan,
-                ActPintuanMember,
-                isIn
-            } = res.data
-            this.swipers.list[0].url = course.image
-            course.courseChar = course.courseChar.split("|")
-            this.courseInfo = course
-            wepy.$instance.globalData.courseInfo = course
-            this.companions = companions
-            this.statistics = statistics
-            this.CourseComment = CourseComment
-            this.actPintuanActivity = actPintuanActivity
-            this.ActPintuan = ActPintuan
-            this.ActPintuanMember = ActPintuanMember
-            this.isIn = isIn
-            this.$apply();
-        }
-        methods = {
-            async createImg(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    store.save('shareInfo', {
-                        course: this.courseInfo,
-                        path: 'pages/activity/pintuan',
-                        id: this.actPintuanActivity.id,
-                        type:3,
-                        courseId:this.courseInfo.id
-                    })
-                    wepy.navigateTo({
-                        url: '/pages/home/share'
-                    });
-                }
-            },
-            toshare() {
-                this.modalName = 'share'
-            },
-            toPintuanfy() {
-                this.toPintuan = true
-            },
-            ret() {
-                return false
-            },
-            tabSelect(e) {
-                console.log(e);
-                this.TabCur = e.currentTarget.dataset.id || e.detail.current;
-            },
-            hideModal() {
-                this.toPintuan = false
-                this.showSku = false
-                this.modalName = ''
-            },
-            sku(type = 'normal') {
-                this.showSku = true
-                this.toPintuan = false
-                this.buyTypt = type
-            },
-            plus() {
-                wx.vibrateShort()
-                this.num = this.num + 1
-            },
-            minus() {
-                if (this.num > 1) {
-                    wx.vibrateShort()
-                    this.num = this.num - 1
-                }
-            },
-            course(inx) {
-                this.courseInx = inx
-            },
-            async buy(aid = 0, ot = 1, ) {
-                if (this.courseInx == -1) {
-                    Tips.toast("请选择一个营期", res => {}, 'none')
-                    return false
-                }
-                wepy.navigateTo({
-                    url: `../detaile/sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${this.actPintuanActivity.id}&actpid=${this.courseInfo.pintuanId}`
-                });
-            }
-        };
+  import wepy from "wepy";
+  import cSwiper from "@/components/common/swiper";
+  import ctitle from "@/components/detaile/title";
+  import cInfo from "@/components/detaile/info";
+  import cRemake from "@/components/detaile/remake";
+  import contact from "@/components/common/contact"
+  import config from "@/api/config";
+  import auth from "@/api/auth";
+  import WxUtils from "@/utils/WxUtils";
+  import Tips from "@/utils/Tips";
+  import store from "@/store/utils"
+  export default class Dialog extends wepy.page {
+    data = {
+      TabCur: 0,
+      close: "/static/images/close.png",
+      swipers: {
+        type: 1,
+        list: [{
+          id: 0,
+          type: "image",
+          url: "",
+          link: "/pages/meet/meet",
+          linkType: "switchTab"
+        }]
+      },
+      actPintuanActivity: {},
+      ActPintuanMember: {},
+      ActPintuan: {},
+      mainHeight: 0,
+      courseInfo: {},
+      modalName: '',
+      nodes: ["name", "attrs", "attrs"],
+      num: 1,
+      isIn: '',
+      showSku: false,
+      buyTypt: 'normal',
+      courseInx: -1,
+      companions: [],
+      statistics: {},
+      CourseComment: {},
+      sign_states: {
+        0: '火热招生中',
+        1: '少量名额',
+        2: '已满员'
+      },
+      toPintuan: false,
+      numList: [{
+        name: '参团',
+        name1: '支付完成'
+      }, {
+        name: '获得更多优惠',
+        name1: '分享活动'
+      }, {
+        name: '拼团成功',
+        name1: '老师主动联系您'
+      }],
+      member: {}
+    };
+    components = {
+      cSwiper,
+      ctitle,
+      cInfo,
+      cRemake,
+      contact
+    };
+    config = {
+      navigationBarTitleText: "活动详情"
+    };
+    // 转发暂时先不开启
+    onShareAppMessage(res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: this.courseInfo.courseTittle,
+        imageUrl: this.courseInfo.image,
+        path: '/pages/activity/pintuan?id=' + this.actPintuanActivity.id + '&agentId=' + this.member.agentId
+      }
     }
+    async onLoad(opt) {
+      console.log(opt)
+      // 获取主内容高度，用于悬浮详情导航
+      let view = wx.createSelectorQuery().select("#info-box");
+      view
+        .fields({
+            size: true
+          },
+          data => {
+            console.log(data.height);
+            this.mainHeight = data.height;
+          }
+        )
+        .exec();
+      await auth.login()
+      this.member = wepy.getStorageSync('member');
+      let res = await config.pintuanDetai(opt.id || opt.scene)
+      let {
+        course,
+        companions,
+        statistics,
+        CourseComment,
+        actPintuanActivity,
+        ActPintuan,
+        ActPintuanMember,
+        isIn
+      } = res.data
+      this.swipers.list[0].url = course.image
+      course.courseChar = course.courseChar.split("|")
+      this.courseInfo = course
+      wepy.$instance.globalData.courseInfo = course
+      this.companions = companions
+      this.statistics = statistics
+      this.CourseComment = CourseComment
+      this.actPintuanActivity = actPintuanActivity
+      this.ActPintuan = ActPintuan
+      this.ActPintuanMember = ActPintuanMember
+      this.isIn = isIn
+      this.$apply();
+    }
+    methods = {
+      async createImg(e) {
+        if (e.detail.errMsg == "getUserInfo:ok") {
+          await auth.getUserinfo(e.detail)
+          store.save('shareInfo', {
+            course: this.courseInfo,
+            path: 'pages/activity/pintuan',
+            id: this.actPintuanActivity.id,
+            type: 3,
+            courseId: this.courseInfo.id
+          })
+          wepy.navigateTo({
+            url: '/pages/home/share'
+          });
+        }
+      },
+      toshare() {
+        this.modalName = 'share'
+      },
+      toPintuanfy() {
+        this.toPintuan = true
+      },
+      ret() {
+        return false
+      },
+      tabSelect(e) {
+        console.log(e);
+        this.TabCur = e.currentTarget.dataset.id || e.detail.current;
+      },
+      hideModal() {
+        this.toPintuan = false
+        this.showSku = false
+        this.modalName = ''
+      },
+      sku(type = 'normal') {
+        this.showSku = true
+        this.toPintuan = false
+        this.buyTypt = type
+      },
+      plus() {
+        wx.vibrateShort()
+        this.num = this.num + 1
+      },
+      minus() {
+        if (this.num > 1) {
+          wx.vibrateShort()
+          this.num = this.num - 1
+        }
+      },
+      course(inx) {
+        this.courseInx = inx
+      },
+      async buy(aid = 0, ot = 1, ) {
+        if (this.courseInx == -1) {
+          Tips.toast("请选择一个营期", res => {}, 'none')
+          return false
+        }
+        wepy.navigateTo({
+          url: `../detaile/sureOrder?type=${ot}&pid=${this.courseInfo.periodList[this.courseInx].id}&cid=${this.courseInfo.id}&num=${this.num}&aid=${this.actPintuanActivity.id}&actpid=${this.courseInfo.pintuanId}`
+        });
+      }
+    };
+  }
 </script>
 <style>
-    page {
-        height: 100%;
-    }
+  page {
+    height: 100%;
+  }
 </style>
 
 <style lang="less" scoped>
-    .dont-click {
-        pointer-events: none;
-    }
-    .main-view {
-        height: calc(~"100% - 100rpx");
-    }
-    .scroll-view {
-        height: calc(~"100% - 90rpx") !important;
-    }
-    .sku-item {
-        display: inline-block;
-        width: 240rpx;
-    }
-    .sku-box {
-        white-space: nowrap;
-        width: 100%;
-    }
-    .plus {
-        height: 100rpx;
-        line-height: 100rpx;
-    }
-    .submit.line {
-        border: 1px solid var(--orange);
-        color: var(--orange)
-    }
+  .dont-click {
+    pointer-events: none;
+  }
+
+  .main-view {
+    height: calc(~"100% - 100rpx");
+  }
+
+  .scroll-view {
+    height: calc(~"100% - 90rpx") !important;
+  }
+
+  .sku-item {
+    display: inline-block;
+    width: 240rpx;
+  }
+
+  .sku-box {
+    white-space: nowrap;
+    width: 100%;
+  }
+
+  .plus {
+    height: 100rpx;
+    line-height: 100rpx;
+  }
+
+  .submit.line {
+    border: 1px solid var(--orange);
+    color: var(--orange)
+  }
 </style>

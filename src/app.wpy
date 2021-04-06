@@ -42,7 +42,7 @@
       appCode: "",
       // baseUrl: "https://wechat.hxqxly.com",
       baseUrl: "https://test.hxqxly.com",
-      themeColor: "#F4D000",
+      themeColor: "#215E21",
       cityCode: "",
       code: "",
       sessionId: "",
@@ -202,7 +202,7 @@
       ],
       window: {
         backgroundTextStyle: "dark",
-        navigationBarBackgroundColor: "#F4D000",
+        navigationBarBackgroundColor: "#215E21",
         backgroundColor: "#fff",
         navigationBarTitleText: "",
         navigationBarTextStyle: "white"

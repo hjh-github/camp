@@ -2,7 +2,7 @@
   ColorUi for MP-weixin  v2.1.4 | by 文晓港 2019年4月25日19:15:42
   仅供学习交流，如作它用所承受的法律责任一概与作者无关
   使用ColorUi开发扩展与插件时，请注明基于ColorUi开发
-  
+
   （QQ交流群：240787041）
 */
 
@@ -14,8 +14,10 @@ page {
 	/* var属性兼容性 --> https://www.caniuse.com/#feat=css-variables */
 	/* 标准色 */
 	--red: #e54d42;
-	--orange: #f37b1d;
-	--yellow: #fbbd08;
+  --orange: #215E21;
+  --yellow: #215E21;
+	--orange1: #f37b1d;
+	--yellow1: #fbbd08;
 	--olive: #8dc63f;
 	--green: #39b54a;
 	--cyan: #1cbbb4;
@@ -52,6 +54,7 @@ page {
 	--gradualBlue: linear-gradient(45deg, #0081ff, #1cbbb4);
 	/* 垂直渐变 */
 	--gradualOrangeL: linear-gradient(180deg, #ed1c24, #ff9700);
+  --gradualGreenL: linear-gradient(180deg, #215E21, #39b54a);
 	/* 阴影透明色 */
 	--ShadowSize: 6rpx 6rpx 8rpx;
 	--redShadow: rgba(204, 69, 59, 0.2);
@@ -3598,6 +3601,10 @@ scroll-view.cu-steps .cu-item {
 	background-image: var(--gradualGreen);
 	color: var(--white);
 }
+.bg-gradual-orange_vertical {
+	background-image: var(--gradualGreenL);
+	color: var(--white);
+}
 
 .bg-gradual-purple {
 	background-image: var(--gradualPurple);
@@ -3874,7 +3881,12 @@ scroll-view.cu-steps .cu-item {
 .lines-yellow {
 	color: var(--yellow);
 }
-
+.text-yellow1{
+  color: var(--yellow1);
+}
+.text-orange1{
+  color: var(--orange1);
+}
 .text-olive,
 .line-olive,
 .lines-olive {
