@@ -196,7 +196,7 @@
         },
         {
           root: "crowdfund",
-          pages: ["pages/page","pages/sureOrder"]
+          pages: ["pages/page","pages/sureOrder","pages/help","pages/orders"]
         }
 
       ],

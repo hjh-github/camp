@@ -1,0 +1,114 @@
+
+<template>
+  <view>
+    <view class="cu-bar bg-white">
+      <view class="action">
+        <text class="cuIcon-title text-green"></text>可选支持金额
+      </view>
+      <view class="action"></view>
+    </view>
+    <view class="grid col-4 padding-sm">
+      <view class="margin-tb-sm text-center" wx:for="{{info.amountList}}" wx:key>
+        <button style="width:90%" @tap="clickItem({{item}})" class="cu-btn round {{moneyOrder == item ? '' :'light'}}  bg-red">{{item}}</button>
+      </view>
+    </view>
+    <view class="cu-form-group radius">
+      <view class="title">其他金额</view>
+      <input type="number" @input="input" placeholder="支持金额" />
+    </view>
+    <view class="cu-bar bg-white margin-top solid-bottom">
+      <view class="action">
+        <text class="cuIcon-edit text-green"></text>想对他说
+      </view>
+      <view class="action"></view>
+    </view>
+    <view class="cu-form-group ">
+      <textarea maxlength="140" bindinput="textareaAInput" value="{{copywriting}}" placeholder="{{'例如：'+ info.copywriting}}"></textarea>
+    </view>
+    <view class="tabbar solid-top bg-orange text-center {{moneyOrder ? '':'disable'}} " @tap="topay">
+      <text class="text-lg"> {{moneyOrder ?'支持 ' + moneyOrder +  ' 元' : '支持'}} </text>
+    </view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy"
+  import api from "../api"
+  import config from '@/api/config'
+  import Tips from "@/utils/Tips"
+  import WxUtils from "@/utils/WxUtils"
+  export default class Dialog extends wepy.page {
+    config = {
+      navigationBarTitleText: "支持他"
+    };
+    data = {
+      moneyOrder: "",
+      copywriting: "",
+      info: {}
+    };
+    async onLoad(opt) {
+      let res = await api.toSupport(opt.id || 6)
+      this.info = res.data
+      console.log(this.info)
+      if (this.info.amountList.length > 0) {
+        this.moneyOrder = this.info.amountList[0]
+      }
+      this.$apply()
+    }
+    methods = {
+      textareaAInput(e) {
+        this.copywriting = e.detail.value;
+      },
+      clickItem(value) {
+        this.moneyOrder = value;
+      },
+      input(e) {
+        this.moneyOrder = e.detail.value;
+      },
+      async topay() {
+        if (!this.moneyOrder || this.moneyOrder == 0) {
+          Tips.toast("请选择或输入正确的金额", res => {}, 'none');
+          return
+        }
+        let res = await api.commit({
+          regId: this.info.regId,
+          moneyOrder: this.moneyOrder,
+          copywriting: this.copywriting
+        })
+        console.log(res)
+        if (res.errcode == 200) {
+          let _code = await config.wxpaytopay({
+            orderPaySn: res.data.paySn,
+            describe: '描述',
+            money: parseInt(res.data.payAmount * 100)
+          })
+          WxUtils.wxPay(_code.data).then(r => {
+            Tips.toast('支付成功', () => {
+              WxUtils.backOrRedirect('/crowdfund/pages/page')
+            }, 'none')
+          })
+        }
+      }
+    };
+  }
+</script>
+<style>
+  page {
+    height: 100%;
+  }
+</style>
+
+<style lang="less" scoped>
+  .tabbar {
+    width: 100%;
+    height: 100rpx;
+    line-height: 100rpx;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+  }
+  .disable {
+    pointer-events: none;
+    opacity: 0.6;
+  }
+</style>

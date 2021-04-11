@@ -34,4 +34,36 @@ export default class config extends base {
       return res;
     })
   }
+   // 初始化可支持金额
+   static async toSupport(regId) {
+    let url = `${this.baseUrl}/crowdfunding/toSupport`;
+    let params = {
+      regId,
+      sessionId: wepy.$instance.globalData.sessionId
+    }
+    return this.post(url, params, true,true,true).then(res => {
+      return res;
+    })
+  }
+   // 提交支持订单
+   static async commit(opt) {
+    let url = `${this.baseUrl}/crowdfunding/commit`;
+    let params = {
+      ...opt,
+      sessionId: wepy.$instance.globalData.sessionId
+    }
+    return this.post(url, params, true,true,true).then(res => {
+      return res;
+    })
+  }
+  // 提交支持订单
+  static async crowdfunds() {
+    let url = `${this.baseUrl}/member/crowdfunding/list`;
+    let params = {
+      sessionId: wepy.$instance.globalData.sessionId
+    }
+    return this.post(url, params, true,true,true).then(res => {
+      return res;
+    })
+  }
 }

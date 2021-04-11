@@ -22,89 +22,83 @@
                   <l-countdown wx:if="{{ActBargainReg.awardsStatus == 0}}" time="{{ActBargainReg.invalidTime}}" />
                 </view>
               </view>
-              <view class="text-df flex flex-c" >
+              <view class="text-df flex flex-c">
                 <view class="cu-tag radius bg-red ">目标金额：<text class="text-xl">{{ActBargainReg.coursePrice}}元</text></view>
                 <view class="text-red text-xs margin-left">已得到：<text class="text-xl">{{info.reg.supportNum}}人</text>支持</view>
               </view>
             </view>
-
           </view>
-
         </view>
       </view>
       <view class="progress  margin-left margin-right">
-        <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted"
-          style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
+        <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
         <view class="cu-progress round striped {{active?'active':''}}">
           <view class="bg-orange" style="width:{{percent}}%"></view>
         </view>
       </view>
       <view class="log-box radius padding margin-left margin-top">
-          <view class="text-left text-lg solid-bottom padding-bottom">支持者（{{info.reg.supportNum}}人）</view>
-          <scroll-view scroll-y style="max-height:600rpx;">
-            <repeat for="{{info.supports}}" key="index" index="index" item="item">
-                <view class="flex flex-c margin-top text-df">
-                    <view class="cu-avatar lg round" style="background-image:url({{item.profilePhoto}});"></view>
-                    <view class="weui-flex__item text-left padding-left">{{item.name}}</view>
-                    <view class="text-red">支持了 {{item.moneyOrder}}元</view>
+        <view class="text-left text-lg solid-bottom padding-bottom">支持者（{{info.reg.supportNum}}人）</view>
+        <scroll-view scroll-y style="max-height:600rpx;">
+          <repeat for="{{info.supports}}" key="index" index="index" item="item">
+            <view class="flex flex-c margin-top text-df">
+              <view class="cu-avatar lg round" style="background-image:url({{item.profilePhoto}});"></view>
+              <view class="weui-flex__item text-left padding-left">{{item.name}}</view>
+              <view class="text-red">支持了 {{item.moneyOrder}}元</view>
+            </view>
+            <view class="flex flex-c margin-top text-df">
+              <view class="lg round"></view>
+              <view class="cu-list">
+                <view class="cu-item main padding-left-sm">
+                  <text class="text-df">{{item.copywriting}}</text>
                 </view>
-                <view class="flex flex-c margin-top text-df">
-                    <view class="lg round"></view>
-                    <view class="cu-list">
-                      <view class="cu-item main padding-left-sm">
-                        <text class="text-df">{{item.copywriting}}</text>
-                      </view>
-                      <view class="cu-item main padding-left-sm text-gray margin-tb-xs">
-                        <text class="text-df">{{item.createTime}}</text>
-                      </view>
-                    </view>
+                <view class="cu-item main padding-left-sm text-gray margin-tb-xs">
+                  <text class="text-df">{{item.createTime}}</text>
                 </view>
-                <view class="bg-gray w100" style="height:1px" ></view>
-            </repeat>
-          </scroll-view>
+              </view>
+            </view>
+            <view class="bg-gray w100" style="height:1px"></view>
+          </repeat>
+        </scroll-view>
       </view>
       <!-- <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo> -->
       <scroll-view scroll-x class="bg-white nav margin-top solid-bottom">
-          <view class="flex text-center">
-            <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
-            <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
-            <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
-          </view>
-        </scroll-view>
-        <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
-          <swiper-item>
-            <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
-              <rich-text nodes="{{courseInfo.details}}"></rich-text>
-            </scroll-view>
-          </swiper-item>
-          <swiper-item>
-            <scroll-view scroll-y class="bg-white h100 padding">
-              <rich-text nodes="{{courseInfo.trip}}"></rich-text>
-            </scroll-view>
-          </swiper-item>
-          <swiper-item>
-            <scroll-view scroll-y class="bg-white h100 padding">
-              <rich-text nodes="{{courseInfo.notice}}"></rich-text>
-            </scroll-view>
-          </swiper-item>
-        </swiper>
+        <view class="flex text-center">
+          <view class="cu-item flex-sub {{0==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="0">图文详情</view>
+          <view class="cu-item flex-sub {{1==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="1">安全行程</view>
+          <view class="cu-item flex-sub {{2==TabCur?'text-orange cur':''}}" bindtap="tabSelect" data-id="2">报名须知</view>
+        </view>
       </scroll-view>
+      <swiper class="bg-white text-center scroll-view" current="{{TabCur}}" bindchange="tabSelect">
+        <swiper-item>
+          <scroll-view scroll-y class="bg-white h100 padding-left padding-right">
+            <rich-text nodes="{{courseInfo.details}}"></rich-text>
+          </scroll-view>
+        </swiper-item>
+        <swiper-item>
+          <scroll-view scroll-y class="bg-white h100 padding">
+            <rich-text nodes="{{courseInfo.trip}}"></rich-text>
+          </scroll-view>
+        </swiper-item>
+        <swiper-item>
+          <scroll-view scroll-y class="bg-white h100 padding">
+            <rich-text nodes="{{courseInfo.notice}}"></rich-text>
+          </scroll-view>
+        </swiper-item>
+      </swiper>
     </scroll-view>
-    <view wx:if="{{info.owner == 1}}"  class="cu-bar tabbar border shop solid-top bg-white">
-      <view class="action text-left padding-left "  @tap="topay" style="width:375rpx;">
+    </scroll-view>
+    <view wx:if="{{info.owner == 1}}" class="cu-bar tabbar border shop solid-top bg-white">
+      <view class="action text-left padding-left" @tap="tosupport" style="width:375rpx;">
         <text class="text-lg">自己付</text>
       </view>
       <view class="bg-orange submit text-lg" @tap="toshare">找人帮我筹</view>
     </view>
-     <view wx:if="{{info.owner == 0}}" class="cu-bar tabbar border shop solid-top bg-white">
-       <view class="action text-left padding-left "  @tap="topay" style="width:375rpx;">
-         <text class="text-lg">支持他</text>
-       </view>
-       <view class="bg-orange submit text-lg" @tap="toshare">我也报名</view>
-     </view>
-
-
-
+    <view wx:if="{{info.owner == 0}}" class="cu-bar tabbar border shop solid-top bg-white">
+      <view class="action text-left padding-left" @tap="tosupport" style="width:375rpx;">
+        <text class="text-lg">支持他</text>
+      </view>
+      <view class="bg-orange submit text-lg" @tap="toOpen">我也报名</view>
+    </view>
     <view class="cu-modal {{modalName=='share'?'show':''}}">
       <view class="cu-dialog" style="width:450rpx">
         <view class="cu-bar bg-white justify-end">
@@ -115,16 +109,15 @@
         </view>
         <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
           <button class="action" open-type="share" style="line-height:1">
-            <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
-          </button>
+              <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
+            </button>
           <button class="action" style="line-height:1" open-type="getUserInfo" bindgetuserinfo="createImg">
-            <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
-          </button>
+              <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
+            </button>
         </view>
       </view>
     </view>
     <!-- <contact /> -->
-
   </view>
 </template>
 
@@ -137,11 +130,12 @@
   import store from "@/store/utils"
   import contact from "@/components/common/contact"
   import cInfo from "@/components/detaile/info";
+  import WxUtils from "@/utils/WxUtils"
 
   export default class Dialog extends wepy.page {
     data = {
       close: "/static/images/close.png",
-      TabCur:0,
+      TabCur: 0,
       active: true,
       routes: 0,
       regId: '',
@@ -154,6 +148,7 @@
       percent: 0,
       info: {},
       modalName: '',
+      member:null,
       status: {
         0: {
           a: '砍价中',
@@ -200,11 +195,10 @@
         // 来自页面内转发按钮
         // console.log(res.target)
       }
-
       return {
         title: this.courseInfo.courseTittle,
         imageUrl: this.courseInfo.image,
-        path: '/pages/activity/bargain?id=' + this.ActBargainReg.id + '&agentId=' + this.member.agentId
+        path: '/crowdfund/pages/page?id=' + this.ActBargainReg.id + '&agentId=' + this.member.agentId
       }
     }
     async onLoad(opt) {
@@ -215,6 +209,12 @@
       await this.load()
       this.$apply()
     }
+    async onShow() {
+      if (this.member) {
+        await this.load()
+        this.$apply()
+      }
+    }
     methods = {
       hideModal() {
         this.modalName = ''
@@ -224,9 +224,9 @@
           await auth.getUserinfo(e.detail)
           store.save('shareInfo', {
             course: this.courseInfo,
-            path: 'pages/activity/bargain',
+            path: 'crowdfund/pages/page',
             id: this.ActBargainReg.id,
-            type: 3,
+            type: 4,
             courseId: this.courseInfo.id
           })
           wepy.navigateTo({
@@ -237,13 +237,13 @@
       toshare() {
         this.modalName = 'share'
       },
-      async tocut(e) {
-        if (e.detail.errMsg == "getUserInfo:ok") {
-          await auth.getUserinfo(e.detail)
-          wepy.navigateTo({
-            url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
-          });
-        }
+      tosupport() {
+        wepy.navigateTo({
+          url: `/crowdfund/pages/help?id=${this.info.regId}`
+        });
+      },
+      toOpen(){
+        WxUtils.backOrRedirect(`/pages/detaile/detaile?id=${this.info.courseInfo.id}`)
       },
       tabSelect(e) {
         this.TabCur = e.currentTarget.dataset.id || e.detail.current;
@@ -302,35 +302,28 @@
   }
   .log-box {
     background-color: rgba(255, 255, 255, 1);
-    color:#333;
+    color: #333;
     width: 690rpx;
   }
-
   .solid-bottom {
     border-color: #eee !important;
   }
-
   .opacity {
     opacity: 0;
   }
-
   .border-2 {
     border: 2px solid #fff;
   }
-
   .container {
     height: calc(~"100% - 100rpx");
     box-sizing: border-box;
-
     .progress {
       width: 690rpx;
       position: relative;
-
       .cu-progress {
         border: 2px solid #fff;
         margin-top: 70rpx;
       }
-
       .cuted {
         position: absolute;
         top: 10rpx;
@@ -338,52 +331,44 @@
         margin-left: -46rpx;
         white-space: nowrap;
       }
-
       .cu-btn {
         box-sizing: border-box;
         width: 550rpx;
         height: 90rpx;
         margin: 70rpx 70rpx 0;
-
         &.bg-gray {
           pointer-events: none
         }
       }
     }
   }
-
   .cu-avatar {
     border: 2px solid #fff;
   }
-
   .content-bar {
     width: 690rpx;
     box-sizing: border-box;
     padding-top: 64rpx;
     position: relative;
-    margin-left:30rpx;
+    margin-left: 30rpx;
     .cu-avatar {
       position: absolute;
       left: 50%;
       top: 0;
       margin-left: -64rpx;
     }
-
     .content {
       padding-top: 64rpx;
       overflow: hidden;
     }
-
     .img {
       width: 180rpx;
       height: 180rpx;
     }
-
     .content-msg {
       border-top: 2px solid #eee;
     }
   }
-
   .nowrap {
     white-space: nowrap;
   }

@@ -57,7 +57,7 @@
             let res = await config.getPoster({
                 page: this.shareInfo.path,
                 sceneStr: encodeURI(`agentId=${agentId}&id=${this.shareInfo.id}`),
-                courseId:this.shareInfo.id,
+                id:this.shareInfo.id,
                 type:this.shareInfo.type
             })
             this.loadImagePath = res.qr
