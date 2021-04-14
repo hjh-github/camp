@@ -85,6 +85,12 @@
           <text class="text-black">我的拼团</text>
         </view>
       </view>
+	  <view class="cu-item arrow" data-url="/crowdfund/pages/orders" @tap="navi">
+	    <view class="content">
+	      <text class="cuIcon-friendfavor  text-red"></text>
+	      <text class="text-black">我的众筹</text>
+	    </view>
+	  </view>
       <view class="cu-item arrow" data-url="/agent/pages/my" @tap="navi">
         <view class="content">
           <text class="cuIcon-expressman  text-red"></text>

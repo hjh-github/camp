@@ -19,8 +19,7 @@
                         <tetx class="text-orange text-sm ">{{item.awardsStatusDesc}}</tetx>
                     </view>
                     <view class="action">
-                        <button wx:if="{{item.awardsStatus < 1}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">继续砍价</button>
-                        <button wx:if="{{item.awardsStatus > 0}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">查看进度</button>
+                        <button wx:if="{{item.awardsStatus < 1}}" class="cu-btn bg-orange margin-left" @tap="tocut({{item}})">查看进度</button>
                     </view>
                 </view>
             </view>
@@ -34,6 +33,8 @@
     import config from "../api"
     import Tips from "@/utils/Tips"
     import WxUtils from "@/utils/WxUtils"
+    import auth from "@/api/auth"
+
     export default class Dialog extends wepy.page {
         config = {
             navigationBarTitleText: "我的众筹",
@@ -58,6 +59,7 @@
             loadmoring: false,
         };
         async onLoad(opt) {
+          await auth.login()
             await this.loadData()
             this.isload = false
         }
@@ -117,7 +119,7 @@
         methods = {
             tocut(e) {
                 wepy.navigateTo({
-                    url: '/pages/activity/bargain?id=' + e.id
+                    url: './page?id=' + e.id
                 });
             }
         };

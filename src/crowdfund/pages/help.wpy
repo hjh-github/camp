@@ -14,7 +14,7 @@
     </view>
     <view class="cu-form-group radius">
       <view class="title">其他金额</view>
-      <input type="number" @input="input" placeholder="支持金额" />
+      <input type="digit" @input="input" placeholder="支持金额" />
     </view>
     <view class="cu-bar bg-white margin-top solid-bottom">
       <view class="action">
@@ -77,12 +77,7 @@
         })
         console.log(res)
         if (res.errcode == 200) {
-          let _code = await config.wxpaytopay({
-            orderPaySn: res.data.paySn,
-            describe: '描述',
-            money: parseInt(res.data.payAmount * 100)
-          })
-          WxUtils.wxPay(_code.data).then(r => {
+          WxUtils.wxPay(res.data).then(r => {
             Tips.toast('支付成功', () => {
               WxUtils.backOrRedirect('/crowdfund/pages/page')
             }, 'none')

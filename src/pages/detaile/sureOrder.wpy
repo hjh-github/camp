@@ -152,7 +152,7 @@
         periodId: this.opt.pid,
         num: this.opt.num,
         actId: this.opt.aid,
-        couponUserId: this.couponUser.id,
+        couponUserId: this.couponUser.id || 0,
         paymentType: this.paymentType
       }
       let {
@@ -189,7 +189,7 @@
           price: _data.totalPrice,
           actPintuanId: this.opt.actpid,
           paymentType: this.paymentType,
-          couponUserId:this.couponUser.id
+          couponUserId:this.couponUser.id || 0
         }
       }
       this.$apply()
