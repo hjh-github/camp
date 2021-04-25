@@ -1,0 +1,73 @@
+
+<template>
+    <view class="h100 flex flex-y flex-c margin-top:50rpx;">
+        <view wx:if="{{!loadImagePath}}">查信息未更新或不存在，请联系客服查询</view>
+        <view wx:if="{{loadImagePath}}" class="flex flex-y flex-c">
+            <image src="{{loadImagePath}}" mode="widthFix" style="width:750rpx;" @tap="proview({{loadImagePath}})" />
+            <view class="cu-btn bg-orange shadow-blur round lg margin-tb" @tap="saveImg">保存到手机</view>
+        </view>
+
+    </view>
+</template>
+<script>
+    import wepy from "wepy";
+    import Lang from "@/utils/Lang"
+    import Tips from "@/utils/Tips"
+    export default class shareInfo extends wepy.page {
+        config = {
+            navigationBarTitleText: "详情"
+        };
+        methods = {
+            //点击保存到相册
+            saveImg() {
+                if(this.errcode == '-1'){
+                  Lang.openSetting()
+                  return
+                }
+                Lang.downImg(this.loadImagePath,res=>{
+                  if(res.code == 0){
+                      Tips.toast('保存成功', () => {}, 'none')
+                  }else if(res.code == '-1'){
+                      this.errcode = res.code
+                      Tips.toast('您已拒绝授权下载图片，点击保存按钮获取授权', () => {}, 'none')
+                  }
+                  this.$apply()
+                });
+            },
+            proview(item){
+              if(!item) return
+              wx.previewImage({
+                current: item, // 当前显示图片的http链接
+                urls: [item] // 需要预览的图片http链接列表
+              })
+            },
+        };
+        data = {
+            loadImagePath:'',
+            errcode:0
+        }
+        /**
+         * 生命周期函数--监听页面加载
+         */
+        async onLoad(options) {
+            console.log(wepy.$instance.globalData.picView)
+            this.loadImagePath = wepy.$instance.globalData.picView
+            this.$apply()
+        }
+
+    }
+</script>
+
+<style lang="less" scoped>
+    .canvas {
+        width: 360px;
+        height: 637px;
+        background: #fff;
+    }
+    .cu-btn {
+        margin-top:30rpx;
+        height: 90rpx;
+        line-height: 90rpx;
+        width:360rpx;
+    }
+</style>

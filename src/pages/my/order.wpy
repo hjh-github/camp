@@ -65,9 +65,12 @@
                         <text>需付款</text>
                     </view>
                     <view class="action">
-                        <text class="text-orange text-price">{{orderInfo.paymentType == 1 ? orderInfo.moneyOrder : orderInfo.earnesMoney}}</text>
+                        <text wx:if="{{orderInfo.paymentType == 1}}" class="text-orange text-price">{{orderInfo.moneyOrder}}</text>
+                        <text wx:if="{{orderInfo.paymentType == 2}}" class="text-orange text-price">{{orderInfo.earnesMoney}}</text>
+                        <text wx:if="{{orderInfo.paymentType == 3}}" class="text-orange text-price">{{orderInfo.tailMoney}}</text>
                     </view>
                 </view>
+                
             </view>
             <view class="cu-list menu border margin-top bg-white">
                 <view class="cu-item">

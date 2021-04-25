@@ -7,50 +7,47 @@
         <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
           <view>{{orderInfo.courseTittle}}</view>
           <view class="flex flex-sb"><text>{{payParams.periodName}}</text> <text><text
-                class="cuIcon-close lg text-gray"></text>{{payParams.courseNum}}</text>
+                  class="cuIcon-close lg text-gray"></text>{{payParams.courseNum}}</text>
           </view>
         </view>
       </view>
       <view class="cu-list menu border margin-top padding-top padding-bottom-sm bg-white">
         <button open-type="getUserInfo" bindgetuserinfo="getChilds" class="cu-item arrow">
-          <view class="content">
-            <view class="padding-bottom-sm">
-              <text class="text-orange text-lg">出行人</text>
-            </view>
-            <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
-              <view class="padding-bottom-xs text-left">
-                <text
-                  class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
-                <text class=" text-df">{{item.name}}</text>
-                <text class="text-df">（{{item.cardNum}}）</text>
+            <view class="content">
+              <view class="padding-bottom-sm">
+                <text class="text-orange text-lg">出行人</text>
               </view>
-            </repeat>
-          </view>
-          <view class="action">
-            <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber"
-              bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
-            <view wx:if="{{!childs.length && mobile}}" class="text-grey text-df">请选择</view>
-          </view>
-        </button>
+              <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
+                <view class="padding-bottom-xs text-left">
+                  <text
+                    class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
+                  <text class=" text-df">{{item.name}}</text>
+                  <text class="text-df">（{{item.cardNum}}）</text>
+                </view>
+              </repeat>
+            </view>
+            <view class="action">
+              <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber"
+                bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
+        <view wx:if="{{!childs.length && mobile}}" class="text-grey text-df">请选择</view>
       </view>
-      <view wx:if="{{payParams.orderType == 1}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
-        <view class="text-black text-df"> 购买数量 </view>
-        <view class="text-lg "><text
-            class="text-black padding-sm padding-top-xs padding-bottom-xs">{{payParams.courseNum}}</text></view>
-      </view>
-      <view class="cu-form-group align-start padding-bottom-lg">
-        <view class="title text-orange text-df">众筹语：</view>
-      </view>
-      <view class="cu-form-group align-start padding-bottom-lg">
-        <textarea maxlength="100" value="{{payParams.remark}}" class="textarea text-df" placeholder-class="text-df"
-          bindinput="textareaBInput" placeholder="写一段众筹语可以让大家更懂你的需要~"></textarea>
-        <view class="num">{{payParams.remark.length}} / 100</view>
-      </view>
-    </scroll-view>
-    <view class="cu-bar tabbar border shop solid-top bg-gray">
-      <view class="bg-orange submit text-lg {{canpay?'':'disable'}}" @tap="pay">发起众筹</view>
-    </view>
-
+      </button>
+  </view>
+  <view wx:if="{{payParams.orderType == 1}}" class="flex flex-c flex-sb padding padding-top-sm text-left bg-white">
+    <view class="text-black text-df"> 购买数量 </view>
+    <view class="text-lg "><text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{payParams.courseNum}}</text></view>
+  </view>
+  <view class="cu-form-group align-start padding-bottom-lg">
+    <view class="title text-orange text-df">众筹语：</view>
+  </view>
+  <view class="cu-form-group align-start padding-bottom-lg">
+    <textarea maxlength="100" value="{{payParams.remark}}" class="textarea text-df" placeholder-class="text-df" bindinput="textareaBInput" placeholder="写一段众筹语可以让大家更懂你的需要~"></textarea>
+    <view class="num">{{payParams.remark.length}} / 100</view>
+  </view>
+  </scroll-view>
+  <view class="cu-bar tabbar border shop solid-top bg-gray">
+    <view class="bg-orange submit text-lg {{canpay?'':'disable'}}" @tap="pay">发起众筹</view>
+  </view>
   </view>
 </template>
 
@@ -138,7 +135,6 @@
         } else {
           this.coupons = []
         }
-
         this.payParams = {
           childIds: '',
           courseId: _data.courseId,
@@ -204,12 +200,15 @@
         if (!this.mobile) {
           return false
         }
-        if (e.detail.errMsg == "getUserInfo:ok") {
-          await auth.getUserinfo(e.detail)
-          wepy.navigateTo({
-            url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
-          });
-        }
+        wx.getUserProfile({
+          desc: '仅用于部分活动显示',
+          success: async res => {
+            await auth.getUserinfo(res)
+            wepy.navigateTo({
+              url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
+            });
+          }
+        })
       },
       async pay() {
         if (!this.childs.length) {
@@ -229,12 +228,10 @@
         this.canpay = false
         api.toCrowdfunding(params).then(res => {
           if (res.errcode == 200) {
-            Tips.toast( "发起成功！正在跳转…", r => {
-             
+            Tips.toast("发起成功！正在跳转…", r => {
             }, 'none');
-          }else{
-            Tips.toast( res.errmsg, r => {
-              
+          } else {
+            Tips.toast(res.errmsg, r => {
             }, 'none');
           }
           wx.redirectTo({
@@ -260,35 +257,28 @@
     opacity: 0.6;
     pointer-events: none;
   }
-
   .img {
     width: 200rpx;
     height: 200rpx;
   }
-
   .main-view {
     height: calc(~"100% - 100rpx");
   }
-
   .textarea {
     background-color: #fafafa;
     padding: 10rpx 20rpx;
   }
-
   .num {
     position: absolute;
     right: 30rpx;
     bottom: 16rpx
   }
-
   .align-start {
     position: relative;
   }
-
   .radius {
     border-radius: 50%
   }
-
   .coups-item {
     width: 631rpx;
     height: 218rpx;
@@ -299,7 +289,6 @@
     background-size: 100% auto;
     color: #fff;
     font-size: 30rpx;
-
     .price-box {
       width: 180rpx;
       height: 218rpx;
@@ -310,20 +299,17 @@
       left: 0;
       top: 0;
     }
-
     .name {
       position: absolute;
       left: 200rpx;
       top: 40rpx;
     }
-
     .maner {
       position: absolute;
       left: 200rpx;
       bottom: 40rpx;
       font-size: 24rpx;
     }
-
     .btn-c {
       width: 160rpx;
       height: 218rpx;

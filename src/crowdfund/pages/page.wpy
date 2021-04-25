@@ -33,8 +33,7 @@
         </view>
       </view>
       <view class="progress  margin-left margin-right">
-        <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted"
-          style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
+        <view class="round text-orange bg-white padding-left-sm padding-right-sm cuted" style="left:{{percent > 80 ? 80 : percent}}%">已筹{{cutPrice}}</view>
         <view class="cu-progress round striped {{active?'active':''}}">
           <view class="bg-orange" style="width:{{percent}}%"></view>
         </view>
@@ -96,7 +95,7 @@
       </view>
       <view class="bg-orange submit text-lg" @tap="toshare">找人帮我筹</view>
     </view>
-    <view wx:if="{{info.owner == 0}}" class="cu-bar tabbar border shop solid-top bg-white">
+    <view wx:if="{{info.owner == 0}}" class="cu-bar tabbar border shop solid-top  bg-red">
       <view class="action text-left padding-left" @tap="tosupport" style="width:375rpx;">
         <text class="text-lg">支持他</text>
       </view>
@@ -112,11 +111,11 @@
         </view>
         <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
           <button class="action" open-type="share" style="line-height:1">
-            <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
-          </button>
+              <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
+            </button>
           <button class="action" style="line-height:1" open-type="getUserInfo" bindgetuserinfo="createImg">
-            <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
-          </button>
+              <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
+            </button>
         </view>
       </view>
     </view>
@@ -134,7 +133,6 @@
   import contact from "@/components/common/contact"
   import cInfo from "@/components/detaile/info";
   import WxUtils from "@/utils/WxUtils"
-
   export default class Dialog extends wepy.page {
     data = {
       close: "/static/images/close.png",
@@ -205,7 +203,7 @@
       }
     }
     async onLoad(opt) {
-      this.regId = opt.id || opt.scene
+      this.regId = opt.id || wepy.$instance.globalData.query.id
       this.routes = getCurrentPages()
       await auth.login()
       this.member = wepy.getStorageSync('member');
@@ -223,28 +221,30 @@
         this.modalName = ''
       },
       async createImg(e) {
-        if (e.detail.errMsg == "getUserInfo:ok") {
-          await auth.getUserinfo(e.detail)
-          store.save('shareInfo', {
-            course: this.courseInfo,
-            path: 'crowdfund/pages/page',
-            id: this.ActBargainReg.id,
-            type: 4,
-            courseId: this.courseInfo.id
-          })
-          wepy.navigateTo({
-            url: '/pages/home/share'
-          });
-        }
+        wx.getUserProfile({
+          desc: '仅用于部分活动显示',
+          success: async res => {
+            await auth.getUserinfo(res)
+            store.save('shareInfo', {
+              course: this.courseInfo,
+              path: 'crowdfund/pages/page',
+              id: this.ActBargainReg.id,
+              type: 4,
+              courseId: this.courseInfo.id
+            })
+            wepy.navigateTo({
+              url: '/pages/home/share'
+            });
+          }
+        })
       },
       toshare() {
         this.modalName = 'share'
       },
       tosupport() {
-        if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync(
-          'isFans') != 1) {
+        if (wepy.getStorageSync('isFans') != 1) {
           wepy.navigateTo({
-            url: `/pages/home/auth`
+            url: `/pages/home/auth?mobile=1`
           });
         } else {
           wepy.navigateTo({
@@ -267,18 +267,6 @@
         wepy.navigateTo({
           url: `/pages/my/order?id=${this.info.orderId}`
         });
-      },
-      async onGotUserInfo(e) {
-        if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync(
-            'isFans') != 1) {
-          wepy.navigateTo({
-            url: `/pages/home/auth`
-          });
-        } else {
-          await this.helpBargain()
-          await this.load()
-          this.$apply()
-        }
       },
     };
     async helpBargain() {
@@ -310,38 +298,30 @@
   .scroll-view {
     height: calc(~"100% - 90rpx") !important;
   }
-
   .log-box {
     background-color: rgba(255, 255, 255, 1);
     color: #333;
     width: 690rpx;
   }
-
   .solid-bottom {
     border-color: #eee !important;
   }
-
   .opacity {
     opacity: 0;
   }
-
   .border-2 {
     border: 2px solid #fff;
   }
-
   .container {
     height: calc(~"100% - 100rpx");
     box-sizing: border-box;
-
     .progress {
       width: 690rpx;
       position: relative;
-
       .cu-progress {
         border: 2px solid #fff;
         margin-top: 70rpx;
       }
-
       .cuted {
         position: absolute;
         top: 10rpx;
@@ -349,53 +329,44 @@
         margin-left: -46rpx;
         white-space: nowrap;
       }
-
       .cu-btn {
         box-sizing: border-box;
         width: 550rpx;
         height: 90rpx;
         margin: 70rpx 70rpx 0;
-
         &.bg-gray {
           pointer-events: none
         }
       }
     }
   }
-
   .cu-avatar {
     border: 2px solid #fff;
   }
-
   .content-bar {
     width: 690rpx;
     box-sizing: border-box;
     padding-top: 64rpx;
     position: relative;
     margin-left: 30rpx;
-
     .cu-avatar {
       position: absolute;
       left: 50%;
       top: 0;
       margin-left: -64rpx;
     }
-
     .content {
       padding-top: 64rpx;
       overflow: hidden;
     }
-
     .img {
       width: 180rpx;
       height: 180rpx;
     }
-
     .content-msg {
       border-top: 2px solid #eee;
     }
   }
-
   .nowrap {
     white-space: nowrap;
   }

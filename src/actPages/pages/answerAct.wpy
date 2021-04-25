@@ -27,7 +27,7 @@
                 <!-- 未答题，可以答题 -->
                 <view wx:if="{{item.state == 2}}">
                     <view class="text-center margin-bottom-sm">{{item.title}}</view>
-                    <button class="text-center btn" open-type="getUserInfo" bindgetuserinfo="onGotUserInfo" @tap="open({{item.id}})">点击开始答题</button>
+                    <button class="text-center btn" @tap="onGotUserInfo" @tap="open({{item.id}})">点击开始答题</button>
                 </view>
             </view>
         </repeat>
@@ -59,17 +59,18 @@
         }
         methods = {
             async onGotUserInfo(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail);
-                    if (this.id) {
-                        wepy.navigateTo({
-                            url: './answer?id=' + this.id
-                        });
-                    }
-                }
-            },
-            open(id) {
                 this.id = id
+                wx.getUserProfile({
+                    desc: '仅用于部分活动显示',
+                    success: async res => {
+                        await auth.getUserinfo(res);
+                        if (this.id) {
+                            wepy.navigateTo({
+                                url: './answer?id=' + this.id
+                            });
+                        }
+                    }
+                })
             },
             linend() {
                 this.tiemend = true

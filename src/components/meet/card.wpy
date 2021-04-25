@@ -17,8 +17,8 @@
             </view>
             <view class="text-content">
                 <text decode>
-                                        {{remark.content}}
-                                    </text>
+                                            {{remark.content}}
+                                        </text>
             </view>
             <view class="bg-white padding" style="padding-top:0">
                 <view class="grid col-3 grid-square">
@@ -46,7 +46,7 @@
                 <view class="cu-avatar-group">
                     <view class="cu-avatar round " wx:for="{{remark.likePhotos}}" wx:key wx:for-item="item" style="background-image:url({{item}});"></view>
                 </view>
-                <button style="font-size:32rpx;" open-type="getUserInfo" bindgetuserinfo="targgetLike"><text class="cuIcon-appreciatefill {{!remark.isLike ?'text-gray':'text-red'}} margin-lr-xs"></text> {{remark.likeCount || "" }}</button>
+                <button style="font-size:32rpx;" @tap="targgetLike"><text class="cuIcon-appreciatefill {{!remark.isLike ?'text-gray':'text-red'}} margin-lr-xs"></text> {{remark.likeCount || "" }}</button>
             </view>
         </view>
     </view>
@@ -69,20 +69,23 @@
                 });
             },
             async targgetLike(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    this.remark.isLike = this.remark.isLike ? 0 : 1
-                    let res = await config.dolike({
-                        commentId: this.remark.commentId,
-                        state: this.remark.isLike
-                    })
-                    this.remark.likePhotos = res.likePhotos
-                    this.remark.likeCount = res.likeCount
-                    this.$apply()
-                }
+                wx.getUserProfile({
+                    desc: '仅用于部分活动显示',
+                    success: async r => {
+                        await auth.getUserinfo(r)
+                        this.remark.isLike = this.remark.isLike ? 0 : 1
+                        let res = await config.dolike({
+                            commentId: this.remark.commentId,
+                            state: this.remark.isLike
+                        })
+                        this.remark.likePhotos = res.likePhotos
+                        this.remark.likeCount = res.likeCount
+                        this.$apply()
+                    }
+                })
             },
-            previewImage(url,urls){
-                Lang.previewImage(url,[url])
+            previewImage(url, urls) {
+                Lang.previewImage(url, [url])
             }
         };
     }

@@ -1,0 +1,164 @@
+<template>
+  <view>
+    <view class="cu-card case padding-top">
+      <repeat for="{{videoData}}" key="_index" index="index" item="item">
+        <view class="cu-item " wx:if="{{item.url}}">
+          <view class="image">
+            <image class="video" mode='widthFix' src='{{item.url}}' />
+          </view>
+          <view class="cu-list padding-tb">
+           <!-- <view class="cu-item main two-line">
+              <text>{{item.content}}</text>
+            </view> -->
+            <view class="cu-item padding-top-sm flex flex-jend padding-right">
+              <button class="cu-btn bg-orange margin-left" @tap="proview({{item}})">查看票据</button>
+              <button class="cu-btn bg-orange1 margin-left" @tap="downLoad({{item}})">保存到手机</button>
+            </view>
+          </view>
+        </view>
+      </repeat>
+    </view>
+    <view class="cu-load {{!isLoad?'loading':'over'}}" style="background-color:#f5f5f5;margin-top:{{videoData.length > 0 ? '' : '150rpx;'}}"></view>
+  </view>
+</template>
+
+<script>
+  import wepy from "wepy";
+  import api from "../api.js"
+  import auth from "@/api/auth"
+  import Lang from "@/utils/Lang"
+
+  export default class Dialog extends wepy.page {
+    config = {
+      navigationBarTitleText: "我的票据"
+    };
+    data = {
+      close: "/static/images/close.png",
+      homeData: [],
+      videoData: [],
+      videoIndex: '-1',
+      isLoad:false,
+      typeId:'',
+      pageIndex:1
+
+    };
+    async onLoad() {
+      await auth.login()
+      this.load()
+    }
+    // 转发暂时先不开启
+    onShareAppMessage(res) {
+      if (res.from === 'button') {
+        // 来自页面内转发按钮
+        console.log(res.target)
+      }
+      return {
+        title: '',
+        path: '/piaoju/pages/page'
+      }
+    }
+    async load() {
+      this.loadmore()
+      this.$apply()
+    }
+    showMore() {
+      this.isLoad = false
+    }
+    noMore() {
+      this.isLoad = true
+    }
+    async loadmore(pageIndex = 1) {
+      let params = {
+        pageIndex: pageIndex
+      }
+      let video = await api.videoIndex(params)
+      if (!video.receipts.length) {
+        if (pageIndex == 1) {
+          this.videoData = video.receipts
+        }
+        this.pageIndex = pageIndex - 1
+        this.noMore()
+        this.$apply()
+        return false
+      } else {
+        if (pageIndex > 1) this.pageIndex = pageIndex
+        if (pageIndex == 1) {
+          this.videoData = video.receipts
+          this.noMore()
+        } else {
+          this.videoData = this.video.concat(video.receipts)
+        }
+      }
+      this.$apply()
+    }
+    async onPullDownRefresh() {
+      await this.loadmore(1)
+      this.pageIndex = 1
+      this.$apply()
+      wx.stopPullDownRefresh()
+    }
+    onReachBottom() {
+      this.getMore()
+    }
+    async getMore() {
+      if (this.loadmoring) {
+        return false
+      }
+      this.loadmoring = true
+      this.showMore()
+      await this.loadmore(this.pageIndex + 1)
+      this.loadmoring = false
+      this.$apply()
+    }
+    methods = {
+      proview(item){
+        if(!item.url) return
+        wx.previewImage({
+          current: item.url, // 当前显示图片的http链接
+          urls: [item.url] // 需要预览的图片http链接列表
+        })
+      },
+      downLoad(item){
+        if(!item.url) return
+        Lang.downImg(item.url,()=>{
+
+        })
+      }
+    };
+  }
+</script>
+
+
+<style lang="less" scoped>
+  .cu-card .cu-item {
+    border-radius: 0;
+    margin-top: 0
+  }
+
+  .image {
+    position: relative;
+  }
+
+  .playIcon {
+    width: 690rpx;
+    height: 390rpx;
+    position: absolute;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+
+  .video {
+    width: 690rpx;
+    height: 390rpx;
+  }
+
+  .main {
+    max-height: 100rpx;
+    padding: 0 30rpx;
+    color: #333;
+    font-size: 30rpx;
+    line-height: 50rpx;
+  }
+
+</style>

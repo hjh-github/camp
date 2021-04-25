@@ -7,7 +7,7 @@
     </view>
     <button wx:if="{{!mobile}}" class="cu-btn bg-orange shadow-blur round lg" open-type="getPhoneNumber"
       bindgetphonenumber="bindgetphonenumber">绑定手机号</button>
-    <button wx:if="{{mobile}}" class="cu-btn bg-orange shadow-blur round lg" @tap="onGotUserInfo">绑定成功，立即登录</button>
+    <button wx:if="{{mobile}}" class="cu-btn bg-orange shadow-blur round lg" @tap="onGotUserInfo">立即登录</button>
   </view>
 </template>
 
@@ -23,6 +23,11 @@
     data = {
       mobile: '',
     };
+    onLoad(opt){
+      //用于部分活动要求不授权手机号，单独授权用户昵称 + 头像时使用
+      if(opt.mobile) this.mobile = opt.mobile
+      console.log(opt.mobile)
+    }
     methods = {
       async onGotUserInfo(e) {
         wx.getUserProfile({

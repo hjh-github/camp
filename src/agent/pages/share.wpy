@@ -6,7 +6,7 @@
             <image src="{{loadImagePath}}" mode="widthFix" style="width:550rpx;" />
             <view class="cu-btn bg-orange shadow-blur round lg margin-top" @tap="saveImg">保存海报</view>
         </view>
-        
+
     </view>
 </template>
 <script>
@@ -43,13 +43,13 @@
             let res = await config.getPoster({
                 page: 'pages/home/index',
                 sceneStr: encodeURI(`agentId=${options.agentId}`),
-                id:this.shareInfo.id,
-                type:this.shareInfo.type
+                id:0,
+                type:5
             })
             this.loadImagePath = res.qr
             this.$apply()
         }
-        
+
     }
 </script>
 

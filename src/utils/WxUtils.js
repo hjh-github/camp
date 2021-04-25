@@ -2,7 +2,7 @@ import Tips from './Tips';
 import wepy from 'wepy';
 
 export default class WxUtils {
-  static tabUrls = ['/pages/home/template', '/pages/goods/category', '/pages/goods/cart', '/pages/customer/index', '/pages/customer/index_template'];
+  static tabUrls = ['/pages/home/index'];
   static mapUrls = {
     '/pages/shop/index': '/pages/home/template',
     '/pages/home/home': '/pages/home/template'
@@ -10,7 +10,7 @@ export default class WxUtils {
 
   static isTab (url) {
     const type = wepy.$instance.globalData.shopType;
-    return type == 1 && this.tabUrls.some(path => path == url);
+    return this.tabUrls.some(path => path == url);
   }
   static mapUrl (url) {
     const type = wepy.$instance.globalData.shopType;

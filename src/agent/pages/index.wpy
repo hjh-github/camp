@@ -12,7 +12,7 @@
                         <view class="text-orange">{{agent.auditStatusStr}}</view>
                     </view>
                 </view>
-                <button wx:if="{{agent.auditStatus == 1}}" class="cu-btn round bg-orange margin-right" open-type="getUserInfo" bindgetuserinfo="toShare" role="button" aria-disabled="false">生成分享海报</button>
+                <button wx:if="{{agent.auditStatus == 1}}" class="cu-btn round bg-orange margin-right" @tap="toShare" role="button" aria-disabled="false">生成分享海报</button>
                 <view wx:else></view>
             </view>
             <view class="bg-f">
@@ -123,17 +123,20 @@
                     url: '/pages/my/order?id=' + id + "&notic=1"
                 });
             },
-           async toShare(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    store.save('agentInfo', {
-                        path: 'pages/home/index',
-                        id: this.agent.id
-                    })
-                    wepy.navigateTo({
-                        url: './share'
-                    });
-                }
+            async toShare(e) {
+                wx.getUserProfile({
+                    desc: '仅用于部分活动显示',
+                    success: async res => {
+                        await auth.getUserinfo(res)
+                        store.save('agentInfo', {
+                            path: 'pages/home/index',
+                            id: this.agent.id
+                        })
+                        wepy.navigateTo({
+                            url: './share'
+                        });
+                    }
+                })
             }
         };
     }

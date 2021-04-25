@@ -106,7 +106,7 @@
             this.$apply()
         }
         ckeckIn(callback) {
-            if (!this.agentIndex.state) {
+            if (!this.agentIndex || !this.agentIndex.state ) {
                 this.modalName = 'image'
                 this.$apply()
             } else {

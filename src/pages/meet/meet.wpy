@@ -8,23 +8,23 @@
     </view>
     <view class="bg-img" @tap="toanswer" style="margin:30rpx auto 0;width:678rpx;height:141rpx;background-image:url(https://images.kuan1.cn/kuan1/upload/image/20201210/20201210180511_17757.png)"></view>
     <!-- <view class="padding flex text-center text-grey bg-white shadow-warp">
-                    <view class="flex flex-sub flex-direction solid-right">
-                      <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
-                      <view>亲自护照</view>
-                    </view>
-                    <view class="flex flex-sub flex-direction solid-right">
-                      <view class="text-xxl text-orange"><text class="cuIcon-calendar"></text></view>
-                      <view>活动点评</view>
-                    </view>
-                    <view class="flex flex-sub flex-direction solid-right">
-                      <view class="text-xxl text-orange"><text class="cuIcon-album"></text></view>
-                      <view>活动照片</view>
-                    </view>
-                    <view class="flex flex-sub flex-direction">
-                      <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
-                      <view>每日记录</view>
-                    </view>
-                  </view> -->
+                      <view class="flex flex-sub flex-direction solid-right">
+                        <view class="text-xxl text-orange"><text class="cuIcon-news"></text></view>
+                        <view>亲自护照</view>
+                      </view>
+                      <view class="flex flex-sub flex-direction solid-right">
+                        <view class="text-xxl text-orange"><text class="cuIcon-calendar"></text></view>
+                        <view>活动点评</view>
+                      </view>
+                      <view class="flex flex-sub flex-direction solid-right">
+                        <view class="text-xxl text-orange"><text class="cuIcon-album"></text></view>
+                        <view>活动照片</view>
+                      </view>
+                      <view class="flex flex-sub flex-direction">
+                        <view class="text-xxl text-orange"><text class="cuIcon-footprint"></text></view>
+                        <view>每日记录</view>
+                      </view>
+                    </view> -->
     <view class="flex padding text-xxl flex-c flex-jc text-orange margin-top"> ~ <text class="cuIcon-discoverfill padding-left-sm padding-right-sm"></text> <text class="text-lg  padding-right-sm">家长心声</text>~ </view>
     <repeat for="{{remarks}}" key="index" index="index" item="item">
       <cCard :remark.sync="item"></cCard>
@@ -122,12 +122,15 @@
         });
       },
       async onGotUserInfo(e) {
-        if (e.detail.errMsg == "getUserInfo:ok") {
-          await auth.getUserinfo(e.detail);
-          wepy.navigateTo({
-            url: "./childs"
-          });
-        }
+        wx.getUserProfile({
+          desc: '仅用于部分活动显示',
+          success: async res => {
+            await auth.getUserinfo(res);
+            wepy.navigateTo({
+              url: "./childs"
+            });
+          }
+        })
       },
       async bindgetphonenumber(e) {
         if (e.detail.errMsg == "getPhoneNumber:ok") {

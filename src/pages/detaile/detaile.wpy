@@ -53,8 +53,7 @@
         </view>
         <!-- 更多信息 -->
         <cInfo :model.sync="courseInfo" :companions.sync="companions"></cInfo>
-        <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics"
-          :CourseComment.sync="CourseComment"></cRemake>
+        <cRemake wx:if="{{CourseComment}}" :model.sync="courseInfo" :statistics.sync="statistics" :CourseComment.sync="CourseComment"></cRemake>
       </view>
       <scroll-view scroll-x class="bg-white nav margin-top-sm solid-bottom">
         <view class="flex text-center">
@@ -120,17 +119,16 @@
         <view class="cu-bar bg-white padding-left">
           <view>
             <text> 活动费：<text
-                class="text-red text-price text-xxl">{{courseInx == -1 ? courseInfo.price : courseInfo.periodList[courseInx].price}}</text>
+                  class="text-red text-price text-xxl">{{courseInx == -1 ? courseInfo.price : courseInfo.periodList[courseInx].price}}</text>
             </text>
             <text wx:if="{{courseInfo.paymentType == 2 && buyTypt != 'crowdfund'}}" class="margin-left-sm"> 定金：<text
-                class="text-red text-price text-lg">{{courseInfo.earnesMoney}}</text> </text>
+                  class="text-red text-price text-lg">{{courseInfo.earnesMoney}}</text> </text>
           </view>
         </view>
         <view wx:if="{{courseInfo.paymentType == 2 && buyTypt != 'crowdfund'}}" class="cu-bar bg-white padding-left">
           <text> 付款方式（可先付定金下单）：</text>
         </view>
-        <view wx:if="{{courseInfo.paymentType == 2 && buyTypt != 'crowdfund'}}"
-          class="flex flex-c padding padding-top-sm text-left bg-white">
+        <view wx:if="{{courseInfo.paymentType == 2 && buyTypt != 'crowdfund'}}" class="flex flex-c padding padding-top-sm text-left bg-white">
           <view class="flex flex-c flex__item">
             <view class="margin-right" @tap="paymentType(1)">
               <radio checked="{{paymentType == 1}}" class="radio margin-right-sm yellow"></radio>全额付款
@@ -146,8 +144,7 @@
         <view class="grid col-3 padding-sm">
           <repeat for="{{courseInfo.periodList}}" key="index" index="index" item="item">
             <view class="sku-item padding-xs">
-              <view @tap="course({{index}})"
-                class="bg-{{item.signState != 2? 'orange':'gray dont-click'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
+              <view @tap="course({{index}})" class="bg-{{item.signState != 2? 'orange':'gray dont-click'}} padding-xs {{courseInx == index ? '' : 'light'}} radius text-center shadow-blur">
                 <view class="text-xs text-Abc">{{item.startTimeStr}}~{{item.endTimeStr}}</view>
               </view>
             </view>
@@ -156,17 +153,14 @@
         <view class="flex flex-sb padding padding-top-sm text-left ">
           <view> 购买数量 </view>
           <view class="text-lg ">
-            <text @tap="minus"
-              class="bg-{{num>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
+            <text @tap="minus" class="bg-{{num>1?'orange':'gray'}} cuIcon-move lg text-white padding-sm padding-top-xs padding-bottom-xs"></text>
             <text class="text-black padding-sm padding-top-xs padding-bottom-xs">{{num}}</text>
-            <text @tap="plus"
-              class="cuIcon-add lg text-white bg-{{buyTypt == 'bargain' || buyTypt == 'crowdfund'?'gray':'orange'}} padding-sm padding-top-xs padding-bottom-xs"></text>
+            <text @tap="plus" class="cuIcon-add lg text-white bg-{{buyTypt == 'bargain' || buyTypt == 'crowdfund'?'gray':'orange'}} padding-sm padding-top-xs padding-bottom-xs"></text>
           </view>
         </view>
         <view wx:if="{{buyTypt == 'normal'}}" @tap="buy('',1)" class="bg-orange plus text-white text-lg text-center">
           立即购买</view>
-        <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)"
-          class="bg-orange plus text-white text-lg text-center">发起砍价</view>
+        <view wx:if="{{buyTypt == 'bargain'}}" @tap="bargain('',2)" class="bg-orange plus text-white text-lg text-center">发起砍价</view>
         <view wx:if="{{buyTypt == 'pintuan'}}" @tap="buy('',3)" class="bg-orange plus text-white text-lg text-center">
           发起拼团</view>
         <view wx:if="{{buyTypt == 'crowdfund'}}" @tap="buy('',4)" class="bg-orange plus text-white text-lg text-center">
@@ -175,11 +169,11 @@
     </view>
     <view class="cu-bar bg-white tabbar border shop solid-top">
       <button class="action" @tap="cont">
-        <view class="cuIcon-weixin text-orange"></view>咨询
-      </button>
+          <view class="cuIcon-weixin text-orange"></view>咨询
+        </button>
       <button class="action" @tap="toshare">
-        <view class="cuIcon-friend text-orange "></view><text class="text-sm">邀请同伴</text>
-      </button>
+          <view class="cuIcon-friend text-orange "></view><text class="text-sm">邀请同伴</text>
+        </button>
       <view class="bg-orange submit text-lg" @tap="sku('normal')">立即购买</view>
     </view>
     <view class="cu-modal bottom-modal {{modalName=='bottomModal'?'show':''}}">
@@ -208,11 +202,11 @@
         </view>
         <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
           <button class="action" open-type="share" style="line-height:1">
-            <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
-          </button>
+              <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
+            </button>
           <button class="action" open-type="getUserInfo" bindgetuserinfo="createImg" style="line-height:1">
-            <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
-          </button>
+              <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
+            </button>
         </view>
       </view>
     </view>
@@ -343,7 +337,7 @@
       },
       async tocut(type) {
         if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync(
-          'isFans') != 1) {
+            'isFans') != 1) {
           wepy.navigateTo({
             url: `/pages/home/auth`
           });
@@ -353,25 +347,28 @@
         }
       },
       async createImg(e) {
-        if (e.detail.errMsg == "getUserInfo:ok") {
-          await auth.getUserinfo(e.detail)
-          store.save('shareInfo', {
-            course: this.courseInfo,
-            path: 'pages/detaile/detaile',
-            id: this.courseInfo.id,
-            type: 1
-          })
-          wepy.navigateTo({
-            url: '/pages/home/share'
-          });
-        }
+        wx.getUserProfile({
+          desc: '仅用于部分活动显示',
+          success: async res => {
+            await auth.getUserinfo(res)
+            store.save('shareInfo', {
+              course: this.courseInfo,
+              path: 'pages/detaile/detaile',
+              id: this.courseInfo.id,
+              type: 1
+            })
+            wepy.navigateTo({
+              url: '/pages/home/share'
+            });
+          }
+        })
       },
       toshare() {
         this.modalName = 'share'
       },
       toPintuanfy() {
         if (wepy.getStorageSync('mobile') == '' || !wepy.getStorageSync('mobile') || wepy.getStorageSync(
-          'isFans') != 1) {
+            'isFans') != 1) {
           wepy.navigateTo({
             url: `/pages/home/auth`
           });
@@ -474,25 +471,20 @@
   .dont-click {
     pointer-events: none;
   }
-
   .main-view {
     height: calc(~"100% - 100rpx");
   }
-
   .scroll-view {
     height: calc(~"100% - 90rpx") !important;
   }
-
   .sku-item {
     display: inline-block;
     width: 240rpx;
   }
-
   .sku-box {
     white-space: nowrap;
     width: 100%;
   }
-
   .plus {
     height: 100rpx;
     line-height: 100rpx;

@@ -44,7 +44,7 @@
                 <button style="width:600rpx;white-space: nowrap;" open-type="getUserInfo" bindgetuserinfo="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
                 <!-- -->
                 <!--  -->
-                <button wx:if="{{info.status == 2 || info.status == 3}}"  class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" @tap="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
+                <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" @tap="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
             </view>
         </view>
         <view class="log-box radius padding">
@@ -117,7 +117,7 @@
             }
         };
         config = {
-            navigationBarBackgroundColor: '#ed1c24',
+            navigationBarBackgroundColor: '#215E21',
             navigationBarTitleText: '砍价',
             "usingComponents": {
                 "l-countdown": "../../components/countdown/index"
@@ -131,7 +131,7 @@
                 if (this.ActBargainReg) {
                     let act = this.ActBargainReg
                     let _p = Lang.sum([act.coursePrice, -act.courseNewPrice], 2),
-                        _sp = Lang.sum([act.coursePrice -act.cutMinPrice], 2)
+                        _sp = Lang.sum([act.coursePrice - act.cutMinPrice], 2)
                     this.percent = parseInt(_p / _sp * 100)
                     return _p
                 }
@@ -149,7 +149,7 @@
             }
         }
         async onLoad(opt) {
-            this.regId = opt.id || opt.scene
+            this.regId = opt.id || wepy.$instance.globalData.query.id
             this.routes = getCurrentPages()
             await auth.login()
             this.member = wepy.getStorageSync('member');
@@ -161,30 +161,36 @@
                 this.modalName = ''
             },
             async createImg(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    store.save('shareInfo', {
-                        course: this.courseInfo,
-                        path: 'pages/activity/bargain',
-                        id: this.ActBargainReg.id,
-                        type:3,
-                        courseId:this.courseInfo.id
-                    })
-                    wepy.navigateTo({
-                        url: '/pages/home/share'
-                    });
-                }
+                wx.getUserProfile({
+                    desc: '仅用于部分活动显示',
+                    success: async res => {
+                        await auth.getUserinfo(res)
+                        store.save('shareInfo', {
+                            course: this.courseInfo,
+                            path: 'pages/activity/bargain',
+                            id: this.ActBargainReg.id,
+                            type: 3,
+                            courseId: this.courseInfo.id
+                        })
+                        wepy.navigateTo({
+                            url: '/pages/home/share'
+                        });
+                    }
+                })
             },
             toshare() {
                 this.modalName = 'share'
             },
             async tocut(e) {
-                if (e.detail.errMsg == "getUserInfo:ok") {
-                    await auth.getUserinfo(e.detail)
-                    wepy.navigateTo({
-                        url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
-                    });
-                }
+                wx.getUserProfile({
+                    desc: '仅用于部分活动显示',
+                    success: async res => {
+                        await auth.getUserinfo(res)
+                        wepy.navigateTo({
+                            url: `/pages/detaile/detaile?id=${this.courseInfo.id}`
+                        });
+                    }
+                })
             },
             buy() {
                 wepy.navigateTo({
