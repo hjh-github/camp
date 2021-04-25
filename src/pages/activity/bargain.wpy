@@ -41,7 +41,7 @@
             </view>
             <!--   -->
             <view wx:if="{{info.owner == 0}}" class="flex flex-c flex-jc">
-                <button style="width:600rpx;white-space: nowrap;" open-type="getUserInfo" bindgetuserinfo="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
+                <button style="width:600rpx;white-space: nowrap;" @tap="tocut" class="cu-btn round bg-orange text-white border-2 shadow text-bold">我也去砍价</button>
                 <!-- -->
                 <!--  -->
                 <button wx:if="{{info.status == 2 || info.status == 3}}" class="cu-btn round {{info.status == 2 ? 'bg-yellow' : 'bg-gray'}} text-white border-2 shadow text-bold" @tap="onGotUserInfo">{{info.status == 2 ? '砍价' : '已帮砍'}}</button>
@@ -67,7 +67,7 @@
                 </view>
                 <view class="padding-bottom-xl bg-white flex flex-c flex-sa">
                     <button class="action" open-type="share" style="line-height:1"><view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm" >分享邀请</text></button>
-                    <button class="action" style="line-height:1" open-type="getUserInfo" bindgetuserinfo="createImg"><view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm" >海报邀请</text></button>
+                    <button class="action" style="line-height:1" @tap="createImg"><view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm" >海报邀请</text></button>
                 </view>
             </view>
         </view>
@@ -162,7 +162,7 @@
             },
             async createImg(e) {
                 wx.getUserProfile({
-                    desc: '仅用于部分活动显示',
+                    desc: '用于完善用户信息',
                     success: async res => {
                         await auth.getUserinfo(res)
                         store.save('shareInfo', {
@@ -183,7 +183,7 @@
             },
             async tocut(e) {
                 wx.getUserProfile({
-                    desc: '仅用于部分活动显示',
+                    desc: '用于完善用户信息',
                     success: async res => {
                         await auth.getUserinfo(res)
                         wepy.navigateTo({

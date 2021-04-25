@@ -177,7 +177,7 @@
           <button class="action" open-type="share" style="line-height:1">
               <view class="cuIcon-weixin text-green " style="font-size:66rpx;"></view><text class="text-sm">分享邀请</text>
             </button>
-          <button class="action" open-type="getUserInfo" bindgetuserinfo="createImg" style="line-height:1">
+          <button class="action" @tap="createImg" style="line-height:1">
               <view class="cuIcon-pic text-orange " style="font-size:66rpx;"></view><text class="text-sm">海报邀请</text>
             </button>
         </view>
@@ -311,7 +311,7 @@
     methods = {
       async createImg(e) {
         wx.getUserProfile({
-          desc: '仅用于部分活动显示',
+          desc: '用于完善用户信息',
           success: async res => {
             await auth.getUserinfo(res)
             store.save('shareInfo', {

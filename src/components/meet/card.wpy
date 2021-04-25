@@ -70,7 +70,7 @@
             },
             async targgetLike(e) {
                 wx.getUserProfile({
-                    desc: '仅用于部分活动显示',
+                    desc: '用于完善用户信息',
                     success: async r => {
                         await auth.getUserinfo(r)
                         this.remark.isLike = this.remark.isLike ? 0 : 1

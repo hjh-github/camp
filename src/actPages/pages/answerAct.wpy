@@ -61,7 +61,7 @@
             async onGotUserInfo(e) {
                 this.id = id
                 wx.getUserProfile({
-                    desc: '仅用于部分活动显示',
+                    desc: '用于完善用户信息',
                     success: async res => {
                         await auth.getUserinfo(res);
                         if (this.id) {

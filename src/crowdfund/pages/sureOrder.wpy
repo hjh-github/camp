@@ -12,7 +12,7 @@
         </view>
       </view>
       <view class="cu-list menu border margin-top padding-top padding-bottom-sm bg-white">
-        <button open-type="getUserInfo" bindgetuserinfo="getChilds" class="cu-item arrow">
+        <button @tap="getChilds" class="cu-item arrow">
             <view class="content">
               <view class="padding-bottom-sm">
                 <text class="text-orange text-lg">出行人</text>
@@ -201,7 +201,7 @@
           return false
         }
         wx.getUserProfile({
-          desc: '仅用于部分活动显示',
+          desc: '用于完善用户信息',
           success: async res => {
             await auth.getUserinfo(res)
             wepy.navigateTo({
