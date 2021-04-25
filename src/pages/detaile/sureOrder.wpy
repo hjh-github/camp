@@ -13,21 +13,21 @@
       </view>
       <view class="cu-list menu border margin-top padding-top padding-bottom-sm bg-white">
         <button @tap="getChilds" class="cu-item arrow">
-                        <view class="content">
-                          <view class="padding-bottom-sm">
-                            <text class="text-black text-df">出行人</text>
-                            <text class="text-red text-xs">（购买保险并生成旅游合同）</text>
-                          </view>
-                          <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
-                            <view class="padding-bottom-xs text-left">
-                              <text class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
-                              <text class=" text-df">{{item.name}}</text>
-                              <text class="text-df">（{{item.cardNum}}）</text>
+                          <view class="content">
+                            <view class="padding-bottom-sm">
+                              <text class="text-black text-df">出行人</text>
+                              <text class="text-red text-xs">（购买保险并生成旅游合同）</text>
                             </view>
-                          </repeat>
-                        </view>
-                        <view class="action">
-                          <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
+                            <repeat wx:if="{{childs.length}}" for="{{childs}}" key="index" index="index" item="item">
+                              <view class="padding-bottom-xs text-left">
+                                <text class="cu-tag radius {{item.gender==0?'cuIcon-female bg-pink':'cuIcon-male bg-blue'}} margin-right-sm"></text>
+                                <text class=" text-df">{{item.name}}</text>
+                                <text class="text-df">（{{item.cardNum}}）</text>
+                              </view>
+                            </repeat>
+                          </view>
+                          <view class="action">
+                            <button wx:if="{{!mobile}}" class="cu-btn bg-white " open-type="getPhoneNumber" bindgetphonenumber="bindgetphonenumber" style="background-color:{{theme}}">请先绑定手机</button>
         <view wx:if="{{!childs.length && mobile}}" class="text-grey text-df">请选择</view>
       </view>
       </button>
@@ -249,15 +249,9 @@
         if (!this.mobile) {
           return false
         }
-        wx.getUserProfile({
-          desc: '用于完善用户信息',
-          success: async res => {
-            await auth.getUserinfo(res)
-            wepy.navigateTo({
-              url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
-            });
-          }
-        })
+        wepy.navigateTo({
+          url: '/pages/meet/childs?type=1&len=' + this.payParams.courseNum
+        });
       },
       async pay() {
         if (!this.childs.length || this.childs.length != this.payParams.courseNum) {
