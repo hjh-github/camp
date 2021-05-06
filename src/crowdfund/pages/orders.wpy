@@ -8,8 +8,8 @@
                     </image>
                     <view class="margin-left flex flex-y flex-sb" style="overflow:hidden">
                         <view>{{item.courseTittle}}</view>
-                        <view class="text-orange"><text class="text-price text-lg margin-right-sm">{{item.courseNewPrice}}</text><text class="text-price text-gray text-old margin-right">{{item.coursePrice}}</text></view>
-                        <view class="flex flex-sb"><text>{{item.periods}}</text> <text><text class="cuIcon-close lg text-gray"></text>{{item.courseNum}}</text>
+                        <view class="text-orange1"><text class="text-price text-lg margin-right-sm">{{item.coursePrice}}</text> 已筹：<text class="text-price text-orange1  margin-right">{{item.supportedAmounts}}</text></view>
+                        <view class="flex flex-sb"><text>{{item.periods}}</text>
                         </view>
                         <l-countdown wx:if="{{item.awardsStatus < 1}}" time="{{item.invalidTime}}"/>
                     </view>
